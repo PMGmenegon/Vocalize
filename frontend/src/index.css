@@ -1,1 +1,160 @@
 @import "tailwindcss";
+
+/* =====================================================================
+   TEMAS (sotaque)
+   O ThemeContext grava `data-accent="us" | "uk"` no <html>. Cada tema
+   redefine as variáveis abaixo; o Tailwind enxerga todas elas como
+   utilitários (bg-brand, text-ink, border-line, ...) via @theme inline.
+
+   - us: dominante VERMELHO (#B22234), secundário azul (#3C3B6E)
+   - uk: dominante AZUL-MARINHO (#012169), secundário vermelho (#C8102E)
+
+   Contraste (WCAG AA) é verificado por `npm run check:contrast`, que lê
+   este arquivo. Se mudar uma cor, rode o script.
+   ===================================================================== */
+
+:root,
+html[data-accent="us"] {
+  --canvas: #ffffff;
+  --surface: #f6f4f8;
+  --ink: #1c1b3a;
+  --muted: #55547a;
+  --line: #dddbe8;
+
+  --brand: #b22234; /* vermelho da bandeira dos EUA */
+  --brand-strong: #8f1b2a; /* hover / estado pressionado */
+  --on-brand: #ffffff;
+  --on-brand-soft: #fce9eb;
+
+  --accent: #3c3b6e; /* azul da bandeira dos EUA */
+  --on-accent: #ffffff;
+
+  --link: #b22234;
+  --control: #b22234; /* borda de controles (precisa de 3:1) */
+  --focus: #3c3b6e;
+}
+
+html[data-accent="uk"] {
+  --canvas: #ffffff;
+  --surface: #f1f4fa;
+  --ink: #0a1330;
+  --muted: #475473;
+  --line: #d6dceb;
+
+  --brand: #012169; /* azul da Union Jack */
+  --brand-strong: #00174a;
+  --on-brand: #ffffff;
+  --on-brand-soft: #e3e9f8;
+
+  --accent: #c8102e; /* vermelho da Union Jack */
+  --on-accent: #ffffff;
+
+  --link: #012169;
+  --control: #012169;
+  --focus: #c8102e;
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-on-brand: var(--on-brand);
+  --color-on-brand-soft: var(--on-brand-soft);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-link: var(--link);
+  --color-control: var(--control);
+}
+
+/* ---------------------------------------------------------------------
+   Base
+   --------------------------------------------------------------------- */
+@layer base {
+  html {
+    background-color: var(--canvas);
+    color: var(--ink);
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    background-color: var(--canvas);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Foco sempre visível para quem navega por teclado. */
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  /* Dentro de áreas com fundo da cor da marca o anel de foco fica branco. */
+  .on-brand :focus-visible {
+    outline-color: var(--on-brand);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Quem pede menos movimento não vê animações nem transições. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Detalhes gráficos de cada tema
+   --------------------------------------------------------------------- */
+@layer components {
+  /* Faixa fina no topo: cor da marca, branco e cor secundária. */
+  .accent-stripe {
+    height: 8px;
+    background: linear-gradient(
+      to bottom,
+      var(--brand) 0 50%,
+      var(--on-brand) 50% 75%,
+      var(--accent) 75% 100%
+    );
+  }
+
+  /* Camada decorativa do hero: estrelas e listras (US) ou cruz (UK). */
+  .hero-deco {
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(to left, #000 25%, transparent 85%);
+    mask-image: linear-gradient(to left, #000 25%, transparent 85%);
+  }
+
+  html[data-accent="us"] .hero-deco {
+    background-image:
+      url("./assets/deco/us-stars.svg"),
+      repeating-linear-gradient(
+        to bottom,
+        rgb(255 255 255 / 0.1) 0 24px,
+        transparent 24px 48px
+      );
+    background-size:
+      64px 64px,
+      auto;
+  }
+
+  html[data-accent="uk"] .hero-deco {
+    background-image: url("./assets/deco/uk-cross.svg");
+    background-size: cover;
+    background-position: center;
+  }
+}
