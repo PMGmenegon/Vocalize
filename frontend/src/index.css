@@ -94,7 +94,7 @@ html[data-accent="uk"] {
   }
 
   /* Dentro de áreas com fundo da cor da marca o anel de foco fica branco. */
-  .on-brand :focus-visible {
+  .surface-brand :focus-visible {
     outline-color: var(--on-brand);
   }
 }

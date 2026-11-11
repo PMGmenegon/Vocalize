@@ -35,7 +35,7 @@ export default function Logo({ className = '', markOnly = false }: LogoProps) {
       ) : (
         <>
           <span className="sr-only">Vocalize</span>
-          <span aria-hidden="true" className="text-xl font-black tracking-wider">
+          <span aria-hidden="true" className="text-lg font-black tracking-wider max-[340px]:hidden sm:text-xl">
             <span className="text-brand">VOCA</span>
             <span className="text-accent">LIZE</span>
           </span>
