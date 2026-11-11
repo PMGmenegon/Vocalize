@@ -158,3 +158,69 @@ html[data-accent="uk"] {
     background-position: center;
   }
 }
+
+/* ---------------------------------------------------------------------
+   Tela de abertura (Splash) — linha do tempo de ~2s:
+     0–700ms   as duas metades da palavra deslizam até o centro
+     700–1600  pausa
+     1600–2000 fade-out revelando o dashboard (já montado por baixo)
+   O componente remove o overlay em 2000ms (ver Splash.tsx).
+   --------------------------------------------------------------------- */
+@keyframes splash-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes splash-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes splash-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.splash {
+  animation: splash-out 400ms ease-in 1600ms both;
+}
+
+.splash-word {
+  font-family: "Arial Black", "Segoe UI Black", "Helvetica Neue", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 900;
+  font-size: 120px;
+  letter-spacing: 4px;
+}
+
+.splash-left {
+  animation: splash-in-left 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.splash-right {
+  animation: splash-in-right 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* "Reduzir movimento": a marca aparece parada, sem deslizar nem esmaecer. */
+@media (prefers-reduced-motion: reduce) {
+  .splash,
+  .splash-left,
+  .splash-right {
+    animation: none;
+  }
+}
