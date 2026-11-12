@@ -131,17 +131,6 @@ html[data-accent="uk"] {
   }
 }
 
-@keyframes scene-in {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
 /* ---------------------------------------------------------------------
    Detalhes gráficos de cada tema
    --------------------------------------------------------------------- */
@@ -159,11 +148,6 @@ html[data-accent="uk"] {
       stroke 400ms ease !important;
   }
 
-  /* Ilustrações entram com fade quando o modo muda (a troca remonta o SVG). */
-  .scene-in {
-    animation: scene-in 450ms ease-out both;
-  }
-
   /* Faixa fina no topo: cor da marca, branco e cor secundária. */
   .accent-stripe {
     height: 8px;
@@ -173,32 +157,6 @@ html[data-accent="uk"] {
       var(--on-brand) 50% 75%,
       var(--accent) 75% 100%
     );
-  }
-
-  /* Camada decorativa do hero: estrelas e listras (US) ou cruz (UK). */
-  .hero-deco {
-    pointer-events: none;
-    -webkit-mask-image: linear-gradient(to left, #000 25%, transparent 85%);
-    mask-image: linear-gradient(to left, #000 25%, transparent 85%);
-  }
-
-  html[data-accent="us"] .hero-deco {
-    background-image:
-      url("./assets/deco/us-stars.svg"),
-      repeating-linear-gradient(
-        to bottom,
-        rgb(255 255 255 / 0.1) 0 24px,
-        transparent 24px 48px
-      );
-    background-size:
-      64px 64px,
-      auto;
-  }
-
-  html[data-accent="uk"] .hero-deco {
-    background-image: url("./assets/deco/uk-cross.svg");
-    background-size: cover;
-    background-position: center;
   }
 }
 

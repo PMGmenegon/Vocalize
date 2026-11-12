@@ -9,7 +9,6 @@ export default function Hero() {
 
   return (
     <section className="surface-brand relative isolate overflow-hidden bg-brand text-on-brand">
-      <div className="hero-deco absolute inset-0 -z-10" aria-hidden="true" />
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24 lg:py-28">
         <div>
           <h1>
