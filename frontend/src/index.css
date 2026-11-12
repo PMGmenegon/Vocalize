@@ -251,6 +251,18 @@ html[data-accent="uk"] {
   }
 }
 
+@keyframes hl-draw {
+  to {
+    background-size: 100% 0.16em;
+  }
+}
+
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
 @keyframes flag-wave {
   0%,
   100% {
@@ -274,6 +286,36 @@ html[data-accent="uk"] {
   /* Texto que troca com o modo (a troca remonta o elemento via key). */
   .fade-swap {
     animation: fade-swap 450ms ease-out both;
+  }
+
+  /* Fundo do hero: branco com um brilho suave nas duas cores do tema. */
+  .hero-glow {
+    background-color: var(--canvas);
+    background-image:
+      radial-gradient(60rem 28rem at 8% -10%, color-mix(in srgb, var(--brand) 12%, transparent), transparent 70%),
+      radial-gradient(50rem 26rem at 105% 110%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%);
+  }
+
+  /* Palavra marcada com um traço que se desenha sozinho. */
+  .hl {
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-repeat: no-repeat;
+    background-position: 0 92%;
+    background-size: 0% 0.16em;
+    animation: hl-draw 800ms 700ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  }
+
+  /* Cursor piscante da máquina de escrever. */
+  .caret {
+    display: inline-block;
+    width: 0.08em;
+    height: 0.9em;
+    margin-left: 0.06em;
+    vertical-align: -0.1em;
+    background: currentColor;
+  }
+  .caret-idle {
+    animation: caret-blink 1s steps(1) infinite;
   }
 
   /* Surge ao rolar a página (ver Reveal.tsx). */
