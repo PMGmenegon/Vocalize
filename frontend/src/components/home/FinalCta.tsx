@@ -10,7 +10,7 @@ export default function FinalCta() {
         <h2 className="text-3xl font-black sm:text-4xl">Pronto para ouvir de verdade?</h2>
         <p className="mx-auto mt-3 max-w-xl text-on-brand-soft">Escolha seu sotaque e comece sua primeira rodada.</p>
         <Link
-          to="/app"
+          to="/cadastro"
           className="group mt-8 inline-flex items-center justify-center gap-2 rounded-xl bg-on-brand px-8 py-3.5 text-base font-bold text-brand shadow-lg transition-all hover:bg-on-brand-soft active:scale-95"
         >
           Começar

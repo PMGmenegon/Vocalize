@@ -44,7 +44,7 @@ export default function Hero() {
 
           <div className="rise mt-8 flex flex-wrap items-center gap-3" style={delay(360)}>
             <Link
-              to="/app"
+              to="/cadastro"
               className="group inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-7 py-3.5 text-base font-bold text-on-brand shadow-lg transition-all hover:bg-brand-strong active:scale-95"
             >
               Começar

@@ -7,6 +7,7 @@ import { MODE_COPY } from '../theme/modeCopy'
 import { useTheme } from '../theme/useTheme'
 
 const ITEMS: readonly NavItem[] = [
+  { label: 'Início', to: '/app', end: true },
   { label: 'Praticar', to: '/app/praticar' },
   { label: 'Estatísticas', to: '/app/estatisticas' },
   { label: 'Revisão', to: '/app/revisao' },
@@ -16,10 +17,9 @@ const ITEMS: readonly NavItem[] = [
 /**
  * Layout da área logada (/app): cabeçalho com navegação + conteúdo da página.
  *
- * A splash aparece toda vez que este layout é montado (ao entrar em /app).
- * Quando houver login real, ela passará a ser acionada logo após o login.
- * O dashboard já fica renderizado por baixo; `inert` o tira do foco/leitores
- * de tela enquanto a splash cobre a tela.
+ * A splash aparece toda vez que este layout é montado: logo após o login/cadastro
+ * (que navega para /app) e ao recarregar a página. A tela já fica renderizada por
+ * baixo; `inert` a tira do foco/leitores de tela enquanto a splash cobre tudo.
  */
 export default function AppLayout() {
   const [splashDone, setSplashDone] = useState(false)

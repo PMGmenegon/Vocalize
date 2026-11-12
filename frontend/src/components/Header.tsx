@@ -6,6 +6,8 @@ import Logo from './Logo'
 export interface NavItem {
   label: string
   to: string
+  /** Só fica "ativo" na rota exata (para o "Início" não acender em todas as subpáginas). */
+  end?: boolean
 }
 
 interface HeaderProps {
@@ -50,6 +52,7 @@ export default function Header({ logoTo, items, trackActive = false, cta, greeti
         <NavLink
           key={item.to}
           to={item.to}
+          end={item.end}
           onClick={close}
           className={({ isActive }) =>
             `${baseLink} ${size} ${isActive ? 'bg-surface text-link underline decoration-2 underline-offset-8' : 'text-ink hover:bg-surface'}`

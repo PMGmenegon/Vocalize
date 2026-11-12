@@ -7,8 +7,9 @@ const ITEMS: readonly NavItem[] = [
   { label: 'Funcionalidades', to: '/#funcionalidades' },
   { label: 'Sotaques', to: '/#sotaques' },
   { label: 'Níveis', to: '/#niveis' },
+  { label: 'Entrar', to: '/login' },
 ]
-const CTA: NavItem = { label: 'Começar', to: '/app' }
+const CTA: NavItem = { label: 'Começar', to: '/cadastro' }
 
 /** Layout do site público (página inicial e afins). */
 export default function PublicLayout() {
