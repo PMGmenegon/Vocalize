@@ -49,3 +49,105 @@ export function ChatIcon({ className }: { className?: string }) {
     </Icon>
   )
 }
+
+/** Mapa com marcador — cenários reais. */
+export function PinIcon({ className }: { className?: string }) {
+  return (
+    <Icon className={className}>
+      <path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z" />
+      <circle cx="12" cy="10" r="2.4" />
+    </Icon>
+  )
+}
+
+/** Ondas sonoras com lápis — ditado. */
+export function DictationIcon({ className }: { className?: string }) {
+  return (
+    <Icon className={className}>
+      <path d="M3 10v4M7 7v10M11 9v6" />
+      <path d="M14 20h3.5L22 15.5a2.1 2.1 0 0 0-3-3L14.5 17z" />
+    </Icon>
+  )
+}
+
+/** Globo — sotaques. */
+export function GlobeIcon({ className }: { className?: string }) {
+  return (
+    <Icon className={className}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18M12 3c2.8 2.6 4 5.6 4 9s-1.2 6.4-4 9c-2.8-2.6-4-5.6-4-9s1.2-6.4 4-9z" />
+    </Icon>
+  )
+}
+
+/** Microfone — responder falando. */
+export function MicIcon({ className }: { className?: string }) {
+  return (
+    <Icon className={className}>
+      <rect x="9" y="3" width="6" height="11" rx="3" />
+      <path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3M9 21h6" />
+    </Icon>
+  )
+}
+
+/** Visto dentro de um balão — correção com explicação. */
+export function CheckNoteIcon({ className }: { className?: string }) {
+  return (
+    <Icon className={className}>
+      <path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H10l-5 4v-4H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z" />
+      <path d="M8 10.5l3 3 5-6" />
+    </Icon>
+  )
+}
+
+/** Degraus — níveis. */
+export function StairsIcon({ className }: { className?: string }) {
+  return (
+    <Icon className={className}>
+      <path d="M3 20h5v-5h5v-5h5V5h3" />
+    </Icon>
+  )
+}
+
+/** Seta para cima — subir de nível. */
+export function TrendUpIcon({ className }: { className?: string }) {
+  return (
+    <Icon className={className}>
+      <path d="M3 17l6-6 4 4 8-8" />
+      <path d="M15 7h6v6" />
+    </Icon>
+  )
+}
+
+/** Gráfico de barras — estatísticas. */
+export function ChartIcon({ className }: { className?: string }) {
+  return (
+    <Icon className={className}>
+      <path d="M4 20V4M4 20h16" />
+      <rect x="8" y="12" width="3" height="5" />
+      <rect x="13" y="8" width="3" height="9" />
+      <rect x="18" y="14" width="2" height="3" />
+    </Icon>
+  )
+}
+
+/** Cartões empilhados — flashcards. */
+export function CardsIcon({ className }: { className?: string }) {
+  return (
+    <Icon className={className}>
+      <rect x="3" y="7" width="14" height="12" rx="2" />
+      <path d="M7 7V5.5A1.5 1.5 0 0 1 8.5 4H20a1 1 0 0 1 1 1v9.5a1.5 1.5 0 0 1-1.5 1.5H17" />
+      <path d="M7 12h6" />
+    </Icon>
+  )
+}
+
+/** Teclado — responder digitando. */
+export function KeyboardIcon({ className }: { className?: string }) {
+  return (
+    <Icon className={className}>
+      <rect x="2.5" y="6" width="19" height="12" rx="2" />
+      <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10" />
+    </Icon>
+  )
+}

@@ -32,6 +32,11 @@ html[data-accent="us"] {
   --link: #b22234;
   --control: #b22234; /* borda de controles (precisa de 3:1) */
   --focus: #3c3b6e;
+  /* Semânticos (iguais nos dois temas): erro e acerto nunca dependem da cor da marca. */
+  --danger: #fde8e8;
+  --on-danger: #8a1c1c;
+  --ok: #dcfce7;
+  --on-ok: #14532d;
 }
 
 html[data-accent="uk"] {
@@ -52,6 +57,11 @@ html[data-accent="uk"] {
   --link: #012169;
   --control: #012169;
   --focus: #c8102e;
+  /* Semânticos (iguais nos dois temas): erro e acerto nunca dependem da cor da marca. */
+  --danger: #fde8e8;
+  --on-danger: #8a1c1c;
+  --ok: #dcfce7;
+  --on-ok: #14532d;
 }
 
 @theme inline {
@@ -68,6 +78,10 @@ html[data-accent="uk"] {
   --color-on-accent: var(--on-accent);
   --color-link: var(--link);
   --color-control: var(--control);
+  --color-danger: var(--danger);
+  --color-on-danger: var(--on-danger);
+  --color-ok: var(--ok);
+  --color-on-ok: var(--on-ok);
 }
 
 /* ---------------------------------------------------------------------

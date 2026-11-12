@@ -64,6 +64,12 @@ const PAIRS = [
   ['focus', 'canvas', UI, 'anel de foco'],
   ['focus', 'surface', UI, 'anel de foco em cartões'],
   ['on-brand', 'brand', UI, 'anel de foco sobre a cor da marca'],
+  ['on-danger', 'danger', TEXT, 'palavra errada destacada'],
+  ['on-ok', 'ok', TEXT, 'palavra corrigida destacada'],
+  ['ink', 'danger', TEXT, 'texto comum sobre fundo de erro'],
+  ['muted', 'on-brand-soft', TEXT, 'texto secundário sobre fundo suave'],
+  ['brand', 'surface', UI, 'ícones e bordas de marca em cartões'],
+  ['accent', 'surface', UI, 'ícones na cor secundária em cartões'],
 ]
 
 let failures = 0
