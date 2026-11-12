@@ -80,7 +80,7 @@ export default function Splash({ onDone }: SplashProps) {
     <div
       role="status"
       onClick={onDone}
-      className="splash fixed inset-0 z-[100] grid cursor-pointer place-items-center bg-[#0a0c1c] px-4"
+      className="splash fixed inset-0 z-[100] grid cursor-pointer place-items-center bg-white px-4"
     >
       <span className="sr-only">Abrindo o Vocalize</span>
       <svg
