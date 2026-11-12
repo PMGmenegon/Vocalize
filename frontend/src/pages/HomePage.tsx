@@ -4,6 +4,7 @@ import AccentChoice from '../components/home/AccentChoice'
 import Features from '../components/home/Features'
 import FinalCta from '../components/home/FinalCta'
 import Hero from '../components/home/Hero'
+import TryRound from '../components/home/TryRound'
 import HowItWorks from '../components/home/HowItWorks'
 import Levels from '../components/home/Levels'
 
@@ -21,6 +22,7 @@ export default function HomePage() {
     <>
       <Hero />
       <HowItWorks />
+      <TryRound />
       <Features />
       <AccentChoice />
       <Levels />
