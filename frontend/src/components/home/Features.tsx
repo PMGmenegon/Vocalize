@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import Reveal from '../Reveal'
 import {
   CardsIcon,
   ChartIcon,
@@ -73,14 +74,14 @@ export default function Features() {
       <p className="mt-3 max-w-2xl text-muted">Tudo o que o Vocalize foi pensado para oferecer.</p>
 
       <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {FEATURES.map((f) => (
-          <li key={f.title} className="rounded-2xl border border-line bg-surface p-6">
-            <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand text-on-brand">
+        {FEATURES.map((f, i) => (
+          <Reveal as="li" key={f.title} delay={(i % 3) * 90} className="group rounded-2xl border-2 border-line bg-surface p-6 transition-all duration-200 hover:border-brand motion-safe:hover:-translate-y-1 hover:shadow-lg">
+            <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand text-on-brand transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:group-hover:-rotate-6">
               {f.icon}
             </span>
             <h3 className="mt-4 text-lg font-black text-ink">{f.title}</h3>
             <p className="mt-1 text-muted">{f.description}</p>
-          </li>
+          </Reveal>
         ))}
       </ul>
     </section>

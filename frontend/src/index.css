@@ -225,3 +225,77 @@ html[data-accent="uk"] {
     animation: none;
   }
 }
+
+/* ---------------------------------------------------------------------
+   Interação e movimento (todos desligados por "reduzir movimento")
+   --------------------------------------------------------------------- */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-swap {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes flag-wave {
+  0%,
+  100% {
+    transform: skewY(0) scaleX(1);
+  }
+  25% {
+    transform: skewY(-5deg) scaleX(0.97);
+  }
+  75% {
+    transform: skewY(5deg) scaleX(0.97);
+  }
+}
+
+@layer components {
+  /* Entrada do hero ao carregar a página (escalonada por --d). */
+  .rise {
+    animation: rise 650ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: var(--d, 0ms);
+  }
+
+  /* Texto que troca com o modo (a troca remonta o elemento via key). */
+  .fade-swap {
+    animation: fade-swap 450ms ease-out both;
+  }
+
+  /* Surge ao rolar a página (ver Reveal.tsx). */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+      opacity 600ms ease,
+      transform 600ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition-delay: var(--d, 0ms);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Bandeiras "ondulam" quando o botão ou cartão que as contém recebe o mouse. */
+  .flag {
+    transform-origin: left center;
+  }
+  button:hover .flag,
+  article:hover .flag {
+    animation: flag-wave 900ms ease-in-out;
+  }
+}

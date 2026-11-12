@@ -35,7 +35,7 @@ export default function AccentChoice() {
           return (
             <article
               key={code}
-              className={`rounded-2xl border-2 bg-surface p-5 sm:p-6 ${active ? 'border-brand' : 'border-line'}`}
+              className={`rounded-2xl border-2 bg-surface p-5 transition-all duration-200 hover:shadow-lg motion-safe:hover:-translate-y-1 sm:p-6 ${active ? 'border-brand' : 'border-line hover:border-brand'}`}
             >
               <div className="flex flex-wrap items-center gap-3">
                 <h3 className="inline-flex items-center gap-2 text-xl font-black text-ink">
@@ -55,7 +55,7 @@ export default function AccentChoice() {
                 aria-pressed={active}
                 onClick={() => setAccent(code)}
                 className={[
-                  'mt-5 inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl border-2 px-5 text-base font-bold transition-colors',
+                  'mt-5 inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl border-2 px-5 text-base font-bold transition-all active:scale-95',
                   active
                     ? 'border-brand bg-brand text-on-brand'
                     : 'border-control bg-canvas text-brand hover:bg-canvas/60',

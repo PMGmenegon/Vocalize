@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import Reveal from '../Reveal'
 import type { Accent } from '../../theme/accents'
 import { useTheme } from '../../theme/useTheme'
 import { ChatIcon, HeadphonesIcon, PencilIcon } from '../icons'
@@ -71,16 +72,16 @@ export default function HowItWorks() {
 
       <ol className="mt-10 grid gap-6 md:grid-cols-3">
         {STEPS.map((step, i) => (
-          <li key={step.title} className="rounded-2xl bg-surface p-6">
+          <Reveal as="li" key={step.title} delay={i * 120} className="group rounded-2xl border-2 border-transparent bg-surface p-6 transition-all duration-200 hover:border-brand motion-safe:hover:-translate-y-1 hover:shadow-lg">
             <div className="flex items-center gap-3">
-              <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand text-on-brand">
+              <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand text-on-brand transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:group-hover:-rotate-6">
                 {step.icon}
               </span>
               <span className="text-sm font-bold tracking-widest text-accent uppercase">Passo {i + 1}</span>
             </div>
             <h3 className="mt-5 text-xl font-black text-ink">{step.title}</h3>
             <p className="mt-2 text-muted">{step.description}</p>
-          </li>
+          </Reveal>
         ))}
       </ol>
 
