@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
-import { cancelSpeech, describeVoice, speak, speechSupported } from '../../lib/speech'
+import { cancelSpeech, failureMessage, speak, speechSupported } from '../../lib/speech'
 import { diffWords, type DiffResult } from '../../lib/diff'
 import { ACCENTS, type Accent } from '../../theme/accents'
 import { useTheme } from '../../theme/useTheme'
@@ -51,7 +51,7 @@ function Round({ accent }: { accent: Accent }) {
       rate,
       onStart: () => setSpeaking(true),
       onEnd: () => setSpeaking(false),
-    }).then((result) => setVoiceNote(describeVoice(result, accent)))
+    }).then((result) => setVoiceNote(failureMessage(result)))
     inputRef.current?.focus()
   }
 

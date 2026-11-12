@@ -8,6 +8,10 @@
 
 export const speechSupported = typeof window !== 'undefined' && 'speechSynthesis' in window
 
+/** Vozes que já funcionaram (por sotaque) e as que ficaram mudas: evitamos repetir tentativas lentas. */
+const working = new Map<string, string>()
+const broken = new Set<string>()
+
 /** Cada cancelamento invalida falas que ainda estavam esperando para começar. */
 let token = 0
 
@@ -43,7 +47,8 @@ export function candidateVoices(voices: SpeechSynthesisVoice[], locale: string):
   if (pool.length === 0 && wanted === 'en-gb') {
     pool = voices.filter((v) => normalize(v.lang).startsWith('en') && BRITISH_NAME.test(v.name))
   }
-  return [...pool].sort((a, b) => rank(b) - rank(a))
+  const score = (v: SpeechSynthesisVoice) => rank(v) + (working.get(wanted) === v.voiceURI ? 10 : 0)
+  return pool.filter((v) => !broken.has(v.voiceURI)).sort((a, b) => score(b) - score(a))
 }
 
 export function cancelSpeech() {
@@ -86,13 +91,13 @@ function attempt(
     if (voice) utterance.voice = voice
     utterance.rate = rate
     let started = false
-    // Vozes online às vezes ficam mudas sem avisar; sem "start" em 3 s tentamos outra.
+    // Vozes online às vezes ficam mudas sem avisar; sem "start" em 2 s tentamos outra.
     const timer = window.setTimeout(() => {
       if (!started) {
         window.speechSynthesis.cancel()
         resolve('failed')
       }
-    }, 3000)
+    }, 2000)
     utterance.onstart = () => {
       started = true
       window.clearTimeout(timer)
@@ -139,6 +144,7 @@ export async function speak(text: string, locale: string, options: SpeakOptions 
     const outcome = await attempt(text, locale, voice, mine, options)
     if (outcome === 'aborted' || mine !== token) return null
     if (outcome === 'started') {
+      if (voice) working.set(normalize(locale), voice.voiceURI)
       return {
         matched: voice !== null,
         voice: voice ? `${voice.name} (${voice.lang})` : null,
@@ -146,6 +152,7 @@ export async function speak(text: string, locale: string, options: SpeakOptions 
         available: candidates.length,
       }
     }
+    if (voice) broken.add(voice.voiceURI)
     await sleep(80)
     if (mine !== token) return null
   }
@@ -153,19 +160,7 @@ export async function speak(text: string, locale: string, options: SpeakOptions 
   return { matched: false, voice: null, failed: true, available: candidates.length }
 }
 
-/** Texto de aviso/diagnóstico para mostrar ao usuário depois de tentar falar. */
-export function describeVoice(result: SpeakResult | null, accent: 'us' | 'uk'): string {
-  if (!result) return ''
-  if (result.failed) {
-    return 'Não foi possível tocar o áudio neste navegador. Tente o Chrome ou o Edge, com o som ligado.'
-  }
-  if (!result.matched && result.available > 0) {
-    return 'A voz deste sotaque não respondeu, então tocou a voz padrão. Tente o Chrome ou o Edge.'
-  }
-  if (!result.matched) {
-    return accent === 'uk'
-      ? 'Este aparelho não tem voz britânica instalada, então tocou a voz padrão. No Windows: Configurações > Hora e idioma > Fala > Adicionar vozes > Inglês (Reino Unido). No Edge, as vozes online britânicas também servem.'
-      : 'Este aparelho não tem voz americana instalada, então tocou a voz padrão.'
-  }
-  return `Voz usada: ${result.voice}`
+/** Mensagem só para quando NADA tocou (sem falar de qual voz é ou de onde vem). */
+export function failureMessage(result: SpeakResult | null): string {
+  return result?.failed ? 'Não foi possível tocar o áudio. Confira se o som do aparelho está ligado.' : ''
 }
