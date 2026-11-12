@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import Reveal from '../Reveal'
+import ExpandCard from '../ExpandCard'
 import {
   CardsIcon,
   ChartIcon,
@@ -15,52 +15,71 @@ import {
 interface Feature {
   title: string
   description: string
+  details: string
   icon: ReactNode
 }
 
 const FEATURES: readonly Feature[] = [
   {
     title: 'Diálogos com IA em cenários reais',
+    details:
+      'Você escolhe um cenário, como pedir comida ou fazer check-in, e a IA conversa com você como se fosse a situação real, adaptando as falas ao seu nível.',
     description: 'Restaurante, entrevista de emprego, aeroporto, hotel, compras e small talk.',
     icon: <PinIcon />,
   },
   {
     title: 'Ditado palavra por palavra',
+    details:
+      'A IA fala uma frase, você digita o que ouviu e o app marca cada palavra certa ou errada, para você ver exatamente onde o ouvido falhou.',
     description: 'Você escreve o que ouviu e vê cada palavra certa ou errada.',
     icon: <DictationIcon />,
   },
   {
     title: 'Sotaque americano ou britânico',
+    details:
+      'Com o modo americano ou britânico, a voz, o vocabulário (elevator ou lift) e a grafia (color ou colour) acompanham a sua escolha.',
     description: 'Escolha o modo e treine o ouvido com a voz e o vocabulário dele.',
     icon: <GlobeIcon />,
   },
   {
     title: 'Responda digitando ou falando',
+    details:
+      'Responda pelo teclado ou pelo microfone. O reconhecimento de voz depende do navegador; o Chrome costuma funcionar melhor.',
     description: 'Use o teclado ou o microfone, como for melhor para você.',
     icon: <KeyboardIcon />,
   },
   {
     title: 'Correção com explicação em português',
+    details:
+      'Depois de responder, você vê o que ajustar e uma explicação em português, para entender o motivo do erro e não só a versão certa.',
     description: 'Suas respostas são corrigidas e você entende o porquê.',
     icon: <CheckNoteIcon />,
   },
   {
     title: 'Níveis de A2 a C1',
+    details:
+      'Do A2 ao C1, a velocidade da fala, o tamanho das frases e as palavras usadas mudam conforme o nível que você escolher.',
     description: 'Velocidade da fala e vocabulário se adaptam ao seu nível.',
     icon: <StairsIcon />,
   },
   {
     title: 'Sugestão de subir de nível',
+    details:
+      'Quando seus acertos se mantêm altos, o Vocalize sugere subir de nível. A decisão de avançar é sempre sua.',
     description: 'Com base no seu desempenho, indicamos a hora de avançar.',
     icon: <TrendUpIcon />,
   },
   {
     title: 'Estatísticas',
+    details:
+      'Gráficos mostram seu acerto ao longo do tempo, os erros que mais se repetem e quantos dias seguidos você praticou.',
     description: 'Acerto ao longo do tempo, erros mais comuns e sequência de dias.',
     icon: <ChartIcon />,
   },
   {
     title: 'Revisão com flashcards',
+    details:
+      'As palavras que você errou viram flashcards e voltam em intervalos cada vez maiores (repetição espaçada), até ficarem fixas.',
     description: 'As palavras que você errou voltam com repetição espaçada.',
     icon: <CardsIcon />,
   },
@@ -75,13 +94,14 @@ export default function Features() {
 
       <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {FEATURES.map((f, i) => (
-          <Reveal as="li" key={f.title} delay={(i % 3) * 90} className="group rounded-2xl border-2 border-line bg-surface p-6 transition-all duration-200 hover:border-brand motion-safe:hover:-translate-y-1 hover:shadow-lg">
-            <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand text-on-brand transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:group-hover:-rotate-6">
-              {f.icon}
-            </span>
-            <h3 className="mt-4 text-lg font-black text-ink">{f.title}</h3>
-            <p className="mt-1 text-muted">{f.description}</p>
-          </Reveal>
+          <ExpandCard
+            key={f.title}
+            icon={f.icon}
+            title={f.title}
+            summary={f.description}
+            details={f.details}
+            delay={(i % 3) * 90}
+          />
         ))}
       </ul>
     </section>

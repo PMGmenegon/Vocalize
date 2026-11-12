@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import Reveal from '../Reveal'
+import ExpandCard from '../ExpandCard'
 import type { Accent } from '../../theme/accents'
 import { useTheme } from '../../theme/useTheme'
 import { ChatIcon, HeadphonesIcon, PencilIcon } from '../icons'
@@ -7,22 +7,29 @@ import { ChatIcon, HeadphonesIcon, PencilIcon } from '../icons'
 interface Step {
   title: string
   description: string
+  details: string
   icon: ReactNode
 }
 
 const STEPS: readonly Step[] = [
   {
     title: 'Ouvir',
+    details:
+      'O texto fica escondido de propósito: assim você treina o ouvido, e não a leitura. Dá para ouvir de novo e também em velocidade menor.',
     description: 'A IA fala em inglês e o texto fica escondido. Você treina o ouvido de verdade.',
     icon: <HeadphonesIcon />,
   },
   {
     title: 'Transcrever',
+    details:
+      'Você digita a frase. A comparação é palavra por palavra: o que acertou aparece em verde, e o que errou ou faltou aparece em vermelho.',
     description: 'Digite o que ouviu. Comparamos palavra por palavra e mostramos onde errou.',
     icon: <PencilIcon />,
   },
   {
     title: 'Responder',
+    details:
+      'Depois da correção, você responde à IA por texto ou voz e a conversa segue, sempre com a correção e uma explicação em português.',
     description: 'Responda por texto ou voz. A IA corrige e a conversa continua.',
     icon: <ChatIcon />,
   },
@@ -72,16 +79,15 @@ export default function HowItWorks() {
 
       <ol className="mt-10 grid gap-6 md:grid-cols-3">
         {STEPS.map((step, i) => (
-          <Reveal as="li" key={step.title} delay={i * 120} className="group rounded-2xl border-2 border-transparent bg-surface p-6 transition-all duration-200 hover:border-brand motion-safe:hover:-translate-y-1 hover:shadow-lg">
-            <div className="flex items-center gap-3">
-              <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand text-on-brand transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:group-hover:-rotate-6">
-                {step.icon}
-              </span>
-              <span className="text-sm font-bold tracking-widest text-accent uppercase">Passo {i + 1}</span>
-            </div>
-            <h3 className="mt-5 text-xl font-black text-ink">{step.title}</h3>
-            <p className="mt-2 text-muted">{step.description}</p>
-          </Reveal>
+          <ExpandCard
+            key={step.title}
+            icon={step.icon}
+            title={step.title}
+            summary={step.description}
+            details={step.details}
+            eyebrow={`Passo ${i + 1}`}
+            delay={i * 120}
+          />
         ))}
       </ol>
 
