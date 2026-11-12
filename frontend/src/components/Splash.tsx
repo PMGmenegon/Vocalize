@@ -3,8 +3,8 @@ import flagUk from '../assets/deco/flag-uk.svg'
 import flagUs from '../assets/deco/flag-us.svg'
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
 
-/** Duração total da animação (o CSS em index.css usa os mesmos 2s: entrada + pausa + fade-out). */
-const DURATION_MS = 2000
+/** Duração total da animação (o CSS em index.css usa os mesmos 4,2s: surgir + pausa + fade-out). */
+const DURATION_MS = 4200
 /** Com "reduzir movimento": sem animação, só uma exibição rápida da marca. */
 const REDUCED_MOTION_DURATION_MS = 1200
 
@@ -80,13 +80,15 @@ export default function Splash({ onDone }: SplashProps) {
     <div
       role="status"
       onClick={onDone}
-      className="splash fixed inset-0 z-[100] grid cursor-pointer place-items-center bg-white px-4"
+      className="splash fixed inset-0 z-[100] grid cursor-pointer place-items-center overflow-hidden bg-brand-strong px-4"
     >
       <span className="sr-only">Abrindo o Vocalize</span>
+      <div className="splash-rays" aria-hidden="true" />
+      <div className="splash-glow" aria-hidden="true" />
       <svg
         ref={svgRef}
         viewBox="0 0 900 180"
-        className="w-[min(92vw,56rem)]"
+        className="splash-stage relative w-[min(92vw,56rem)]"
         aria-hidden="true"
         focusable="false"
       >
@@ -120,7 +122,7 @@ export default function Splash({ onDone }: SplashProps) {
           className="splash-word"
           dominantBaseline="central"
           stroke="#fff"
-          strokeWidth="3"
+          strokeWidth="4"
           strokeLinejoin="round"
           paintOrder="stroke"
         >

@@ -161,31 +161,46 @@ html[data-accent="uk"] {
 }
 
 /* ---------------------------------------------------------------------
-   Tela de abertura (Splash) — linha do tempo de ~2s:
-     0–700ms   as duas metades da palavra deslizam até o centro
-     700–1600  pausa
-     1600–2000 fade-out revelando o dashboard (já montado por baixo)
-   O componente remove o overlay em 2000ms (ver Splash.tsx).
+   Tela de abertura (Splash) — linha do tempo de ~4,2s, com a marca "surgindo":
+     0–2800ms  a palavra emerge devagar: sai do desfoque, encolhe de um leve
+               zoom; um brilho e raios discretos crescem atrás
+     2800–3500 pausa, com o brilho respirando
+     3500–4200 fade-out revelando o dashboard (já montado por baixo)
+   O componente remove o overlay em 4200ms (ver Splash.tsx).
    --------------------------------------------------------------------- */
-@keyframes splash-in-left {
+@keyframes splash-emerge {
   from {
     opacity: 0;
-    transform: translateX(-60px);
+    filter: blur(22px);
+    transform: scale(1.22);
+  }
+  60% {
+    opacity: 1;
   }
   to {
     opacity: 1;
-    transform: none;
+    filter: blur(0);
+    transform: scale(1);
   }
 }
 
-@keyframes splash-in-right {
+@keyframes splash-glow {
   from {
     opacity: 0;
-    transform: translateX(60px);
+    transform: scale(0.4);
   }
   to {
     opacity: 1;
-    transform: none;
+    transform: scale(1);
+  }
+}
+
+@keyframes splash-rays {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(60deg);
   }
 }
 
@@ -199,7 +214,38 @@ html[data-accent="uk"] {
 }
 
 .splash {
-  animation: splash-out 400ms ease-in 1600ms both;
+  animation: splash-out 700ms ease-in 3500ms both;
+}
+
+/* Brilho suave atrás da palavra. */
+.splash-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(40rem 22rem at 50% 50%, rgb(255 255 255 / 0.28), transparent 70%);
+  animation: splash-glow 2800ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Raios muito discretos girando devagar. */
+.splash-rays {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 150vmax;
+  height: 150vmax;
+  margin: -75vmax 0 0 -75vmax;
+  pointer-events: none;
+  background: repeating-conic-gradient(from 0deg, rgb(255 255 255 / 0.07) 0 6deg, transparent 6deg 18deg);
+  -webkit-mask-image: radial-gradient(circle, #000 0%, transparent 55%);
+  mask-image: radial-gradient(circle, #000 0%, transparent 55%);
+  animation:
+    splash-glow 2800ms ease-out both,
+    splash-rays 4200ms linear both;
+}
+
+.splash-stage {
+  animation: splash-emerge 2800ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, filter, opacity;
 }
 
 .splash-word {
@@ -209,19 +255,12 @@ html[data-accent="uk"] {
   letter-spacing: 4px;
 }
 
-.splash-left {
-  animation: splash-in-left 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-
-.splash-right {
-  animation: splash-in-right 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-
-/* "Reduzir movimento": a marca aparece parada, sem deslizar nem esmaecer. */
+/* "Reduzir movimento": a marca aparece parada, sem emergir nem esmaecer. */
 @media (prefers-reduced-motion: reduce) {
   .splash,
-  .splash-left,
-  .splash-right {
+  .splash-stage,
+  .splash-glow,
+  .splash-rays {
     animation: none;
   }
 }
