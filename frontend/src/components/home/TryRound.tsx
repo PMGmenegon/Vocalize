@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
+import { cancelSpeech, speak, speechSupported } from '../../lib/speech'
 import { diffWords, type DiffResult } from '../../lib/diff'
 import { ACCENTS, type Accent } from '../../theme/accents'
 import { useTheme } from '../../theme/useTheme'
@@ -16,8 +17,6 @@ const SENTENCES: Record<Accent, readonly string[]> = {
   ],
 }
 
-const canSpeak = typeof window !== 'undefined' && 'speechSynthesis' in window
-
 /** Mini rodada jogável: ouça, digite e veja a correção palavra por palavra. */
 export default function TryRound() {
   const { accent } = useTheme()
@@ -34,6 +33,7 @@ function Round({ accent }: { accent: Accent }) {
   const [result, setResult] = useState<DiffResult | null>(null)
   const [revealed, setRevealed] = useState(false)
   const [speaking, setSpeaking] = useState(false)
+  const [voiceNote, setVoiceNote] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
   const sentence = sentences[index % sentences.length] ?? sentences[0]!
@@ -41,22 +41,21 @@ function Round({ accent }: { accent: Accent }) {
   // Para a fala ao sair da página ou trocar de frase/modo.
   useEffect(() => {
     return () => {
-      if (canSpeak) window.speechSynthesis.cancel()
+      cancelSpeech()
     }
   }, [sentence])
 
-  function speak(rate: number) {
-    if (!canSpeak) return
-    window.speechSynthesis.cancel()
-    const utterance = new SpeechSynthesisUtterance(sentence)
-    utterance.lang = locale
-    utterance.rate = rate
-    const voice = window.speechSynthesis.getVoices().find((v) => v.lang.replace('_', '-') === locale)
-    if (voice) utterance.voice = voice
-    utterance.onstart = () => setSpeaking(true)
-    utterance.onend = () => setSpeaking(false)
-    utterance.onerror = () => setSpeaking(false)
-    window.speechSynthesis.speak(utterance)
+  function play(rate: number) {
+    setVoiceNote('')
+    void speak(sentence, locale, {
+      rate,
+      onStart: () => setSpeaking(true),
+      onEnd: () => setSpeaking(false),
+    }).then((result) => {
+      if (result && !result.matched) {
+        setVoiceNote(`Este aparelho não tem uma voz ${accent === 'uk' ? 'britânica' : 'americana'} instalada; usando a voz padrão do inglês.`)
+      }
+    })
     inputRef.current?.focus()
   }
 
@@ -86,16 +85,16 @@ function Round({ accent }: { accent: Accent }) {
         <div className="flex flex-wrap items-center gap-3">
           <button
             type="button"
-            onClick={() => speak(0.95)}
-            disabled={!canSpeak}
+            onClick={() => play(0.95)}
+            disabled={!speechSupported}
             className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl bg-brand px-5 font-bold text-on-brand transition-all hover:bg-brand-strong active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {speaking ? 'Ouvindo…' : 'Ouvir frase'}
           </button>
           <button
             type="button"
-            onClick={() => speak(0.6)}
-            disabled={!canSpeak}
+            onClick={() => play(0.6)}
+            disabled={!speechSupported}
             className="inline-flex min-h-11 cursor-pointer items-center rounded-xl border-2 border-control bg-canvas px-5 font-bold text-brand transition-all hover:bg-canvas/60 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Ouvir devagar
@@ -104,7 +103,12 @@ function Round({ accent }: { accent: Accent }) {
             Sotaque: {ACCENTS[accent].label} ({ACCENTS[accent].locale})
           </span>
         </div>
-        {!canSpeak && (
+        {voiceNote && (
+          <p role="status" className="mt-3 text-sm font-bold text-ink">
+            {voiceNote}
+          </p>
+        )}
+        {!speechSupported && (
           <p className="mt-3 text-sm text-muted">
             Seu navegador não tem voz sintetizada. Use o Chrome para ouvir, ou clique em "Mostrar o texto".
           </p>

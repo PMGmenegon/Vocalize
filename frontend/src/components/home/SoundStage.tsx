@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 import { ACCENTS } from '../../theme/accents'
+import { cancelSpeech, speak, speechSupported } from '../../lib/speech'
 import { MODE_COPY } from '../../theme/modeCopy'
 import { useTheme } from '../../theme/useTheme'
 
 const BARS = 44
-const canSpeak = typeof window !== 'undefined' && 'speechSynthesis' in window
 
 /** Altura "de repouso" das barras (usada também quando o movimento está reduzido). */
 const rest = (i: number, t = 0) => 0.28 + 0.14 * Math.sin(t * 1.2 + i * 0.45) + 0.08 * Math.sin(t * 0.7 + i * 0.2)
@@ -34,6 +34,7 @@ export default function SoundStage() {
   const [speaking, setSpeaking] = useState(false)
   const [active, setActive] = useState(-1)
   const ticker = useRef<number | undefined>(undefined)
+  const [voiceNote, setVoiceNote] = useState('')
 
   // Animação das barras.
   useEffect(() => {
@@ -72,7 +73,7 @@ export default function SoundStage() {
   useEffect(() => {
     return () => {
       window.clearInterval(ticker.current)
-      if (canSpeak) window.speechSynthesis.cancel()
+      cancelSpeech()
     }
   }, [])
 
@@ -85,13 +86,14 @@ export default function SoundStage() {
 
   function play() {
     if (speakingRef.current) {
-      if (canSpeak) window.speechSynthesis.cancel()
+      cancelSpeech()
       finish()
       return
     }
     speakingRef.current = true
     setSpeaking(true)
     setActive(0)
+    setVoiceNote('')
 
     // Plano B: se o navegador não avisar a palavra atual, avançamos por tempo.
     let gotBoundary = false
@@ -101,30 +103,29 @@ export default function SoundStage() {
       if (gotBoundary) return
       fallbackIndex += 1
       if (fallbackIndex >= words.length) {
-        if (!canSpeak) finish()
+        if (!speechSupported) finish()
         return
       }
       setActive(fallbackIndex)
     }, 420)
 
-    if (!canSpeak) return
-    window.speechSynthesis.cancel()
-    const utterance = new SpeechSynthesisUtterance(phrase)
-    utterance.lang = locale
-    utterance.rate = 0.9
-    const voice = window.speechSynthesis.getVoices().find((v) => v.lang.replace('_', '-') === locale)
-    if (voice) utterance.voice = voice
-    utterance.onboundary = (e) => {
-      gotBoundary = true
-      let idx = 0
-      starts.forEach((s, i) => {
-        if (e.charIndex >= s) idx = i
-      })
-      setActive(idx)
-    }
-    utterance.onend = finish
-    utterance.onerror = finish
-    window.speechSynthesis.speak(utterance)
+    if (!speechSupported) return
+    void speak(phrase, locale, {
+      rate: 0.9,
+      onEnd: finish,
+      onBoundary: (charIndex) => {
+        gotBoundary = true
+        let idx = 0
+        starts.forEach((st, i) => {
+          if (charIndex >= st) idx = i
+        })
+        setActive(idx)
+      },
+    }).then((result) => {
+      if (result && !result.matched) {
+        setVoiceNote(`Este aparelho não tem uma voz ${accent === 'uk' ? 'britânica' : 'americana'} instalada; usando a voz padrão do inglês.`)
+      }
+    })
   }
 
   const setPointer = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -187,6 +188,11 @@ export default function SoundStage() {
       <p className="mt-3 text-sm text-muted">
         Passe o mouse (ou o dedo) sobre as ondas e toque em play para ouvir no sotaque do seu modo.
       </p>
+      {voiceNote && (
+        <p role="status" className="mt-2 text-sm font-bold text-ink">
+          {voiceNote}
+        </p>
+      )}
     </div>
   )
 }
