@@ -83,8 +83,6 @@ export default function Splash({ onDone }: SplashProps) {
       className="splash fixed inset-0 z-[100] grid cursor-pointer place-items-center overflow-hidden bg-brand-strong px-4"
     >
       <span className="sr-only">Abrindo o Vocalize</span>
-      <div className="splash-rays" aria-hidden="true" />
-      <div className="splash-glow" aria-hidden="true" />
       <svg
         ref={svgRef}
         viewBox="0 0 900 180"
