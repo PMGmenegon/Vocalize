@@ -1,0 +1,135 @@
+import type { ReactNode } from 'react'
+import type { Accent } from '../../theme/accents'
+import { useTheme } from '../../theme/useTheme'
+import { ChatIcon, HeadphonesIcon, PencilIcon } from '../icons'
+
+interface Step {
+  title: string
+  description: string
+  icon: ReactNode
+}
+
+const STEPS: readonly Step[] = [
+  {
+    title: 'Ouvir',
+    description: 'A IA fala em inglês e o texto fica escondido. Você treina o ouvido de verdade.',
+    icon: <HeadphonesIcon />,
+  },
+  {
+    title: 'Transcrever',
+    description: 'Digite o que ouviu. Comparamos palavra por palavra e mostramos onde errou.',
+    icon: <PencilIcon />,
+  },
+  {
+    title: 'Responder',
+    description: 'Responda por texto ou voz. A IA corrige e a conversa continua.',
+    icon: <ChatIcon />,
+  },
+]
+
+interface Round {
+  said: string
+  before: string
+  wrong: string
+  after: string
+  right: string
+  reply: string
+  explanation: string
+}
+
+/** Exemplo de rodada; a palavra muda conforme o modo (check/bill). */
+const ROUNDS: Record<Accent, Round> = {
+  us: {
+    said: 'Could we get the check, please?',
+    before: 'Could we get the',
+    wrong: 'chick',
+    after: ', please?',
+    right: 'check',
+    reply: 'Sure! Here is the check. Take your time.',
+    explanation: '"check" é a conta, no inglês americano. "chick" (pintinho) soa quase igual.',
+  },
+  uk: {
+    said: 'Could we have the bill, please?',
+    before: 'Could we have the',
+    wrong: 'bell',
+    after: ', please?',
+    right: 'bill',
+    reply: 'Of course. Here is the bill. Take your time.',
+    explanation: '"bill" é a conta, no inglês britânico. "bell" (sino) soa parecido.',
+  },
+}
+
+/** Os 3 passos e um exemplo visual de uma rodada. */
+export default function HowItWorks() {
+  const { accent } = useTheme()
+  const round = ROUNDS[accent]
+
+  return (
+    <section id="como-funciona" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-16 sm:px-6 sm:py-20">
+      <h2 className="text-3xl font-black text-ink sm:text-4xl">Como funciona</h2>
+      <p className="mt-3 max-w-2xl text-muted">Cada rodada tem três passos. Poucos minutos por dia já ajudam.</p>
+
+      <ol className="mt-10 grid gap-6 md:grid-cols-3">
+        {STEPS.map((step, i) => (
+          <li key={step.title} className="rounded-2xl border border-line bg-surface p-6">
+            <div className="flex items-center gap-3">
+              <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand text-on-brand">
+                {step.icon}
+              </span>
+              <span className="text-sm font-bold tracking-widest text-accent uppercase">Passo {i + 1}</span>
+            </div>
+            <h3 className="mt-5 text-xl font-black text-ink">{step.title}</h3>
+            <p className="mt-2 text-muted">{step.description}</p>
+          </li>
+        ))}
+      </ol>
+
+      <div className="mt-10 rounded-2xl border border-line bg-surface p-5 sm:p-8">
+        <h3 className="text-lg font-black text-ink">Exemplo de uma rodada</h3>
+        <ol className="mt-5 grid gap-4 lg:grid-cols-3">
+          <li className="rounded-xl bg-canvas p-4">
+            <p className="flex items-center gap-2 text-sm font-bold text-accent">
+              <HeadphonesIcon className="h-5 w-5" /> 1. A IA fala
+            </p>
+            <p className="mt-3 text-muted">
+              <span aria-hidden="true">▶ ▮▮▮▯▮▮▯▮▮▮ </span>
+              <span className="sr-only">Áudio da IA. </span>
+              <span className="text-sm">(texto escondido)</span>
+            </p>
+          </li>
+
+          <li className="rounded-xl bg-canvas p-4">
+            <p className="flex items-center gap-2 text-sm font-bold text-accent">
+              <PencilIcon className="h-5 w-5" /> 2. Você transcreve
+            </p>
+            <p lang="en" className="mt-3 text-ink">
+              {round.before}{' '}
+              <span className="rounded bg-danger px-1.5 font-bold text-on-danger underline decoration-wavy">
+                {round.wrong}
+              </span>
+              <span className="sr-only"> (errado)</span>
+              {round.after}
+            </p>
+            <p className="mt-2 text-sm text-muted">A palavra errada fica destacada.</p>
+          </li>
+
+          <li className="rounded-xl bg-canvas p-4">
+            <p className="flex items-center gap-2 text-sm font-bold text-accent">
+              <ChatIcon className="h-5 w-5" /> 3. Correção e resposta
+            </p>
+            <p lang="en" className="mt-3 text-ink">
+              {round.before}{' '}
+              <span className="rounded bg-ok px-1.5 font-bold text-on-ok">{round.right}</span>
+              <span className="sr-only"> (correto)</span>
+              {round.after}
+            </p>
+            <p className="mt-2 text-sm text-muted">{round.explanation}</p>
+            <p lang="en" className="mt-3 rounded-lg bg-surface p-2 text-sm text-ink">
+              {round.reply}
+            </p>
+          </li>
+        </ol>
+      </div>
+    </section>
+  )
+}
