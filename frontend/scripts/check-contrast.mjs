@@ -68,6 +68,10 @@ const PAIRS = [
   ['on-ok', 'ok', TEXT, 'palavra corrigida destacada'],
   ['ink', 'danger', TEXT, 'texto comum sobre fundo de erro'],
   ['muted', 'on-brand-soft', TEXT, 'texto secundário sobre fundo suave'],
+  ['on-danger', 'canvas', TEXT, 'mensagens de erro e palavras faltando sobre o fundo'],
+  ['on-danger', 'surface', TEXT, 'mensagens de erro em cartões'],
+  ['on-danger', 'canvas', UI, 'borda de campo com erro'],
+  ['on-ok', 'canvas', TEXT, 'texto de acerto sobre o fundo'],
   ['brand', 'surface', UI, 'ícones e bordas de marca em cartões'],
   ['accent', 'surface', UI, 'ícones na cor secundária em cartões'],
 ]
