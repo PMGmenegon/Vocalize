@@ -42,7 +42,7 @@ export default function ChoiceGroup<T extends string | number>({
             <label
               key={opt.value}
               className={`relative flex cursor-pointer gap-3 rounded-xl border-2 p-4 transition-colors has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-(--focus) ${
-                checked ? 'border-brand bg-surface' : 'border-line bg-canvas hover:bg-surface'
+                checked ? 'border-brand bg-surface' : 'border-line bg-card hover:bg-surface'
               }`}
             >
               <input

@@ -30,7 +30,7 @@ export default function UsVsUk() {
   const isPron = item.kind === 'pron'
 
   return (
-    <div className="rounded-2xl border border-line bg-canvas p-4 sm:p-6" role="group" aria-label="Curiosidades: americano versus britânico">
+    <div className="rounded-2xl border border-line bg-card p-4 sm:p-6" role="group" aria-label="Curiosidades: americano versus britânico">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm font-bold tracking-widest text-accent uppercase">
           {KIND_LABEL[item.kind]} · {index + 1} de {DIFFERENCES.length}

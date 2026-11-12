@@ -49,6 +49,13 @@ const UI = 3
 const PAIRS = [
   ['ink', 'canvas', TEXT, 'texto principal'],
   ['ink', 'surface', TEXT, 'texto principal em cartões'],
+  ['ink', 'card', TEXT, 'texto principal em cards elevados'],
+  ['muted', 'card', TEXT, 'texto secundário em cards elevados'],
+  ['link', 'card', TEXT, 'links em cards elevados'],
+  ['on-danger', 'card', TEXT, 'erros em cards elevados'],
+  ['control', 'card', UI, 'borda de controles em cards'],
+  ['focus', 'card', UI, 'anel de foco em cards'],
+  ['brand', 'card', UI, 'bordas de marca em cards'],
   ['muted', 'canvas', TEXT, 'texto secundário'],
   ['muted', 'surface', TEXT, 'texto secundário em cartões'],
   ['link', 'canvas', TEXT, 'links'],

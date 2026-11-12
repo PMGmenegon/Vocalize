@@ -8,7 +8,7 @@ interface CardProps {
 }
 
 const tones = {
-  default: 'border border-line bg-canvas text-ink',
+  default: 'border border-line bg-card text-ink',
   soft: 'border border-line bg-surface text-ink',
   brand: 'surface-brand bg-brand text-on-brand',
 }

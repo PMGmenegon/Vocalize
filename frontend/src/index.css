@@ -15,11 +15,12 @@
 
 :root,
 html[data-accent="us"] {
-  --canvas: #ffffff;
-  --surface: #f6f4f8;
+  --canvas: #faf7f2; /* marfim quente: fundo da página */
+  --card: #fffdf9; /* superfícies elevadas (cards, campos, tooltips) */
+  --surface: #f1ece3; /* áreas rebaixadas (faixas, chips, rodapé) */
   --ink: #1c1b3a;
   --muted: #55547a;
-  --line: #dddbe8;
+  --line: #e2dacb;
 
   --brand: #b22234; /* vermelho da bandeira dos EUA */
   --brand-strong: #8f1b2a; /* hover / estado pressionado */
@@ -40,11 +41,12 @@ html[data-accent="us"] {
 }
 
 html[data-accent="uk"] {
-  --canvas: #ffffff;
-  --surface: #f1f4fa;
+  --canvas: #f5f7fa; /* branco gelo, levemente azulado: fundo da página */
+  --card: #fbfcfe; /* superfícies elevadas (cards, campos, tooltips) */
+  --surface: #eaeff6; /* áreas rebaixadas (faixas, chips, rodapé) */
   --ink: #0a1330;
   --muted: #475473;
-  --line: #d6dceb;
+  --line: #d5dce9;
 
   --brand: #012169; /* azul da Union Jack */
   --brand-strong: #00174a;
@@ -66,6 +68,7 @@ html[data-accent="uk"] {
 
 @theme inline {
   --color-canvas: var(--canvas);
+  --color-card: var(--card);
   --color-surface: var(--surface);
   --color-ink: var(--ink);
   --color-muted: var(--muted);

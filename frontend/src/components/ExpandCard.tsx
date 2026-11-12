@@ -55,7 +55,7 @@ export default function ExpandCard({ icon, title, summary, details, eyebrow, del
         className={`grid transition-[grid-template-rows] duration-300 ease-out ${open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
       >
         <div className="overflow-hidden" inert={!open}>
-          <p className="mt-4 rounded-xl bg-canvas p-3 text-sm text-ink">{details}</p>
+          <p className="mt-4 rounded-xl bg-card p-3 text-sm text-ink">{details}</p>
         </div>
       </div>
 

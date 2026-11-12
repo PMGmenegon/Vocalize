@@ -58,7 +58,7 @@ export default function AccentChoice() {
                   'mt-5 inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl border-2 px-5 text-base font-bold transition-all active:scale-95',
                   active
                     ? 'border-brand bg-brand text-on-brand'
-                    : 'border-control bg-canvas text-brand hover:bg-canvas/60',
+                    : 'border-control bg-card text-brand hover:bg-card/60',
                 ].join(' ')}
               >
                 {active ? `Modo ${ex.title.toLowerCase()} ativo` : `Escolher modo ${ex.title.toLowerCase()}`}

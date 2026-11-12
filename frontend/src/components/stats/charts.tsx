@@ -18,7 +18,7 @@ import {
  */
 const tick = { fill: 'var(--ink)', fontSize: 12 }
 const tooltipStyle = {
-  backgroundColor: 'var(--canvas)',
+  backgroundColor: 'var(--card)',
   border: '2px solid var(--control)',
   borderRadius: 12,
   color: 'var(--ink)',
@@ -38,7 +38,7 @@ export function AccuracyLine({ data }: { data: { label: string; accuracy: number
           name="Acerto"
           stroke="var(--brand)"
           strokeWidth={3}
-          dot={{ r: 4, fill: 'var(--canvas)', stroke: 'var(--brand)', strokeWidth: 2 }}
+          dot={{ r: 4, fill: 'var(--card)', stroke: 'var(--brand)', strokeWidth: 2 }}
           activeDot={{ r: 6, fill: 'var(--brand)' }}
         />
       </LineChart>

@@ -12,7 +12,7 @@ interface ControlProps {
   className: string
 }
 
-const control = 'block w-full rounded-xl border-2 bg-canvas px-4 py-3 text-base text-ink placeholder:text-muted'
+const control = 'block w-full rounded-xl border-2 bg-card px-4 py-3 text-base text-ink placeholder:text-muted'
 
 /** Campo com rótulo visível, dica e mensagem de erro ligados por aria-describedby. */
 function Field({

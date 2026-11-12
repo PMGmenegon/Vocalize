@@ -91,7 +91,7 @@ function Round({ accent }: { accent: Accent }) {
             type="button"
             onClick={() => play(0.6)}
             disabled={!speechSupported}
-            className="inline-flex min-h-11 cursor-pointer items-center rounded-xl border-2 border-control bg-canvas px-5 font-bold text-brand transition-all hover:bg-canvas/60 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex min-h-11 cursor-pointer items-center rounded-xl border-2 border-control bg-card px-5 font-bold text-brand transition-all hover:bg-card/60 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Ouvir devagar
           </button>
@@ -125,7 +125,7 @@ function Round({ accent }: { accent: Accent }) {
               autoCapitalize="off"
               spellCheck={false}
               placeholder="Digite em inglês…"
-              className="min-h-11 flex-1 rounded-xl border-2 border-control bg-canvas px-4 text-ink placeholder:text-muted"
+              className="min-h-11 flex-1 rounded-xl border-2 border-control bg-card px-4 text-ink placeholder:text-muted"
             />
             <button
               type="submit"
@@ -138,7 +138,7 @@ function Round({ accent }: { accent: Accent }) {
 
         <div aria-live="polite" className="mt-6 min-h-4">
           {result && (
-            <div className="fade-swap rounded-xl bg-canvas p-4 sm:p-5">
+            <div className="fade-swap rounded-xl bg-card p-4 sm:p-5">
               <p className="font-black text-ink">
                 {perfect
                   ? 'Perfeito! Você acertou todas as palavras.'
@@ -170,7 +170,7 @@ function Round({ accent }: { accent: Accent }) {
           <button
             type="button"
             onClick={next}
-            className="min-h-10 cursor-pointer rounded-lg border-2 border-control px-4 text-sm font-bold text-brand hover:bg-canvas active:scale-95"
+            className="min-h-10 cursor-pointer rounded-lg border-2 border-control px-4 text-sm font-bold text-brand hover:bg-card active:scale-95"
           >
             Outra frase
           </button>

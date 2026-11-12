@@ -43,7 +43,7 @@ export default function CorrectionStep({ correction, isLast, onNext }: Correctio
         <h3 className="font-black text-ink">Vocabulário-chave</h3>
         <ul className="mt-2 grid gap-2 sm:grid-cols-2">
           {correction.vocabulary.map((v) => (
-            <li key={v.term} className="rounded-lg border border-line bg-canvas px-3 py-2">
+            <li key={v.term} className="rounded-lg border border-line bg-card px-3 py-2">
               <span lang="en" className="font-bold text-ink">
                 {v.term}
               </span>

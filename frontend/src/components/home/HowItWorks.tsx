@@ -129,7 +129,7 @@ export default function HowItWorks() {
               {round.after}
             </p>
             <p className="mt-2 text-sm text-muted">{round.explanation}</p>
-            <p lang="en" className="mt-3 rounded-lg bg-canvas p-2 text-sm text-ink">
+            <p lang="en" className="mt-3 rounded-lg bg-card p-2 text-sm text-ink">
               {round.reply}
             </p>
           </li>

@@ -5,7 +5,7 @@ import ProgressBar from '../ui/ProgressBar'
 const META: Record<WordStatus, { symbol: string; label: string; legend: string; style: string }> = {
   correct: { symbol: '✓', label: 'Certa', legend: 'certa', style: 'bg-ok text-on-ok' },
   wrong: { symbol: '✗', label: 'Errada', legend: 'errada', style: 'bg-danger text-on-danger' },
-  missing: { symbol: '–', label: 'Faltando', legend: 'faltando', style: 'border-2 border-dashed border-on-danger bg-canvas text-on-danger' },
+  missing: { symbol: '–', label: 'Faltando', legend: 'faltando', style: 'border-2 border-dashed border-on-danger bg-card text-on-danger' },
   extra: { symbol: '+', label: 'Sobrando', legend: 'sobrando', style: 'border border-line bg-surface text-muted line-through' },
 }
 const ORDER: WordStatus[] = ['correct', 'wrong', 'missing', 'extra']

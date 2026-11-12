@@ -83,7 +83,7 @@ export default function Levels() {
           <p className="mt-2 max-w-xl text-muted">{level.text}</p>
           <p
             lang={accent === 'us' ? 'en-US' : 'en-GB'}
-            className="mt-5 rounded-xl bg-canvas p-4 text-lg font-bold text-ink"
+            className="mt-5 rounded-xl bg-card p-4 text-lg font-bold text-ink"
           >
             {level.example}
           </p>
