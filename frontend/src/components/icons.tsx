@@ -80,15 +80,6 @@ export function GlobeIcon({ className }: { className?: string }) {
   )
 }
 
-/** Microfone — responder falando. */
-export function MicIcon({ className }: { className?: string }) {
-  return (
-    <Icon className={className}>
-      <rect x="9" y="3" width="6" height="11" rx="3" />
-      <path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3M9 21h6" />
-    </Icon>
-  )
-}
 
 /** Visto dentro de um balão — correção com explicação. */
 export function CheckNoteIcon({ className }: { className?: string }) {
@@ -109,15 +100,6 @@ export function StairsIcon({ className }: { className?: string }) {
   )
 }
 
-/** Seta para cima — subir de nível. */
-export function TrendUpIcon({ className }: { className?: string }) {
-  return (
-    <Icon className={className}>
-      <path d="M3 17l6-6 4 4 8-8" />
-      <path d="M15 7h6v6" />
-    </Icon>
-  )
-}
 
 /** Gráfico de barras — estatísticas. */
 export function ChartIcon({ className }: { className?: string }) {
@@ -131,23 +113,4 @@ export function ChartIcon({ className }: { className?: string }) {
   )
 }
 
-/** Cartões empilhados — flashcards. */
-export function CardsIcon({ className }: { className?: string }) {
-  return (
-    <Icon className={className}>
-      <rect x="3" y="7" width="14" height="12" rx="2" />
-      <path d="M7 7V5.5A1.5 1.5 0 0 1 8.5 4H20a1 1 0 0 1 1 1v9.5a1.5 1.5 0 0 1-1.5 1.5H17" />
-      <path d="M7 12h6" />
-    </Icon>
-  )
-}
 
-/** Teclado — responder digitando. */
-export function KeyboardIcon({ className }: { className?: string }) {
-  return (
-    <Icon className={className}>
-      <rect x="2.5" y="6" width="19" height="12" rx="2" />
-      <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10" />
-    </Icon>
-  )
-}

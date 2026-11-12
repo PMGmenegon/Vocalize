@@ -43,21 +43,9 @@ export default function ExpandCard({ icon, title, summary, details, eyebrow, del
           aria-expanded={open}
           aria-controls={panelId}
           onClick={() => setOpen((v) => !v)}
-          className="flex w-full cursor-pointer items-start justify-between gap-3 text-left after:absolute after:inset-0 after:rounded-2xl focus-visible:outline-none focus-visible:after:outline-3 focus-visible:after:outline-offset-2 focus-visible:after:outline-solid focus-visible:after:outline-(--focus)"
+          className="block w-full cursor-pointer text-left after:absolute after:inset-0 after:rounded-2xl focus-visible:outline-none focus-visible:after:outline-3 focus-visible:after:outline-offset-2 focus-visible:after:outline-solid focus-visible:after:outline-(--focus)"
         >
           {title}
-          <svg
-            viewBox="0 0 24 24"
-            className={`mt-1 h-5 w-5 shrink-0 text-brand transition-transform duration-300 ${open ? 'rotate-180' : ''}`}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M6 9l6 6 6-6" />
-          </svg>
         </button>
       </h3>
       <p className="mt-1 text-muted">{summary}</p>
@@ -71,9 +59,6 @@ export default function ExpandCard({ icon, title, summary, details, eyebrow, del
         </div>
       </div>
 
-      <span aria-hidden="true" className="mt-3 inline-block text-sm font-bold text-link">
-        {open ? 'Mostrar menos' : 'Saiba mais'}
-      </span>
     </Reveal>
   )
 }
