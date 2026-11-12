@@ -22,9 +22,11 @@ function nameFromEmail(email: string) {
 }
 
 export const authService = {
-  /** Usuário logado ou null. */
+  /** Usuário logado ou null. Não falha no modo ?mock=erro, para dar para testar os erros das outras telas. */
   getCurrentUser(): Promise<User | null> {
-    return simulate(() => (db.isAuthenticated() ? db.getUser() : null), 200)
+    return new Promise((resolve) => {
+      window.setTimeout(() => resolve(db.isAuthenticated() ? db.getUser() : null), 200)
+    })
   },
 
   /** Mock: qualquer e-mail entra, como a usuária de demonstração (nível B1, 3 semanas de histórico). */
