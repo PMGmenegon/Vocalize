@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import {
   ACCENT_STORAGE_KEY,
   ACCENTS,
@@ -25,7 +25,16 @@ function readStoredAccent(): Accent {
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [accent, setAccentState] = useState<Accent>(readStoredAccent)
 
+  const fadeTimer = useRef<number | undefined>(undefined)
+
   const setAccent = useCallback((next: Accent) => {
+    // Liga a transição suave de cores só durante a troca (e só se o usuário não pediu menos movimento).
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const root = document.documentElement
+      root.classList.add('theme-fading')
+      window.clearTimeout(fadeTimer.current)
+      fadeTimer.current = window.setTimeout(() => root.classList.remove('theme-fading'), 450)
+    }
     setAccentState(next)
     try {
       localStorage.setItem(ACCENT_STORAGE_KEY, next)
@@ -40,6 +49,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       .querySelector('meta[name="theme-color"]')
       ?.setAttribute('content', ACCENTS[accent].themeColor)
   }, [accent])
+
+  useEffect(() => () => window.clearTimeout(fadeTimer.current), [])
 
   const value = useMemo<ThemeContextValue>(() => ({ accent, setAccent }), [accent, setAccent])
 

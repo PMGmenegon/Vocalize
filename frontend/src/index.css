@@ -117,10 +117,39 @@ html[data-accent="uk"] {
   }
 }
 
+@keyframes scene-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* ---------------------------------------------------------------------
    Detalhes gráficos de cada tema
    --------------------------------------------------------------------- */
 @layer components {
+  /* Troca suave entre temas: a classe só existe por ~450ms durante a troca. */
+  html.theme-fading,
+  html.theme-fading *,
+  html.theme-fading *::before,
+  html.theme-fading *::after {
+    transition:
+      background-color 400ms ease,
+      color 400ms ease,
+      border-color 400ms ease,
+      fill 400ms ease,
+      stroke 400ms ease !important;
+  }
+
+  /* Ilustrações entram com fade quando o modo muda (a troca remonta o SVG). */
+  .scene-in {
+    animation: scene-in 450ms ease-out both;
+  }
+
   /* Faixa fina no topo: cor da marca, branco e cor secundária. */
   .accent-stripe {
     height: 8px;

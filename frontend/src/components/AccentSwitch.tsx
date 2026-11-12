@@ -1,3 +1,4 @@
+import { Flag } from './Flags'
 import { ACCENT_LIST, ACCENTS } from '../theme/accents'
 import { useTheme } from '../theme/useTheme'
 
@@ -25,10 +26,11 @@ export default function AccentSwitch() {
             aria-label={`${info.label} (${info.locale})`}
             onClick={() => setAccent(code)}
             className={[
-              'min-h-9 min-w-11 cursor-pointer rounded-full px-3 text-sm font-bold tracking-wide transition-colors',
+              'inline-flex min-h-9 min-w-11 cursor-pointer items-center justify-center gap-1.5 rounded-full px-2.5 text-sm font-bold tracking-wide transition-colors sm:px-3',
               active ? 'bg-brand text-on-brand' : 'text-ink hover:bg-surface',
             ].join(' ')}
           >
+            <Flag accent={code} />
             {info.short}
           </button>
         )
