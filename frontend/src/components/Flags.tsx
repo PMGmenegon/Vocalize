@@ -5,29 +5,49 @@ interface FlagProps {
   className?: string
 }
 
-const frame = 'rounded-[3px] ring-1 ring-black/25'
+const frame = 'flag rounded-[3px] ring-1 ring-black/25'
 
-const DOTS = [0, 1, 2].flatMap((row) =>
-  [0, 1, 2, 3].map((col) => ({ x: 0.9 + col * 1.75 + (row % 2) * 0.85, y: 0.8 + row * 1.5 })),
-)
+/** Estrela de 5 pontas centrada em (cx, cy). */
+function star(cx: number, cy: number, r: number) {
+  const pts: string[] = []
+  for (let i = 0; i < 10; i++) {
+    const radius = i % 2 === 0 ? r : r * 0.382
+    const a = (Math.PI / 5) * i - Math.PI / 2
+    pts.push(`${(cx + radius * Math.cos(a)).toFixed(2)},${(cy + radius * Math.sin(a)).toFixed(2)}`)
+  }
+  return pts.join(' ')
+}
 
-/** Mini bandeira dos EUA (desenho próprio, simplificado). */
+// Bandeira dos EUA (proporção 1,9:1): 50 estrelas em 9 fileiras alternadas de 6 e 5.
+const CANTON_W = 76
+const CANTON_H = 53.85
+const STARS = Array.from({ length: 9 }, (_, row) =>
+  Array.from({ length: row % 2 === 0 ? 6 : 5 }, (_, col) => ({
+    x: (CANTON_W / 12) * (row % 2 === 0 ? 2 * col + 1 : 2 * col + 2),
+    y: (CANTON_H / 10) * (row + 1),
+  })),
+).flat()
+const STRIPE = 100 / 13
+
+/** Bandeira dos EUA: 13 listras e 50 estrelas. */
 export function FlagUS({ className = 'h-3.5 w-[1.625rem]' }: FlagProps) {
   return (
-    <svg viewBox="0 0 19 10" className={`${frame} ${className}`} aria-hidden="true" focusable="false">
-      <rect width="19" height="10" fill="#b22234" />
-      {[0, 1, 2, 3, 4, 5].map((i) => (
-        <rect key={i} y={0.77 + i * 1.54} width="19" height="0.77" fill="#fff" />
+    <svg viewBox="0 0 190 100" className={`${frame} ${className}`} aria-hidden="true" focusable="false">
+      <rect width="190" height="100" fill="#fff" />
+      {[0, 1, 2, 3, 4, 5, 6].map((i) => (
+        <rect key={i} y={i * 2 * STRIPE} width="190" height={STRIPE} fill="#b22234" />
       ))}
-      <rect width="7.6" height="5.4" fill="#3c3b6e" />
-      {DOTS.map((d, i) => (
-        <circle key={i} cx={d.x} cy={d.y} r="0.32" fill="#fff" />
-      ))}
+      <rect width={CANTON_W} height={CANTON_H} fill="#3c3b6e" />
+      <g fill="#fff">
+        {STARS.map((s, i) => (
+          <polygon key={i} points={star(s.x, s.y, 3.2)} />
+        ))}
+      </g>
     </svg>
   )
 }
 
-/** Mini bandeira do Reino Unido (Union Jack). */
+/** Bandeira do Reino Unido (Union Jack). */
 export function FlagUK({ className = 'h-3.5 w-[1.625rem]' }: FlagProps) {
   const id = useId()
   const whole = `${id}-s`
