@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
-import { cancelSpeech, speak, speechSupported } from '../../lib/speech'
+import { cancelSpeech, describeVoice, speak, speechSupported } from '../../lib/speech'
 import { diffWords, type DiffResult } from '../../lib/diff'
 import { ACCENTS, type Accent } from '../../theme/accents'
 import { useTheme } from '../../theme/useTheme'
@@ -51,11 +51,7 @@ function Round({ accent }: { accent: Accent }) {
       rate,
       onStart: () => setSpeaking(true),
       onEnd: () => setSpeaking(false),
-    }).then((result) => {
-      if (result && !result.matched) {
-        setVoiceNote(`Este aparelho não tem uma voz ${accent === 'uk' ? 'britânica' : 'americana'} instalada; usando a voz padrão do inglês.`)
-      }
-    })
+    }).then((result) => setVoiceNote(describeVoice(result, accent)))
     inputRef.current?.focus()
   }
 

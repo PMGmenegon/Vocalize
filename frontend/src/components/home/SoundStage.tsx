@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 import { ACCENTS } from '../../theme/accents'
-import { cancelSpeech, speak, speechSupported } from '../../lib/speech'
+import { cancelSpeech, describeVoice, speak, speechSupported } from '../../lib/speech'
 import { MODE_COPY } from '../../theme/modeCopy'
 import { useTheme } from '../../theme/useTheme'
 
@@ -121,11 +121,7 @@ export default function SoundStage() {
         })
         setActive(idx)
       },
-    }).then((result) => {
-      if (result && !result.matched) {
-        setVoiceNote(`Este aparelho não tem uma voz ${accent === 'uk' ? 'britânica' : 'americana'} instalada; usando a voz padrão do inglês.`)
-      }
-    })
+    }).then((result) => setVoiceNote(describeVoice(result, accent)))
   }
 
   const setPointer = (e: React.PointerEvent<HTMLDivElement>) => {
