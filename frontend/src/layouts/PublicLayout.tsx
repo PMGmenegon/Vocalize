@@ -2,7 +2,13 @@ import { Outlet } from 'react-router-dom'
 import Header, { type NavItem } from '../components/Header'
 import SkipLink from '../components/SkipLink'
 
-const ITEMS: readonly NavItem[] = [{ label: 'Como funciona', to: '/#como-funciona' }]
+const ITEMS: readonly NavItem[] = [
+  { label: 'Como funciona', to: '/#como-funciona' },
+  { label: 'Funcionalidades', to: '/#funcionalidades' },
+  { label: 'Sotaques', to: '/#sotaques' },
+  { label: 'Níveis', to: '/#niveis' },
+  { label: 'FAQ', to: '/#faq' },
+]
 const CTA: NavItem = { label: 'Começar', to: '/app' }
 
 /** Layout do site público (página inicial e afins). */

@@ -77,14 +77,14 @@ export default function Header({ logoTo, items, trackActive = false, cta, greeti
           <Logo />
         </Link>
 
-        <nav aria-label="Principal" className="hidden items-center gap-1 md:flex">
+        <nav aria-label="Principal" className="hidden items-center gap-1 lg:flex">
           {items.map((item) => renderLink(item, false))}
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3">
           <AccentSwitch />
           {cta && (
-            <Link to={cta.to} className={`${ctaClass} hidden md:inline-flex`}>
+            <Link to={cta.to} className={`${ctaClass} hidden lg:inline-flex`}>
               {cta.label}
             </Link>
           )}
@@ -95,7 +95,7 @@ export default function Header({ logoTo, items, trackActive = false, cta, greeti
             aria-controls={menuId}
             aria-label={open ? 'Fechar menu' : 'Abrir menu'}
             onClick={() => setOpen((v) => !v)}
-            className="inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg border-2 border-control text-brand hover:bg-surface md:hidden"
+            className="inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg border-2 border-control text-brand hover:bg-surface lg:hidden"
           >
             <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
               {open ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
@@ -114,7 +114,7 @@ export default function Header({ logoTo, items, trackActive = false, cta, greeti
       )}
 
       {open && (
-        <nav id={menuId} aria-label="Principal" className="border-t border-line bg-canvas px-4 pb-4 pt-2 md:hidden">
+        <nav id={menuId} aria-label="Principal" className="border-t border-line bg-canvas px-4 pb-4 pt-2 lg:hidden">
           <div className="flex flex-col gap-1">
             {items.map((item) => renderLink(item, true))}
             {cta && (
