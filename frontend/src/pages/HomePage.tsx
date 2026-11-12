@@ -6,7 +6,6 @@ import FinalCta from '../components/home/FinalCta'
 import Hero from '../components/home/Hero'
 import HowItWorks from '../components/home/HowItWorks'
 import Levels from '../components/home/Levels'
-import SectionDivider from '../components/SectionDivider'
 
 /** Página inicial pública: explica o projeto, seção por seção. */
 export default function HomePage() {
@@ -22,13 +21,9 @@ export default function HomePage() {
     <>
       <Hero />
       <HowItWorks />
-      <SectionDivider />
       <Features />
-      <SectionDivider />
       <AccentChoice />
-      <SectionDivider />
       <Levels />
-      <SectionDivider />
       <FinalCta />
     </>
   )
