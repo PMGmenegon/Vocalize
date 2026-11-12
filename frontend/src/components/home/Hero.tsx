@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom'
-import { ModeScene } from '../illustrations/scenes'
 import { MODE_COPY } from '../../theme/modeCopy'
 import { useTheme } from '../../theme/useTheme'
 
-/** Topo da landing: nome, frase principal, frase do modo, ilustração e botão "Começar". */
+/** Topo da landing: nome, frase principal, frase do modo e botão "Começar". */
 export default function Hero() {
   const { accent } = useTheme()
   const copy = MODE_COPY[accent]
@@ -11,7 +10,7 @@ export default function Hero() {
   return (
     <section className="surface-brand relative isolate overflow-hidden bg-brand text-on-brand">
       <div className="hero-deco absolute inset-0 -z-10" aria-hidden="true" />
-      <div className="mx-auto grid max-w-6xl items-center gap-8 px-4 pt-14 sm:px-6 sm:pt-20 lg:grid-cols-2 lg:gap-12 lg:py-24">
+      <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24 lg:py-28">
         <div>
           <h1>
             <span className="block text-sm font-black tracking-[0.3em] text-on-brand-soft">VOCALIZE</span>
@@ -48,7 +47,6 @@ export default function Hero() {
           </div>
         </div>
 
-        <ModeScene accent={accent} className="mx-auto block w-full max-w-md text-on-brand lg:max-w-none" />
       </div>
     </section>
   )

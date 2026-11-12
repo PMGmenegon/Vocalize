@@ -1,4 +1,3 @@
-import { ModeScene } from '../illustrations/scenes'
 import { Flag } from '../Flags'
 import UsVsUk from '../UsVsUk'
 import { ACCENT_LIST, ACCENTS, type Accent } from '../../theme/accents'
@@ -38,8 +37,7 @@ export default function AccentChoice() {
               key={code}
               className={`rounded-2xl border-2 bg-surface p-5 sm:p-6 ${active ? 'border-brand' : 'border-line'}`}
             >
-              <ModeSceneFor code={code} />
-              <div className="mt-4 flex flex-wrap items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <h3 className="inline-flex items-center gap-2 text-xl font-black text-ink">
                   <Flag accent={code} />
                   {ex.title} ({info.short})
@@ -75,9 +73,4 @@ export default function AccentChoice() {
       </div>
     </section>
   )
-}
-
-/** Ilustração fixa de cada lado (não depende do modo atual). */
-function ModeSceneFor({ code }: { code: Accent }) {
-  return <ModeScene accent={code} className="block w-full text-brand" />
 }

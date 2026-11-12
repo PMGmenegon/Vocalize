@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import AccentChoice from '../components/home/AccentChoice'
-import Faq from '../components/home/Faq'
 import Features from '../components/home/Features'
 import FinalCta from '../components/home/FinalCta'
 import Hero from '../components/home/Hero'
@@ -22,7 +21,6 @@ export default function HomePage() {
   return (
     <>
       <Hero />
-      <SectionDivider className="mt-8" />
       <HowItWorks />
       <SectionDivider />
       <Features />
@@ -31,7 +29,6 @@ export default function HomePage() {
       <SectionDivider />
       <Levels />
       <SectionDivider />
-      <Faq />
       <FinalCta />
     </>
   )

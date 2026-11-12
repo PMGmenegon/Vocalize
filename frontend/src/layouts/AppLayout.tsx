@@ -3,7 +3,6 @@ import { Outlet } from 'react-router-dom'
 import Header, { type NavItem } from '../components/Header'
 import SkipLink from '../components/SkipLink'
 import Splash from '../components/Splash'
-import { SceneStrip } from '../components/illustrations/scenes'
 import { MODE_COPY } from '../theme/modeCopy'
 import { useTheme } from '../theme/useTheme'
 
@@ -36,9 +35,6 @@ export default function AppLayout() {
         <main id="conteudo" className="flex-1">
           <Outlet />
         </main>
-        <footer className="relative isolate mt-10 overflow-hidden border-t border-line bg-surface" aria-hidden="true">
-          <SceneStrip accent={accent} className="block h-24 w-full text-brand opacity-30 sm:h-28" />
-        </footer>
       </div>
     </>
   )

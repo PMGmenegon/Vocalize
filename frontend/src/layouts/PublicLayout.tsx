@@ -7,7 +7,6 @@ const ITEMS: readonly NavItem[] = [
   { label: 'Funcionalidades', to: '/#funcionalidades' },
   { label: 'Sotaques', to: '/#sotaques' },
   { label: 'Níveis', to: '/#niveis' },
-  { label: 'FAQ', to: '/#faq' },
 ]
 const CTA: NavItem = { label: 'Começar', to: '/app' }
 

@@ -71,7 +71,7 @@ export default function HowItWorks() {
 
       <ol className="mt-10 grid gap-6 md:grid-cols-3">
         {STEPS.map((step, i) => (
-          <li key={step.title} className="rounded-2xl border border-line bg-surface p-6">
+          <li key={step.title} className="rounded-2xl bg-surface p-6">
             <div className="flex items-center gap-3">
               <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand text-on-brand">
                 {step.icon}
@@ -84,21 +84,19 @@ export default function HowItWorks() {
         ))}
       </ol>
 
-      <div className="mt-10 rounded-2xl border border-line bg-surface p-5 sm:p-8">
+      <div className="mt-10">
         <h3 className="text-lg font-black text-ink">Exemplo de uma rodada</h3>
         <ol className="mt-5 grid gap-4 lg:grid-cols-3">
-          <li className="rounded-xl bg-canvas p-4">
+          <li className="rounded-xl bg-surface p-4">
             <p className="flex items-center gap-2 text-sm font-bold text-accent">
               <HeadphonesIcon className="h-5 w-5" /> 1. A IA fala
             </p>
-            <p className="mt-3 text-muted">
-              <span aria-hidden="true">▶ ▮▮▮▯▮▮▯▮▮▮ </span>
-              <span className="sr-only">Áudio da IA. </span>
-              <span className="text-sm">(texto escondido)</span>
+            <p className="mt-3 text-ink">
+              Você ouve a frase em áudio, sem ver o texto.
             </p>
           </li>
 
-          <li className="rounded-xl bg-canvas p-4">
+          <li className="rounded-xl bg-surface p-4">
             <p className="flex items-center gap-2 text-sm font-bold text-accent">
               <PencilIcon className="h-5 w-5" /> 2. Você transcreve
             </p>
@@ -113,7 +111,7 @@ export default function HowItWorks() {
             <p className="mt-2 text-sm text-muted">A palavra errada fica destacada.</p>
           </li>
 
-          <li className="rounded-xl bg-canvas p-4">
+          <li className="rounded-xl bg-surface p-4">
             <p className="flex items-center gap-2 text-sm font-bold text-accent">
               <ChatIcon className="h-5 w-5" /> 3. Correção e resposta
             </p>
@@ -124,7 +122,7 @@ export default function HowItWorks() {
               {round.after}
             </p>
             <p className="mt-2 text-sm text-muted">{round.explanation}</p>
-            <p lang="en" className="mt-3 rounded-lg bg-surface p-2 text-sm text-ink">
+            <p lang="en" className="mt-3 rounded-lg bg-canvas p-2 text-sm text-ink">
               {round.reply}
             </p>
           </li>

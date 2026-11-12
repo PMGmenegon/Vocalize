@@ -1,9 +1,7 @@
 import { useRef, useState, type KeyboardEvent } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import AccentSwitch from './AccentSwitch'
-import { SceneStrip } from './illustrations/scenes'
 import Logo from './Logo'
-import { useTheme } from '../theme/useTheme'
 
 export interface NavItem {
   label: string
@@ -31,7 +29,6 @@ const ctaClass =
  * Em telas >= md mostra a navegação inline; abaixo disso vira menu hambúrguer.
  */
 export default function Header({ logoTo, items, trackActive = false, cta, greeting }: HeaderProps) {
-  const { accent } = useTheme()
   const [open, setOpen] = useState(false)
   const menuButton = useRef<HTMLButtonElement>(null)
   const menuId = 'menu-principal'
@@ -106,7 +103,6 @@ export default function Header({ logoTo, items, trackActive = false, cta, greeti
 
       {greeting && (
         <div className="relative isolate overflow-hidden border-t border-line bg-surface">
-          <SceneStrip accent={accent} className="absolute inset-y-0 right-0 -z-10 h-full w-[720px] max-w-none text-brand opacity-25" />
           <p className="mx-auto flex h-11 max-w-6xl items-center px-4 text-sm font-bold text-ink sm:px-6">
             <span lang="en" className="text-base font-black text-brand">{greeting}</span>
           </p>

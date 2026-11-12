@@ -11,7 +11,7 @@ export default function SectionDivider({ className = '' }: { className?: string 
 
   return (
     <div className={`mx-auto max-w-6xl px-4 sm:px-6 ${className}`} aria-hidden="true">
-      <svg key={accent} className="scene-in block h-5 w-full" role="presentation" focusable="false">
+      <svg className="block h-5 w-full" role="presentation" focusable="false">
         <defs>
           {accent === 'us' ? (
             <pattern id={id} width="40" height="20" patternUnits="userSpaceOnUse">
