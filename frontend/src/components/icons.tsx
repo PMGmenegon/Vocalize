@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 
 /** Moldura comum dos ícones: traço contínuo na cor do texto (currentColor). */
-function Icon({ children, className = 'h-7 w-7' }: { children: ReactNode; className?: string }) {
+export function Icon({ children, className = 'h-7 w-7' }: { children: ReactNode; className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
