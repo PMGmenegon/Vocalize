@@ -48,6 +48,7 @@ Nesta fase não há backend: tudo vem de dados falsos, mas organizado para ser t
 ```
 frontend/src/
   types/      tipos do domínio (User, Session, Turn, TranscriptionResult, Stats, ...)
+  data/       conteúdo fixo: cenários e personagens (nome, papel, avatar) por sotaque
   mocks/      dados falsos coerentes entre si (usuária B1 com 3 semanas de histórico)
   services/   única porta de entrada para dados; hoje devolvem mocks com atraso simulado
 ```
@@ -72,7 +73,7 @@ Rotas públicas: `/` (landing), `/login`, `/cadastro`. Todas as rotas `/app/*` e
 - `/app/onboarding` — 3 etapas: nível, sotaque (o tema muda na hora) e meta diária.
 - `/app` — saudação do modo, sequência, meta de hoje, nível, recomendação, "Praticar agora", últimas sessões e palavras para revisar.
 - `/app/praticar` — cenários, nível e sotaque.
-- `/app/praticar/:sessaoId` — rodada: ouvir → transcrever → resultado palavra por palavra → responder → correção. Ainda **sem áudio** (botões só simulam).
+- `/app/praticar/:sessaoId` — prática **imersiva**: cena ilustrada do cenário (muda com o sotaque) e a conversa num chat com um personagem (bolha de áudio → transcrição → resultado na bolha → resposta → correção → nova fala, 6 rodadas). Ainda **sem áudio** (botões só simulam). No celular a cena vira um cabeçalho que encolhe ao rolar.
 - `/app/praticar/:sessaoId/resumo` — resumo da sessão.
 - `/app/estatisticas` — gráficos (Recharts) com filtro de 7 dias, 30 dias ou tudo.
 - `/app/revisao` — flashcards com avaliação (Errei, Difícil, Bom, Fácil).

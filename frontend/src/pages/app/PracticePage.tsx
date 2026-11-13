@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '../../auth/useAuth'
-import { ScenarioIcon } from '../../components/appIcons'
+import Scene from '../../components/scenes/Scene'
 import Async from '../../components/ui/Async'
 import Button from '../../components/ui/Button'
 import ChoiceGroup from '../../components/ui/ChoiceGroup'
 import PageHeader, { Page } from '../../components/ui/PageHeader'
 import Skeleton from '../../components/ui/Skeleton'
+import { characterFor } from '../../data/scenarios'
 import { ACCENT_OPTIONS, LEVEL_OPTIONS } from '../../content/options'
 import { useAsync } from '../../hooks/useAsync'
 import { scenarioService, sessionService } from '../../services'
@@ -67,8 +68,8 @@ export default function PracticePage() {
               options={scenarios.map((s) => ({
                 value: s.id,
                 label: s.title,
-                description: s.description,
-                icon: <ScenarioIcon id={s.id} className="h-8 w-8" />,
+                description: `${s.description} Com ${characterFor(s.id, accent).name} (${characterFor(s.id, accent).role.toLowerCase()}).`,
+                media: <Scene scenarioId={s.id} accent={accent} still />,
               }))}
             />
             <div className="grid gap-8 md:grid-cols-2">

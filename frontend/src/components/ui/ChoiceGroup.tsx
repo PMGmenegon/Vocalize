@@ -5,6 +5,8 @@ export interface Choice<T extends string | number> {
   label: string
   description?: string
   icon?: ReactNode
+  /** Imagem larga no topo do cartão (ex.: miniatura de cena). Decorativa. */
+  media?: ReactNode
 }
 
 interface ChoiceGroupProps<T extends string | number> {
@@ -41,7 +43,7 @@ export default function ChoiceGroup<T extends string | number>({
           return (
             <label
               key={opt.value}
-              className={`relative flex cursor-pointer gap-3 rounded-xl border-2 p-4 transition-colors has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-(--focus) ${
+              className={`relative flex cursor-pointer gap-3 overflow-hidden rounded-xl border-2 transition-colors ${opt.media ? 'flex-col p-0' : 'p-4'} has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-(--focus) ${
                 checked ? 'border-brand bg-surface' : 'border-line bg-card hover:bg-surface'
               }`}
             >
@@ -53,13 +55,18 @@ export default function ChoiceGroup<T extends string | number>({
                 onChange={() => onChange(opt.value)}
                 className="sr-only"
               />
+              {opt.media && (
+                <span aria-hidden="true" className="block h-28 w-full overflow-hidden border-b border-line">
+                  {opt.media}
+                </span>
+              )}
               {opt.icon && <span className="shrink-0 text-brand">{opt.icon}</span>}
-              <span className="min-w-0 flex-1">
+              <span className={`min-w-0 flex-1 ${opt.media ? 'px-4 pb-4' : ''}`}>
                 <span className="block font-black text-ink">{opt.label}</span>
                 {opt.description && <span className="mt-0.5 block text-sm text-muted">{opt.description}</span>}
               </span>
               {checked && (
-                <span aria-hidden="true" className="absolute right-3 top-3 text-lg font-black text-brand">
+                <span aria-hidden="true" className="absolute right-3 top-3 rounded-full bg-card px-1.5 text-lg font-black text-brand shadow">
                   ✓
                 </span>
               )}
