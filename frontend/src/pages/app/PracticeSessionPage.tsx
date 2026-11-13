@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import SessionRunner from '../../components/practice/SessionRunner'
+import ChatSession from '../../components/chat/ChatSession'
 import Async from '../../components/ui/Async'
 import Button from '../../components/ui/Button'
 import { Page } from '../../components/ui/PageHeader'
@@ -10,6 +10,9 @@ import { sessionService } from '../../services'
 export default function PracticeSessionPage() {
   const { sessaoId = '' } = useParams()
   const state = useAsync(() => sessionService.get(sessaoId), sessaoId)
+
+  // A conversa ocupa a tela toda (cena + chat); carregamento, erro e "já encerrada" usam a página comum.
+  if (state.status === 'success' && !state.data.endedAt) return <ChatSession session={state.data} />
 
   return (
     <Page narrow>
@@ -24,16 +27,12 @@ export default function PracticeSessionPage() {
         }
         errorMessage="Não encontramos esta sessão. Ela pode ter sido apagada ou aberta em outro navegador."
       >
-        {(session) =>
-          session.endedAt ? (
-            <div className="space-y-4">
-              <p className="text-lg font-bold text-ink">Esta sessão já foi encerrada.</p>
-              <Button to={`/app/praticar/${session.id}/resumo`}>Ver resumo</Button>
-            </div>
-          ) : (
-            <SessionRunner session={session} />
-          )
-        }
+        {(session) => (
+          <div className="space-y-4">
+            <p className="text-lg font-bold text-ink">Esta sessão já foi encerrada.</p>
+            <Button to={`/app/praticar/${session.id}/resumo`}>Ver resumo</Button>
+          </div>
+        )}
       </Async>
     </Page>
   )
