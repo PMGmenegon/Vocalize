@@ -1,6 +1,6 @@
 import { compareDictation, sameText } from '../mocks/compare'
 import { db } from '../mocks/db'
-import { DIALOGS } from '../mocks/dialogs'
+import { DIALOGS, resolveTurn } from '../mocks/dialogs'
 import type { Accent, Correction, Level, ScenarioId, Session, SessionSummary, TranscriptionResult, Turn } from '../types'
 import { summarize } from './history'
 import { scenarioTitle } from './scenarioService'
@@ -33,7 +33,7 @@ function turnOf(session: Session, index: number): Turn {
 const dialogOf = (session: Session, index: number) => {
   const turn = DIALOGS[session.scenarioId][index]
   if (!turn) throw new Error('Rodada inexistente.')
-  return turn
+  return resolveTurn(turn, session.accent)
 }
 
 /**
@@ -51,7 +51,7 @@ export const sessionService = {
         accent,
         startedAt: new Date().toISOString(),
         totalTurns: dialog.length,
-        turns: dialog.map((d, index) => ({ index, wordCount: d.ai.split(/\s+/).length, repetitions: 0 })),
+        turns: dialog.map((d, index) => ({ index, wordCount: resolveTurn(d, accent).ai.split(/\s+/).length, repetitions: 0 })),
       }
       save(session)
       return session

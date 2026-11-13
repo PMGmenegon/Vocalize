@@ -1,4 +1,4 @@
-import { SCENARIOS } from '../mocks/scenarios'
+import { SCENARIOS } from '../data/scenarios'
 import type { Scenario } from '../types'
 import { isEmptyMode, simulate } from './runtime'
 
