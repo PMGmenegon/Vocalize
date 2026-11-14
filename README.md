@@ -48,12 +48,14 @@ Nesta fase não há backend: tudo vem de dados falsos, mas organizado para ser t
 ```
 frontend/src/
   types/      tipos do domínio (User, Session, Turn, TranscriptionResult, Stats, ...)
-  data/       conteúdo fixo: cenários e personagens (nome, papel, avatar) por sotaque
+  data/       situações (id, nome, contexto, ícone, layout, personagem por sotaque, introdução)
   mocks/      dados falsos coerentes entre si (usuária B1 com 3 semanas de histórico)
   services/   única porta de entrada para dados; hoje devolvem mocks com atraso simulado
 ```
 
 **Regra:** as telas **nunca** importam `mocks/`, só `services/`. Nas próximas fases troca-se apenas a implementação dos serviços.
+
+Para criar uma situação nova basta acrescentá-la em `data/scenarios.ts` e criar o banco de falas em `mocks/bank.ts`; a tela de prática escolhe o layout (`training` ou `chat`) pelo campo `layout`. A lógica da sessão fica num único hook (`hooks/usePracticeSession.ts`) usado pelos dois layouts. No mock, cerca de 10% das próximas falas falham de propósito para exercitar o estado de erro.
 
 O login é simulado: qualquer e-mail entra como a usuária de demonstração (com histórico). Uma conta criada em **Cadastro** começa sem histórico, então mostra os estados vazios. Os dados ficam no `localStorage` do navegador.
 
@@ -72,8 +74,11 @@ Rotas públicas: `/` (landing), `/login`, `/cadastro`. Todas as rotas `/app/*` e
 - `/cadastro` e `/login` — validação (e-mail, senha de 8+ caracteres, confirmação). Ao entrar aparece a splash e depois o onboarding (conta nova) ou o início.
 - `/app/onboarding` — 3 etapas: nível, sotaque (o tema muda na hora) e meta diária.
 - `/app` — saudação do modo, sequência, meta de hoje, nível, recomendação, "Praticar agora", últimas sessões e palavras para revisar.
-- `/app/praticar` — cenários, nível e sotaque.
-- `/app/praticar/:sessaoId` — prática **imersiva**: cena ilustrada do cenário (muda com o sotaque) e a conversa num chat com um personagem (bolha de áudio → transcrição → resultado na bolha → resposta → correção → nova fala, 6 rodadas). Ainda **sem áudio** (botões só simulam). No celular a cena vira um cabeçalho que encolhe ao rolar.
+- `/app/praticar` — escolha da **situação** (restaurante, conversa na rua, aeroporto, hotel, compras, entrevista, bate-papo virtual), nível e sotaque.
+- `/app/praticar/:sessaoId` — introdução da situação e botão "Começar"; depois o layout definido nos dados da situação:
+  - **Treino** (situações presenciais): tela focada com player (forma de onda, play/pause, voltar 3 s, repetir, 0.75×), transcrição, resultado palavra por palavra, resposta e correção, roteiro lateral recolhível e atalhos de teclado (Ctrl+Espaço, Ctrl+R, Ctrl+S, Enter).
+  - **Chat** (bate-papo virtual): conversa por mensagens de voz numa moldura de celular (tela inteira no celular).
+  - Não há roteiro fixo: as falas chegam uma a uma e de forma assíncrona (com "preparando a próxima fala…" e "Tentar de novo"), de 3 a ~30 palavras, e a sessão termina em "Encerrar" ou no limite de rodadas (`DEFAULT_MAX_TURNS`). Ainda **sem áudio** (a reprodução é simulada).
 - `/app/praticar/:sessaoId/resumo` — resumo da sessão.
 - `/app/estatisticas` — gráficos (Recharts) com filtro de 7 dias, 30 dias ou tudo.
 - `/app/revisao` — flashcards com avaliação (Errei, Difícil, Bom, Fácil).
