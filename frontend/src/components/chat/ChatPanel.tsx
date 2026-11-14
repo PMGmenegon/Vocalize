@@ -5,8 +5,6 @@ interface ChatPanelProps {
   footer: ReactNode
   /** Muda sempre que chega algo novo (para rolar até o fim). */
   scrollKey: string | number
-  /** Avisa quando o usuário rolou (o cabeçalho ilustrado do celular encolhe). */
-  onScrolled?: (scrolled: boolean) => void
   children: ReactNode
 }
 
@@ -15,7 +13,7 @@ interface ChatPanelProps {
  * Rola sozinho até a mensagem nova, mas só se o usuário estiver perto do fim:
  * quem rolou para cima para reler não é puxado de volta.
  */
-export default function ChatPanel({ header, footer, scrollKey, onScrolled, children }: ChatPanelProps) {
+export default function ChatPanel({ header, footer, scrollKey, children }: ChatPanelProps) {
   const list = useRef<HTMLDivElement>(null)
   const stick = useRef(true)
   const [away, setAway] = useState(false)
@@ -46,9 +44,8 @@ export default function ChatPanel({ header, footer, scrollKey, onScrolled, child
             const nearEnd = el.scrollHeight - el.scrollTop - el.clientHeight < 80
             stick.current = nearEnd
             setAway(!nearEnd)
-            onScrolled?.(el.scrollTop > 24)
           }}
-          className="h-full space-y-3 overflow-y-auto overscroll-contain px-3 py-4"
+          className="h-full overflow-y-auto overscroll-contain"
         >
           {children}
         </div>

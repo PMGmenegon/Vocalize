@@ -13,7 +13,7 @@ function Word({ w }: { w: WordResult }) {
   const m = META[w.status]
   const shown = w.status === 'extra' ? w.typed : w.expected
   return (
-    <li lang="en" className={`inline-flex flex-col rounded-lg px-2.5 py-1 text-base font-bold ${m.style}`}>
+    <li lang="en" className={`inline-flex flex-col rounded-lg px-2.5 py-1 font-bold ${m.style}`}>
       <span>
         <span className="sr-only">{m.label}: </span>
         <span aria-hidden="true">{m.symbol} </span>
@@ -34,7 +34,7 @@ function Word({ w }: { w: WordResult }) {
  * Frase revelada, palavra por palavra. Cada situação tem cor, símbolo e texto
  * (não depende só de cor). O resumo em texto é lido por leitores de tela.
  */
-export default function TranscriptionResult({ result }: { result: Result }) {
+export default function TranscriptionResult({ result, large = false }: { result: Result; large?: boolean }) {
   const counts = ORDER.map((s) => ({ s, n: result.words.filter((w) => w.status === s).length }))
   const summary = `Resultado: ${result.accuracy}% de acerto. ${counts.map(({ s, n }) => `${n} ${META[s].legend}${n === 1 ? '' : 's'}`).join(', ')}.`
 
@@ -42,8 +42,8 @@ export default function TranscriptionResult({ result }: { result: Result }) {
     <div className="mt-2 space-y-3">
       <p className="sr-only">{summary}</p>
       <div aria-hidden="true">
-        <p className="text-2xl font-black text-ink">
-          {result.accuracy}% <span className="text-sm font-bold">de acerto</span>
+        <p className={`font-black text-ink ${large ? 'text-6xl' : 'text-2xl'}`}>
+          {result.accuracy}% <span className={`font-bold ${large ? 'text-xl' : 'text-sm'}`}>de acerto</span>
         </p>
       </div>
       <ProgressBar label="Acerto do ditado" value={result.accuracy} valueText={`${result.accuracy}%`} />

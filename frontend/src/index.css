@@ -379,33 +379,29 @@ html[data-accent="uk"] {
 }
 
 /* ---------------------------------------------------------------------
-   Cenas ilustradas (src/components/scenes). Animações sutis e opcionais:
-   só existem para quem NÃO pediu "reduzir movimento". Miniaturas (.scene-still) ficam paradas.
+   Prática (chat): bolhas que entram suavemente e fundo de conversa com padrão sutil.
+   Só animam para quem NÃO pediu "reduzir movimento".
    --------------------------------------------------------------------- */
+@keyframes bubble-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
-  @keyframes sc-drift { from { transform: translateX(-40px); } to { transform: translateX(40px); } }
-  @keyframes sc-fly { from { transform: translateX(-80px); } to { transform: translateX(120px); } }
-  @keyframes sc-steam { 0% { opacity: 0; transform: translateY(6px); } 40% { opacity: 0.8; } 100% { opacity: 0; transform: translateY(-10px); } }
-  @keyframes sc-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
-  @keyframes sc-flicker { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.08) translateY(-2px); } }
-  @keyframes sc-sway { from { transform: rotate(-1.5deg); } to { transform: rotate(1.5deg); } }
-  @keyframes sc-spin { to { transform: rotate(360deg); } }
-  @keyframes sc-wave { from { transform: translateX(0); } to { transform: translateX(-80px); } }
-  @keyframes wave-bar { 0%, 100% { transform: scaleY(0.45); } 50% { transform: scaleY(1); } }
-  @keyframes bubble-in { from { opacity: 0; transform: translateY(10px) scale(0.97); } to { opacity: 1; transform: none; } }
-  @keyframes typing-dot { 0%, 80%, 100% { transform: translateY(0); opacity: 0.5; } 40% { transform: translateY(-4px); opacity: 1; } }
+  .bubble-in {
+    animation: bubble-in 320ms ease-out both;
+  }
+}
 
-  .sc-drift { animation: sc-drift 18s ease-in-out infinite alternate; }
-  .sc-fly { animation: sc-fly 14s linear infinite alternate; }
-  .sc-steam { animation: sc-steam 2.4s ease-out infinite; }
-  .sc-blink { animation: sc-blink 2.6s ease-in-out infinite; }
-  .sc-flicker { animation: sc-flicker 0.9s ease-in-out infinite; transform-box: fill-box; transform-origin: bottom center; }
-  .sc-sway { animation: sc-sway 5s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: bottom center; }
-  .sc-spin { animation: sc-spin 12s linear infinite; }
-  .sc-wave { animation: sc-wave 6s linear infinite; }
-  .scene-still * { animation: none !important; }
-
-  .wave-playing { animation: wave-bar 0.9s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-  .bubble-in { animation: bubble-in 320ms ease-out both; }
-  .typing-dot { animation: typing-dot 1s ease-in-out infinite; }
+/* Fundo de conversa: pontinhos discretos sobre a cor de superfície do tema. */
+.chat-pattern {
+  background-color: var(--surface);
+  background-image: radial-gradient(var(--line) 1.2px, transparent 1.2px);
+  background-size: 18px 18px;
 }

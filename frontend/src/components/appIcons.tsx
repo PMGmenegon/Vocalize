@@ -1,5 +1,6 @@
-import type { ScenarioId } from '../types'
-import { ChatIcon, Icon } from './icons'
+import type { ReactNode } from 'react'
+import type { ScenarioIconKey } from '../types'
+import { Icon } from './icons'
 
 type P = { className?: string }
 
@@ -67,9 +68,27 @@ const bag = (
   </>
 )
 
-/** Ícone de cada cenário. */
-export function ScenarioIcon({ id, className }: { id: ScenarioId; className?: string }) {
-  if (id === 'small-talk') return <ChatIcon className={className} />
-  const body = { restaurant: utensils, 'job-interview': briefcase, airport: plane, hotel: bed, shopping: bag }[id]
-  return <Icon className={className}>{body}</Icon>
+const ICONS: Record<ScenarioIconKey, ReactNode> = {
+  utensils,
+  briefcase,
+  plane,
+  bed,
+  bag,
+  pin: (
+    <>
+      <path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z" />
+      <circle cx="12" cy="10" r="2.4" />
+    </>
+  ),
+  chat: (
+    <>
+      <path d="M4 5h11a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H9l-4 3v-3H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z" />
+      <path d="M19 9h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-1v3l-3-3h-4" />
+    </>
+  ),
+}
+
+/** Ícone de uma situação (chave definida em src/data/scenarios.ts). */
+export function ScenarioIcon({ icon, className }: { icon: ScenarioIconKey; className?: string }) {
+  return <Icon className={className}>{ICONS[icon]}</Icon>
 }

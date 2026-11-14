@@ -4,6 +4,8 @@ interface FieldProps {
   label: string
   hint?: string
   error?: string
+  /** Texto maior e mais confortável (áreas de transcrição). */
+  large?: boolean
 }
 
 interface ControlProps {
@@ -12,7 +14,7 @@ interface ControlProps {
   className: string
 }
 
-const control = 'block w-full rounded-xl border-2 bg-card px-4 py-3 text-base text-ink placeholder:text-muted'
+const control = 'block w-full rounded-xl border-2 bg-card px-4 py-3 text-ink placeholder:text-muted'
 
 /** Campo com rótulo visível, dica e mensagem de erro ligados por aria-describedby. */
 function Field({
@@ -20,6 +22,7 @@ function Field({
   label,
   hint,
   error,
+  large,
   children,
 }: FieldProps & { id: string; children: (props: ControlProps) => ReactNode }) {
   const describedBy = [hint ? `${id}-hint` : '', error ? `${id}-error` : ''].filter(Boolean).join(' ') || undefined
@@ -31,7 +34,7 @@ function Field({
       {children({
         'aria-describedby': describedBy,
         'aria-invalid': error ? true : undefined,
-        className: `${control} ${error ? 'border-on-danger' : 'border-control'}`,
+        className: `${control} ${large ? 'text-xl leading-relaxed' : 'text-base'} ${error ? 'border-on-danger' : 'border-control'}`,
       })}
       {hint && (
         <p id={`${id}-hint`} className="mt-1.5 text-sm text-muted">
@@ -48,19 +51,19 @@ function Field({
   )
 }
 
-export function Input({ label, hint, error, ...rest }: FieldProps & InputHTMLAttributes<HTMLInputElement>) {
+export function Input({ label, hint, error, large, ...rest }: FieldProps & InputHTMLAttributes<HTMLInputElement>) {
   const id = useId()
   return (
-    <Field id={id} label={label} hint={hint} error={error}>
+    <Field id={id} label={label} hint={hint} error={error} large={large}>
       {(p) => <input id={id} {...p} {...rest} />}
     </Field>
   )
 }
 
-export function Textarea({ label, hint, error, ...rest }: FieldProps & TextareaHTMLAttributes<HTMLTextAreaElement>) {
+export function Textarea({ label, hint, error, large, ...rest }: FieldProps & TextareaHTMLAttributes<HTMLTextAreaElement>) {
   const id = useId()
   return (
-    <Field id={id} label={label} hint={hint} error={error}>
+    <Field id={id} label={label} hint={hint} error={error} large={large}>
       {(p) => <textarea id={id} rows={3} {...p} {...rest} />}
     </Field>
   )

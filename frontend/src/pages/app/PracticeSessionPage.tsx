@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import ChatSession from '../../components/chat/ChatSession'
+import PracticeSession from '../../components/practice/PracticeSession'
 import Async from '../../components/ui/Async'
 import Button from '../../components/ui/Button'
 import { Page } from '../../components/ui/PageHeader'
@@ -11,8 +11,8 @@ export default function PracticeSessionPage() {
   const { sessaoId = '' } = useParams()
   const state = useAsync(() => sessionService.get(sessaoId), sessaoId)
 
-  // A conversa ocupa a tela toda (cena + chat); carregamento, erro e "já encerrada" usam a página comum.
-  if (state.status === 'success' && !state.data.endedAt) return <ChatSession session={state.data} />
+  // A prática tem layout próprio (treino ou chat); carregamento, erro e "já encerrada" usam a página comum.
+  if (state.status === 'success' && !state.data.endedAt) return <PracticeSession session={state.data} />
 
   return (
     <Page narrow>
