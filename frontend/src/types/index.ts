@@ -9,7 +9,13 @@ export type Accent = 'en-US' | 'en-GB'
 export type DailyGoal = 10 | 15 | 20 | 30
 export const DAILY_GOALS: readonly DailyGoal[] = [10, 15, 20, 30]
 
-export type ScenarioId = 'restaurant' | 'job-interview' | 'airport' | 'hotel' | 'shopping' | 'small-talk'
+export type ScenarioId = 'restaurant' | 'street' | 'airport' | 'hotel' | 'shopping' | 'job-interview' | 'virtual-chat'
+
+/** Como a prática é apresentada: tela de treino focada ou conversa por mensagens. */
+export type PracticeLayout = 'training' | 'chat'
+
+/** Chave do ícone da situação (ver ScenarioIcon em components/appIcons.tsx). */
+export type ScenarioIconKey = 'utensils' | 'pin' | 'plane' | 'bed' | 'bag' | 'briefcase' | 'chat'
 
 export interface User {
   id: string
@@ -23,10 +29,14 @@ export interface User {
   createdAt: string
 }
 
+/** Uma situação de listening. O campo `layout` escolhe a tela de prática. */
 export interface Scenario {
   id: ScenarioId
   title: string
+  /** Contexto em uma frase. */
   description: string
+  icon: ScenarioIconKey
+  layout: PracticeLayout
 }
 
 /** Situação de cada palavra na comparação do ditado. */
@@ -62,6 +72,10 @@ export interface Correction {
 
 export interface Turn {
   index: number
+  /** Quando a fala chegou (ISO). */
+  createdAt?: string
+  /** Quando o usuário respondeu (ISO). */
+  repliedAt?: string
   /** Quantidade de palavras da fala da IA (dica). */
   wordCount: number
   repetitions: number
@@ -77,7 +91,9 @@ export interface Session {
   accent: Accent
   startedAt: string
   endedAt?: string
-  totalTurns: number
+  /** Limite de rodadas. A sessão também termina quando o usuário encerra. */
+  maxTurns: number
+  /** As falas chegam uma a uma (assíncronas), então a lista cresce durante a sessão. */
   turns: Turn[]
 }
 

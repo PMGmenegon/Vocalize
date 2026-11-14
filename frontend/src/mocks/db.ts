@@ -10,6 +10,7 @@ const KEYS = {
   sessions: 'vocalize:mock-sessions',
   reviewed: 'vocalize:mock-reviewed',
   mode: 'vocalize:mock-mode',
+  picks: 'vocalize:mock-picks',
 } as const
 
 function read<T>(key: string): T | null {
@@ -37,6 +38,9 @@ export const db = {
   setAuthenticated: (value: boolean) => write(KEYS.auth, value ? true : null),
   getSessions: () => read<Record<string, import('../types').Session>>(KEYS.sessions) ?? {},
   setSessions: (sessions: Record<string, import('../types').Session>) => write(KEYS.sessions, sessions),
+  /** Quais falas do banco já saíram em cada sessão (só o mock sabe; o cliente nunca vê). */
+  getPicks: () => read<Record<string, number[]>>(KEYS.picks) ?? {},
+  setPicks: (picks: Record<string, number[]>) => write(KEYS.picks, picks),
   getReviewed: () => read<string[]>(KEYS.reviewed) ?? [],
   setReviewed: (ids: string[]) => write(KEYS.reviewed, ids),
 }
