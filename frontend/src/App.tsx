@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import RequireAuth from './auth/RequireAuth'
 import { SkeletonBlock } from './components/ui/Skeleton'
 import AppLayout from './layouts/AppLayout'
+import AuthLayout from './layouts/AuthLayout'
 import PublicLayout from './layouts/PublicLayout'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
@@ -26,9 +27,13 @@ export default function App() {
         {/* Site público */}
         <Route element={<PublicLayout />}>
           <Route index element={<HomePage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
+
+        {/* Login e cadastro: tela dividida com painel de identidade visual */}
+        <Route element={<AuthLayout />}>
           <Route path="login" element={<LoginPage />} />
           <Route path="cadastro" element={<RegisterPage />} />
-          <Route path="*" element={<NotFoundPage />} />
         </Route>
 
         {/* Área logada: exige login (simulado) e onboarding concluído */}

@@ -5,7 +5,8 @@ import { themeOf } from '../lib/format'
 import { useTheme } from '../theme/useTheme'
 import Button from './ui/Button'
 import Card from './ui/Card'
-import { Input } from './ui/Input'
+import PasswordStrength from './auth/PasswordStrength'
+import { Input, PasswordInput } from './ui/Input'
 
 type Mode = 'login' | 'register'
 type Errors = Partial<Record<'name' | 'email' | 'password' | 'confirm', string>>
@@ -33,7 +34,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
   const [submitted, setSubmitted] = useState(false)
   const [busy, setBusy] = useState(false)
   const [formError, setFormError] = useState('')
-  const [googleNote, setGoogleNote] = useState('')
+  const [note, setNote] = useState('')
 
   // Quem já está logado não precisa ver o formulário (a navegação pós-login cuida do próprio redirecionamento).
   if (user && !busy) return <Navigate to="/app" replace />
@@ -71,7 +72,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
   const errorCount = Object.keys(errors).length
 
   return (
-    <section className="mx-auto max-w-md px-4 py-10 sm:py-14">
+    <section className="w-full">
       <h1 className="text-3xl font-black text-brand">{isLogin ? 'Entrar' : 'Criar conta'}</h1>
       <p className="mt-2 text-muted">
         {isLogin ? 'Que bom te ver de volta. Continue de onde parou.' : 'Em um minuto você começa a treinar seu ouvido.'}
@@ -81,7 +82,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
         <Button
           variant="secondary"
           className="w-full"
-          onClick={() => setGoogleNote('O login com Google chega numa fase futura. Por enquanto, use e-mail e senha.')}
+          onClick={() => setNote('O login com Google chega numa fase futura. Por enquanto, use e-mail e senha.')}
         >
           <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" focusable="false">
             <path fill="#4285F4" d="M22 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.6a4.8 4.8 0 0 1-2.1 3.1v2.6h3.4c2-1.8 3.1-4.5 3.1-7.5z" />
@@ -91,8 +92,8 @@ export default function AuthForm({ mode }: { mode: Mode }) {
           </svg>
           Entrar com Google
         </Button>
-        <p role="status" className="mt-2 text-sm text-muted">
-          {googleNote}
+        <p role="status" className="mt-2 min-h-5 text-sm text-muted empty:hidden">
+          {note}
         </p>
 
         <div className="my-5 flex items-center gap-3 text-sm text-muted" aria-hidden="true">
@@ -124,26 +125,38 @@ export default function AuthForm({ mode }: { mode: Mode }) {
             onChange={set('email')}
             error={errors.email}
           />
-          <Input
-            label="Senha"
-            name="password"
-            type="password"
-            autoComplete={isLogin ? 'current-password' : 'new-password'}
-            hint={isLogin ? undefined : 'Mínimo de 8 caracteres.'}
-            value={values.password}
-            onChange={set('password')}
-            error={errors.password}
-          />
+          <div>
+            <PasswordInput
+              label="Senha"
+              name="password"
+              autoComplete={isLogin ? 'current-password' : 'new-password'}
+              hint={isLogin ? undefined : 'Mínimo de 8 caracteres.'}
+              value={values.password}
+              onChange={set('password')}
+              error={errors.password}
+            />
+            {!isLogin && <PasswordStrength password={values.password} />}
+          </div>
           {!isLogin && (
-            <Input
+            <PasswordInput
               label="Confirmar senha"
               name="confirm"
-              type="password"
               autoComplete="new-password"
               value={values.confirm}
               onChange={set('confirm')}
               error={errors.confirm}
             />
+          )}
+          {isLogin && (
+            <div className="-mt-1 text-right">
+              <button
+                type="button"
+                onClick={() => setNote('A recuperação de senha chega numa fase futura.')}
+                className="min-h-9 cursor-pointer rounded-lg px-1 text-sm font-bold text-link underline underline-offset-4"
+              >
+                Esqueci minha senha
+              </button>
+            </div>
           )}
           <Button type="submit" size="lg" className="w-full" disabled={busy} aria-busy={busy}>
             {busy ? 'Entrando…' : isLogin ? 'Entrar' : 'Criar conta'}

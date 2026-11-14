@@ -1,4 +1,4 @@
-import { useId, type InputHTMLAttributes, type ReactNode, type TextareaHTMLAttributes } from 'react'
+import { useId, useState, type InputHTMLAttributes, type ReactNode, type TextareaHTMLAttributes } from 'react'
 
 interface FieldProps {
   label: string
@@ -65,6 +65,30 @@ export function Textarea({ label, hint, error, large, ...rest }: FieldProps & Te
   return (
     <Field id={id} label={label} hint={hint} error={error} large={large}>
       {(p) => <textarea id={id} rows={3} {...p} {...rest} />}
+    </Field>
+  )
+}
+
+/** Campo de senha com botão "Mostrar/Ocultar" (alterna o tipo do campo; o botão informa o estado por aria-pressed). */
+export function PasswordInput({ label, hint, error, ...rest }: FieldProps & Omit<InputHTMLAttributes<HTMLInputElement>, 'type'>) {
+  const id = useId()
+  const [visible, setVisible] = useState(false)
+  return (
+    <Field id={id} label={label} hint={hint} error={error}>
+      {(p) => (
+        <div className="relative">
+          <input id={id} type={visible ? 'text' : 'password'} {...p} {...rest} className={`${p.className} pr-24`} />
+          <button
+            type="button"
+            aria-pressed={visible}
+            aria-label={`${visible ? 'Ocultar' : 'Mostrar'} ${label.toLowerCase()}`}
+            onClick={() => setVisible((v) => !v)}
+            className="absolute inset-y-1.5 right-1.5 cursor-pointer rounded-lg px-3 text-sm font-bold text-link hover:bg-surface"
+          >
+            {visible ? 'Ocultar' : 'Mostrar'}
+          </button>
+        </div>
+      )}
     </Field>
   )
 }
