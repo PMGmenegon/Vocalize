@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth, useUser } from '../../auth/useAuth'
 import Button from '../../components/ui/Button'
-import Card from '../../components/ui/Card'
 import ChoiceGroup from '../../components/ui/ChoiceGroup'
 import PageHeader, { Page } from '../../components/ui/PageHeader'
 import { ACCENT_OPTIONS, GOAL_OPTIONS, LEVEL_OPTIONS } from '../../content/options'
@@ -43,40 +42,43 @@ export default function ProfilePage() {
   return (
     <Page narrow>
       <PageHeader title="Perfil" />
-      <Card as="section">
-        <h2 className="text-xl font-black text-ink">Seus dados</h2>
-        <dl className="mt-3 grid gap-3 sm:grid-cols-2">
-          <div>
-            <dt className="text-sm font-bold text-muted">Nome</dt>
+      <section aria-labelledby="data-title">
+        <h2 id="data-title" className="border-b border-line pb-2 text-xl font-black text-ink">
+          Seus dados
+        </h2>
+        <dl className="divide-y divide-line">
+          <div className="flex flex-wrap justify-between gap-2 py-3">
+            <dt className="font-bold text-muted">Nome</dt>
             <dd className="text-ink">{user.name}</dd>
           </div>
-          <div>
-            <dt className="text-sm font-bold text-muted">E-mail</dt>
+          <div className="flex flex-wrap justify-between gap-2 py-3">
+            <dt className="font-bold text-muted">E-mail</dt>
             <dd className="break-all text-ink">{user.email}</dd>
           </div>
         </dl>
-      </Card>
+      </section>
 
       <form
-        className="mt-6 space-y-6"
+        className="mt-10"
         onSubmit={(e) => {
           e.preventDefault()
           void save()
         }}
       >
-        <Card as="section" className="space-y-6">
-          <h2 className="text-xl font-black text-ink">Preferências de estudo</h2>
-          <ChoiceGroup legend="Nível" value={level} onChange={setLevel} options={LEVEL_OPTIONS} />
+        <h2 className="border-b border-line pb-2 text-xl font-black text-ink">Preferências de estudo</h2>
+        <div className="space-y-8 pt-6">
+          <ChoiceGroup legend="Nível" variant="list" value={level} onChange={setLevel} options={LEVEL_OPTIONS} columns="sm:grid-cols-2" />
           <ChoiceGroup
             legend="Sotaque"
+            variant="pill"
             value={accent}
-            options={ACCENT_OPTIONS}
+            options={ACCENT_OPTIONS.map((o) => ({ value: o.value, label: o.label }))}
             onChange={(next) => {
               setAccentChoice(next)
               setAccent(themeOf(next))
             }}
           />
-          <ChoiceGroup legend="Meta diária" columns="sm:grid-cols-2" value={goal} onChange={setGoal} options={GOAL_OPTIONS} />
+          <ChoiceGroup legend="Meta diária" variant="pill" value={goal} onChange={setGoal} options={GOAL_OPTIONS.map((o) => ({ value: o.value, label: `${o.value} min` }))} />
           <div className="flex flex-wrap items-center gap-4">
             <Button type="submit" disabled={busy || !dirty} aria-busy={busy}>
               {busy ? 'Salvando…' : 'Salvar alterações'}
@@ -85,14 +87,14 @@ export default function ProfilePage() {
               {message?.text}
             </p>
           </div>
-        </Card>
+        </div>
       </form>
 
-      <div className="mt-8">
+      <section className="mt-10 border-t border-line pt-6">
         <Button variant="danger" onClick={() => void signOut()}>
           Sair
         </Button>
-      </div>
+      </section>
     </Page>
   )
 }

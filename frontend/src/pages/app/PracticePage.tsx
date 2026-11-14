@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '../../auth/useAuth'
-import Scene from '../../components/scenes/Scene'
+import { ScenarioIcon } from '../../components/appIcons'
 import Async from '../../components/ui/Async'
 import Button from '../../components/ui/Button'
 import ChoiceGroup from '../../components/ui/ChoiceGroup'
 import PageHeader, { Page } from '../../components/ui/PageHeader'
 import Skeleton from '../../components/ui/Skeleton'
-import { characterFor } from '../../data/scenarios'
 import { ACCENT_OPTIONS, LEVEL_OPTIONS } from '../../content/options'
+import { characterFor } from '../../data/scenarios'
 import { useAsync } from '../../hooks/useAsync'
 import { scenarioService, sessionService } from '../../services'
 import type { ScenarioId } from '../../types'
@@ -41,16 +41,16 @@ export default function PracticePage() {
       <Async
         state={state}
         skeleton={
-          <div role="status" aria-live="polite" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            <span className="sr-only">Carregando cenários…</span>
-            {Array.from({ length: 6 }, (_, i) => (
-              <Skeleton key={i} className="h-28" />
+          <div role="status" aria-live="polite" className="space-y-3">
+            <span className="sr-only">Carregando situações…</span>
+            {Array.from({ length: 7 }, (_, i) => (
+              <Skeleton key={i} className="h-14" />
             ))}
           </div>
         }
         isEmpty={(list) => list.length === 0}
-        empty={{ title: 'Nenhum cenário disponível', description: 'Volte daqui a pouco: estamos preparando novas situações.' }}
-        errorMessage="Não foi possível carregar os cenários."
+        empty={{ title: 'Nenhuma situação disponível', description: 'Volte daqui a pouco: estamos preparando novas situações.' }}
+        errorMessage="Não foi possível carregar as situações."
       >
         {(scenarios) => (
           <form
@@ -61,26 +61,27 @@ export default function PracticePage() {
             }}
           >
             <ChoiceGroup
-              legend="Cenário"
-              columns="sm:grid-cols-2 lg:grid-cols-3"
+              legend="Situação"
+              variant="list"
+              columns="md:grid-cols-2"
               value={scenarioId}
               onChange={setScenarioId}
               options={scenarios.map((s) => ({
                 value: s.id,
                 label: s.title,
-                description: `${s.description} Com ${characterFor(s.id, accent).name} (${characterFor(s.id, accent).role.toLowerCase()}).`,
-                media: <Scene scenarioId={s.id} accent={accent} still />,
+                description: `${s.description} Com ${characterFor(s.id, accent).name}, ${characterFor(s.id, accent).role.toLowerCase()}.`,
+                icon: <ScenarioIcon icon={s.icon} className="h-7 w-7" />,
               }))}
             />
-            <div className="grid gap-8 md:grid-cols-2">
-              <ChoiceGroup legend="Nível da conversa" columns="grid-cols-2" value={level} onChange={setLevel} options={LEVEL_OPTIONS.map((o) => ({ value: o.value, label: o.value }))} />
-              <ChoiceGroup legend="Sotaque" columns="grid-cols-2" value={accent} onChange={setAccent} options={ACCENT_OPTIONS.map((o) => ({ value: o.value, label: o.value === 'en-US' ? 'Americano (US)' : 'Britânico (UK)' }))} />
+            <div className="flex flex-wrap gap-x-12 gap-y-6">
+              <ChoiceGroup legend="Nível" variant="pill" value={level} onChange={setLevel} options={LEVEL_OPTIONS.map((o) => ({ value: o.value, label: o.value }))} />
+              <ChoiceGroup legend="Sotaque" variant="pill" value={accent} onChange={setAccent} options={ACCENT_OPTIONS.map((o) => ({ value: o.value, label: o.value === 'en-US' ? 'Americano (US)' : 'Britânico (UK)' }))} />
             </div>
-            <p role="alert" className="text-sm font-bold text-on-danger">
+            <p role="alert" className="text-sm font-bold text-on-danger empty:hidden">
               {error}
             </p>
             <Button type="submit" size="lg" disabled={busy} aria-busy={busy} className="w-full sm:w-auto">
-              {busy ? 'Preparando…' : 'Começar sessão'}
+              {busy ? 'Preparando…' : 'Continuar'}
             </Button>
           </form>
         )}

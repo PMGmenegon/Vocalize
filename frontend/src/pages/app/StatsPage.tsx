@@ -3,7 +3,6 @@ import { AccuracyLine, ColumnBars, HorizontalBars } from '../../components/stats
 import ChartCard from '../../components/stats/ChartCard'
 import Async from '../../components/ui/Async'
 import Button from '../../components/ui/Button'
-import Card from '../../components/ui/Card'
 import ChoiceGroup from '../../components/ui/ChoiceGroup'
 import PageHeader, { Page } from '../../components/ui/PageHeader'
 import ProgressBar from '../../components/ui/ProgressBar'
@@ -21,11 +20,11 @@ const PERIODS = [
 
 function Kpi({ label, value, note }: { label: string; value: string; note?: string }) {
   return (
-    <Card>
-      <p className="text-sm font-bold text-muted">{label}</p>
-      <p className="mt-1 text-3xl font-black text-ink">{value}</p>
-      {note && <p className="mt-1 text-sm text-muted">{note}</p>}
-    </Card>
+    <div className="py-1 sm:px-6 sm:first:pl-0 sm:last:pr-0">
+      <dt className="text-sm font-bold text-muted">{label}</dt>
+      <dd className="mt-1 text-3xl font-black text-ink">{value}</dd>
+      {note && <dd className="mt-1 text-sm text-muted">{note}</dd>}
+    </div>
   )
 }
 
@@ -54,8 +53,8 @@ export default function StatsPage() {
   return (
     <Page>
       <PageHeader title="Estatísticas" description="Acompanhe sua evolução no listening, os erros mais comuns e o ritmo de estudo." />
-      <div className="mb-6 max-w-md">
-        <ChoiceGroup legend="Período" columns="grid-cols-3" value={period} onChange={setPeriod} options={PERIODS} />
+      <div className="mb-6">
+        <ChoiceGroup legend="Período" variant="pill" value={period} onChange={setPeriod} options={PERIODS} />
       </div>
 
       <Async
@@ -73,7 +72,7 @@ export default function StatsPage() {
           const best = s.byScenario.reduce((a, b) => (b.accuracy > a.accuracy ? b : a), s.byScenario[0]!)
           return (
             <div className="space-y-6">
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <dl className="grid gap-4 border-y border-line py-5 sm:grid-cols-2 sm:gap-y-6 lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-line">
                 <Kpi label="Sessões no período" value={String(s.sessionsCount)} />
                 <Kpi label="Repetições por fala" value={String(s.averageRepetitions).replace('.', ',')} note="Média de vezes que você ouviu cada fala." />
                 <Kpi label="Respostas corrigidas" value={`${s.correctedRate}%`} note="Das respostas que receberam correção." />
@@ -82,9 +81,9 @@ export default function StatsPage() {
                   value={`${s.streak.current} ${s.streak.current === 1 ? 'dia' : 'dias'}`}
                   note={`Melhor sequência: ${s.streak.best} ${s.streak.best === 1 ? 'dia' : 'dias'}.`}
                 />
-              </div>
+              </dl>
 
-              <div className="grid gap-4 lg:grid-cols-2">
+              <div className="grid gap-x-12 gap-y-10 lg:grid-cols-2">
                 <ChartCard
                   title="Acerto no listening"
                   description="Porcentagem de palavras certas no ditado, sessão a sessão."
@@ -122,9 +121,9 @@ export default function StatsPage() {
                 </ChartCard>
               </div>
 
-              <div className="grid gap-4 lg:grid-cols-3">
-                <Card as="section">
-                  <h2 className="text-xl font-black text-ink">Por sotaque</h2>
+              <div className="grid gap-x-12 gap-y-10 lg:grid-cols-3">
+                <section>
+                  <h2 className="border-b border-line pb-2 text-xl font-black text-ink">Por sotaque</h2>
                   <ul className="mt-4 space-y-4">
                     {s.byAccent.map((a) => (
                       <li key={a.accent}>
@@ -138,29 +137,29 @@ export default function StatsPage() {
                       </li>
                     ))}
                   </ul>
-                </Card>
+                </section>
 
-                <Card as="section">
-                  <h2 className="text-xl font-black text-ink">Palavras mais erradas</h2>
-                  <ol className="mt-4 space-y-2">
+                <section>
+                  <h2 className="border-b border-line pb-2 text-xl font-black text-ink">Palavras mais erradas</h2>
+                  <ol className="divide-y divide-line">
                     {s.wrongWords.map((w, i) => (
-                      <li key={w.word} className="flex items-center justify-between gap-2">
+                      <li key={w.word} className="flex items-center justify-between gap-2 py-2.5">
                         <span>
                           <span className="text-sm text-muted">{i + 1}. </span>
                           <span lang="en" className="font-bold text-ink">
                             {w.word}
                           </span>
                         </span>
-                        <span className="rounded-full bg-danger px-2.5 py-0.5 text-xs font-bold text-on-danger">
+                        <span className="text-sm font-bold text-on-danger">
                           {w.count} {w.count === 1 ? 'erro' : 'erros'}
                         </span>
                       </li>
                     ))}
                   </ol>
-                </Card>
+                </section>
 
-                <Card as="section">
-                  <h2 className="text-xl font-black text-ink">Linha do tempo de níveis</h2>
+                <section>
+                  <h2 className="border-b border-line pb-2 text-xl font-black text-ink">Linha do tempo de níveis</h2>
                   <ol className="mt-4 space-y-4 border-l-2 border-line pl-4">
                     {s.levelTimeline.map((t) => (
                       <li key={t.level}>
@@ -171,7 +170,7 @@ export default function StatsPage() {
                       </li>
                     ))}
                   </ol>
-                </Card>
+                </section>
               </div>
             </div>
           )

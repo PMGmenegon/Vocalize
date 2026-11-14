@@ -1,9 +1,7 @@
 import { useUser } from '../../auth/useAuth'
 import { FlameIcon } from '../../components/appIcons'
 import Async from '../../components/ui/Async'
-import Badge from '../../components/ui/Badge'
 import Button from '../../components/ui/Button'
-import Card from '../../components/ui/Card'
 import { Page } from '../../components/ui/PageHeader'
 import ProgressBar from '../../components/ui/ProgressBar'
 import Skeleton from '../../components/ui/Skeleton'
@@ -50,67 +48,62 @@ export default function DashboardPage() {
         {(d) => {
           const goalDone = d.todayMinutes >= d.dailyGoalMinutes
           return (
-            <div className="space-y-6">
-              <div className="grid gap-4 sm:grid-cols-3">
-                <Card>
-                  <h2 className="flex items-center gap-2 text-sm font-bold text-muted">
+            <div className="space-y-10">
+              <dl className="grid gap-6 border-y border-line py-6 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-line">
+                <div className="sm:pr-8">
+                  <dt className="flex items-center gap-2 text-sm font-bold text-muted">
                     <FlameIcon className="h-5 w-5 text-brand" /> Sequência
-                  </h2>
-                  <p className="mt-2 text-4xl font-black text-ink">
+                  </dt>
+                  <dd className="mt-1 text-4xl font-black text-ink">
                     {d.streakDays} <span className="text-lg font-bold">{d.streakDays === 1 ? 'dia' : 'dias'}</span>
-                  </p>
-                  <p className="mt-1 text-sm text-muted">
-                    {d.streakDays > 0 ? 'Estudando em dias seguidos.' : 'Comece hoje a sua sequência.'}
-                  </p>
-                </Card>
-                <Card>
-                  <h2 className="text-sm font-bold text-muted">Meta de hoje</h2>
-                  <p className="mt-2 text-4xl font-black text-ink">
+                  </dd>
+                  <dd className="text-sm text-muted">{d.streakDays > 0 ? 'Estudando em dias seguidos.' : 'Comece hoje a sua sequência.'}</dd>
+                </div>
+                <div className="sm:px-8">
+                  <dt className="text-sm font-bold text-muted">Meta de hoje</dt>
+                  <dd className="mt-1 text-4xl font-black text-ink">
                     {d.todayMinutes} <span className="text-lg font-bold">/ {d.dailyGoalMinutes} min</span>
-                  </p>
-                  <ProgressBar
-                    className="mt-3"
-                    label="Meta de hoje"
-                    value={d.todayMinutes}
-                    max={d.dailyGoalMinutes}
-                    valueText={`${d.todayMinutes} de ${d.dailyGoalMinutes} minutos`}
-                  />
-                  <p className="mt-2 text-sm text-muted">
-                    {goalDone ? '✓ Meta cumprida. Parabéns!' : `Faltam ${d.dailyGoalMinutes - d.todayMinutes} min.`}
-                  </p>
-                </Card>
-                <Card>
-                  <h2 className="text-sm font-bold text-muted">Nível atual</h2>
-                  <p className="mt-2 text-4xl font-black text-ink">{user.level}</p>
-                  <p className="mt-1 text-sm text-muted">Sotaque: {ACCENT_LABEL[user.accent]}</p>
-                </Card>
-              </div>
+                  </dd>
+                  <dd>
+                    <ProgressBar className="mt-2" label="Meta de hoje" value={d.todayMinutes} max={d.dailyGoalMinutes} valueText={`${d.todayMinutes} de ${d.dailyGoalMinutes} minutos`} />
+                    <span className="mt-1 block text-sm text-muted">{goalDone ? '✓ Meta cumprida. Parabéns!' : `Faltam ${d.dailyGoalMinutes - d.todayMinutes} min.`}</span>
+                  </dd>
+                </div>
+                <div className="sm:pl-8">
+                  <dt className="text-sm font-bold text-muted">Nível atual</dt>
+                  <dd className="mt-1 text-4xl font-black text-ink">{user.level}</dd>
+                  <dd className="text-sm text-muted">Sotaque: {ACCENT_LABEL[user.accent]}</dd>
+                </div>
+              </dl>
 
-              <Card tone="soft">
-                <h2 className="text-sm font-bold text-muted">Recomendação de nível</h2>
-                <p className="mt-1 text-lg font-black text-ink">{d.recommendation.message}</p>
-                {d.recommendation.sessionsRemaining > 0 && (
-                  <ProgressBar
-                    className="mt-3 max-w-md"
-                    label="Caminho até o próximo nível"
-                    value={5 - d.recommendation.sessionsRemaining}
-                    max={5}
-                    valueText={`${5 - d.recommendation.sessionsRemaining} de 5 sessões acima de ${d.recommendation.threshold}%`}
-                  />
-                )}
-              </Card>
+              <section aria-label="Próximo passo" className="flex flex-wrap items-center justify-between gap-6">
+                <div className="max-w-xl">
+                  <h2 className="text-sm font-bold text-muted">Recomendação de nível</h2>
+                  <p className="mt-1 text-lg font-black text-ink">{d.recommendation.message}</p>
+                  {d.recommendation.sessionsRemaining > 0 && (
+                    <ProgressBar
+                      className="mt-3"
+                      label="Caminho até o próximo nível"
+                      value={5 - d.recommendation.sessionsRemaining}
+                      max={5}
+                      valueText={`${5 - d.recommendation.sessionsRemaining} de 5 sessões acima de ${d.recommendation.threshold}%`}
+                    />
+                  )}
+                </div>
+                <Button to="/app/praticar" size="lg" className="w-full px-10 sm:w-auto">
+                  Praticar agora
+                </Button>
+              </section>
 
-              <Button to="/app/praticar" size="lg" className="w-full sm:w-auto">
-                Praticar agora
-              </Button>
-
-              <div className="grid gap-4 lg:grid-cols-2">
-                <Card as="section">
-                  <h2 className="text-xl font-black text-ink">Últimas sessões</h2>
+              <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
+                <section aria-labelledby="recent-title">
+                  <h2 id="recent-title" className="border-b border-line pb-2 text-xl font-black text-ink">
+                    Últimas sessões
+                  </h2>
                   {d.recentSessions.length === 0 ? (
                     <p className="mt-3 text-muted">Você ainda não fez nenhuma sessão. Que tal começar agora?</p>
                   ) : (
-                    <ul className="mt-3 divide-y divide-line">
+                    <ul className="divide-y divide-line">
                       {d.recentSessions.map((s) => (
                         <li key={s.id} className="flex flex-wrap items-center justify-between gap-2 py-3">
                           <div>
@@ -119,16 +112,21 @@ export default function DashboardPage() {
                               {formatDate(s.date)} · {s.minutes} min · {ACCENT_LABEL[s.accent]}
                             </p>
                           </div>
-                          <Badge tone={s.accuracy >= 85 ? 'ok' : 'neutral'}>{s.accuracy}% de acerto</Badge>
+                          <span className={`text-sm font-bold ${s.accuracy >= 85 ? 'text-on-ok' : 'text-ink'}`}>
+                            {s.accuracy >= 85 && <span aria-hidden="true">✓ </span>}
+                            {s.accuracy}% de acerto
+                          </span>
                         </li>
                       ))}
                     </ul>
                   )}
-                </Card>
+                </section>
 
-                <Card as="section">
-                  <div className="flex items-center justify-between gap-3">
-                    <h2 className="text-xl font-black text-ink">Palavras para revisar hoje</h2>
+                <section aria-labelledby="review-title">
+                  <div className="flex items-center justify-between gap-3 border-b border-line pb-2">
+                    <h2 id="review-title" className="text-xl font-black text-ink">
+                      Palavras para revisar hoje
+                    </h2>
                     <Button to="/app/revisao" variant="ghost">
                       Revisar
                     </Button>
@@ -136,17 +134,18 @@ export default function DashboardPage() {
                   {d.reviewWords.length === 0 ? (
                     <p className="mt-3 text-muted">Nada para revisar por hoje. Volte amanhã!</p>
                   ) : (
-                    <ul className="mt-3 flex flex-wrap gap-2">
+                    <ul className="divide-y divide-line">
                       {d.reviewWords.map((w) => (
-                        <li key={w.id}>
-                          <span lang="en" className="inline-block rounded-full border border-line bg-surface px-3 py-1 text-sm font-bold text-ink">
+                        <li key={w.id} className="flex justify-between gap-3 py-3">
+                          <span lang="en" className="font-bold text-ink">
                             {w.word}
                           </span>
+                          <span className="text-muted">{w.meaning}</span>
                         </li>
                       ))}
                     </ul>
                   )}
-                </Card>
+                </section>
               </div>
             </div>
           )

@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import Card from '../ui/Card'
 
 interface ChartCardProps {
   title: string
@@ -11,12 +10,12 @@ interface ChartCardProps {
   children: ReactNode
 }
 
-/** Moldura de gráfico: título, descrição, alternativa em texto e tabela de dados. */
+/** Gráfico direto na página (sem caixa): título, descrição, alternativa em texto e tabela de dados. */
 export default function ChartCard({ title, description, summary, table, children }: ChartCardProps) {
   return (
-    <Card as="section">
-      <h2 className="text-xl font-black text-ink">{title}</h2>
-      <p className="mt-1 text-sm text-muted">{description}</p>
+    <section aria-label={title}>
+      <h2 className="border-b border-line pb-2 text-xl font-black text-ink">{title}</h2>
+      <p className="mt-2 text-sm text-muted">{description}</p>
       <div role="img" aria-label={`${title}. ${summary}`} className="mt-4 h-64 w-full text-ink">
         {children}
       </div>
@@ -50,6 +49,6 @@ export default function ChartCard({ title, description, summary, table, children
           </table>
         </div>
       </details>
-    </Card>
+    </section>
   )
 }

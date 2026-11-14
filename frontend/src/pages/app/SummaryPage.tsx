@@ -1,7 +1,6 @@
 import { useParams } from 'react-router-dom'
 import Async from '../../components/ui/Async'
 import Button from '../../components/ui/Button'
-import Card from '../../components/ui/Card'
 import PageHeader, { Page } from '../../components/ui/PageHeader'
 import Skeleton from '../../components/ui/Skeleton'
 import { useAsync } from '../../hooks/useAsync'
@@ -10,10 +9,10 @@ import { sessionService } from '../../services'
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <Card>
-      <p className="text-sm font-bold text-muted">{label}</p>
-      <p className="mt-1 text-3xl font-black text-ink">{value}</p>
-    </Card>
+    <div className="py-1 sm:px-6 sm:first:pl-0 sm:last:pr-0">
+      <dt className="text-sm font-bold text-muted">{label}</dt>
+      <dd className="mt-1 text-3xl font-black text-ink">{value}</dd>
+    </div>
   )
 }
 
@@ -48,28 +47,28 @@ export default function SummaryPage() {
         {(s) => (
           <>
             <PageHeader title="Sessão concluída" description={`${s.scenarioTitle} · ${s.turnsCompleted} ${s.turnsCompleted === 1 ? 'rodada' : 'rodadas'}`} />
-            <div className="grid gap-4 sm:grid-cols-2">
+            <dl className="grid gap-4 border-y border-line py-5 sm:grid-cols-4 sm:gap-0 sm:divide-x sm:divide-line">
               <Metric label="Acerto médio" value={`${s.averageAccuracy}%`} />
               <Metric label="Tempo" value={formatDuration(s.durationSeconds)} />
               <Metric label="Palavras erradas" value={String(s.wrongWords.length)} />
               <Metric label="Correções recebidas" value={String(s.correctionsCount)} />
-            </div>
+            </dl>
 
-            <Card className="mt-4" as="section">
-              <h2 className="text-lg font-black text-ink">Palavras para treinar</h2>
+            <section className="mt-8">
+              <h2 className="border-b border-line pb-2 text-lg font-black text-ink">Palavras para treinar</h2>
               {s.wrongWords.length === 0 ? (
                 <p className="mt-2 text-muted">✓ Você acertou todas as palavras. Excelente!</p>
               ) : (
-                <ul className="mt-3 flex flex-wrap gap-2">
+                <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
                   {s.wrongWords.map((w) => (
-                    <li key={w} lang="en" className="rounded-full bg-danger px-3 py-1 text-sm font-bold text-on-danger">
+                    <li key={w} lang="en" className="text-base font-bold text-on-danger">
                       <span aria-hidden="true">✗ </span>
                       {w}
                     </li>
                   ))}
                 </ul>
               )}
-            </Card>
+            </section>
 
             <div className="mt-6 flex flex-wrap gap-3">
               <Button to="/app/praticar" size="lg">

@@ -56,7 +56,7 @@ function Flashcards({ cards }: { cards: Flashcard[] }) {
     <div className="grid gap-6 lg:grid-cols-[1fr_18rem]">
       <div>
         {done || !card ? (
-          <Card tone="soft" className="text-center">
+          <section className="border-y border-line py-10 text-center">
             <p role="status" className="text-2xl font-black text-ink">
               ✓ Revisão de hoje concluída!
             </p>
@@ -64,7 +64,7 @@ function Flashcards({ cards }: { cards: Flashcard[] }) {
             <div className="mt-5 flex justify-center">
               <Button to="/app">Ir para o início</Button>
             </div>
-          </Card>
+          </section>
         ) : (
           <Card>
             <p className="text-sm font-bold text-muted">
@@ -144,11 +144,13 @@ function Flashcards({ cards }: { cards: Flashcard[] }) {
         )}
       </div>
 
-      <Card as="aside" tone="soft">
-        <h2 className="text-lg font-black text-ink">Fila de hoje</h2>
-        <ol className="mt-3 space-y-2">
+      <aside aria-labelledby="queue-title" className="lg:border-l lg:border-line lg:pl-6">
+        <h2 id="queue-title" className="border-b border-line pb-2 text-lg font-black text-ink">
+          Fila de hoje
+        </h2>
+        <ol className="divide-y divide-line">
           {cards.map((c, i) => (
-            <li key={c.id} className="flex items-center justify-between gap-2 text-sm">
+            <li key={c.id} className="flex items-center justify-between gap-2 py-2.5 text-sm">
               <span lang="en" className={`font-bold ${i < index ? 'text-muted line-through' : 'text-ink'}`}>
                 {c.word}
               </span>
@@ -156,7 +158,7 @@ function Flashcards({ cards }: { cards: Flashcard[] }) {
             </li>
           ))}
         </ol>
-      </Card>
+      </aside>
     </div>
   )
 }
