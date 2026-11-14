@@ -1,14 +1,16 @@
-/** Faixa editorial fina para o celular (decorativa): a mesma frase e o mesmo par US/UK da lateral. */
+import { WINE } from './brandColors'
+
+/** Celular (decorativo): só a etiqueta e a frase principal, em tamanho menor, acima do formulário. */
 export default function BrandStrip() {
   return (
-    <div aria-hidden="true" lang="en" className="flex h-14 items-center justify-between gap-3 overflow-hidden border-b border-line bg-surface px-4">
-      <p className="font-editorial text-[15px] leading-tight text-ink">
-        The world speaks. <em className="text-[#9b1c2e]">You should too.</em>
-      </p>
-      <p className="hidden shrink-0 text-[11px] font-bold uppercase tracking-[0.18em] min-[380px]:block">
-        <span className="text-[#9b1c2e]">US</span>
-        <span className="mx-1 text-muted">/</span>
-        <span className="text-[#012169]">UK</span>
+    <div aria-hidden="true" lang="en" className="mb-8">
+      <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted">Vocalize · Listening Lab</p>
+      <p className="font-editorial mt-2 text-[1.75rem] font-medium leading-[1.08] tracking-tight text-ink">
+        The world speaks.
+        <br />
+        <em className="font-normal" style={{ color: WINE }}>
+          You should too.
+        </em>
       </p>
     </div>
   )

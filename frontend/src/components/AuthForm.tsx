@@ -4,7 +4,6 @@ import { useAuth } from '../auth/useAuth'
 import { themeOf } from '../lib/format'
 import { useTheme } from '../theme/useTheme'
 import Button from './ui/Button'
-import Card from './ui/Card'
 import PasswordStrength from './auth/PasswordStrength'
 import { Input, PasswordInput } from './ui/Input'
 
@@ -73,96 +72,93 @@ export default function AuthForm({ mode }: { mode: Mode }) {
 
   return (
     <section className="w-full">
-      <h1 className="text-3xl font-black text-brand">{isLogin ? 'Entrar' : 'Criar conta'}</h1>
+      <h1 className="text-3xl font-black text-brand">{isLogin ? 'Bem-vindo de volta' : 'Crie sua conta'}</h1>
       <p className="mt-2 text-muted">
-        {isLogin ? 'Que bom te ver de volta. Continue de onde parou.' : 'Em um minuto você começa a treinar seu ouvido.'}
+        {isLogin ? 'Continue de onde parou e treine seu ouvido.' : 'Em um minuto você começa a treinar seu ouvido.'}
       </p>
 
-      <Card className="mt-6">
-        <Button
-          variant="secondary"
-          className="w-full"
-          onClick={() => setNote('O login com Google chega numa fase futura. Por enquanto, use e-mail e senha.')}
-        >
-          <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" focusable="false">
-            <path fill="#4285F4" d="M22 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.6a4.8 4.8 0 0 1-2.1 3.1v2.6h3.4c2-1.8 3.1-4.5 3.1-7.5z" />
-            <path fill="#34A853" d="M12 22c2.8 0 5.2-.9 6.9-2.5l-3.4-2.6c-.9.6-2.1 1-3.5 1-2.7 0-5-1.8-5.800-4.300H2.700v2.700A10 10 0 0 0 12 22z" />
-            <path fill="#FBBC05" d="M6.200 13.600a6 6 0 0 1 0-3.800V7.100H2.700a10 10 0 0 0 0 9.200z" />
-            <path fill="#EA4335" d="M12 5.900c1.500 0 2.900.5 4 1.500l3-3A10 10 0 0 0 2.700 7.100l3.500 2.700C7 7.700 9.300 5.900 12 5.900z" />
-          </svg>
-          Entrar com Google
-        </Button>
-        <p role="status" className="mt-2 min-h-5 text-sm text-muted empty:hidden">
-          {note}
-        </p>
-
-        <div className="my-5 flex items-center gap-3 text-sm text-muted" aria-hidden="true">
-          <span className="h-px flex-1 bg-line" />
-          ou
-          <span className="h-px flex-1 bg-line" />
+      <form ref={formRef} onSubmit={onSubmit} noValidate className="mt-8 space-y-4">
+        <div role="alert">
+          {submitted && errorCount > 0 && (
+            <p className="rounded-xl bg-danger p-3 text-sm font-bold text-on-danger">
+              Corrija {errorCount === 1 ? 'o campo destacado' : `os ${errorCount} campos destacados`} para continuar.
+            </p>
+          )}
+          {formError && <p className="rounded-xl bg-danger p-3 text-sm font-bold text-on-danger">{formError}</p>}
         </div>
-
-        <form ref={formRef} onSubmit={onSubmit} noValidate className="space-y-4">
-          <div role="alert">
-            {submitted && errorCount > 0 && (
-              <p className="rounded-xl bg-danger p-3 text-sm font-bold text-on-danger">
-                Corrija {errorCount === 1 ? 'o campo destacado' : `os ${errorCount} campos destacados`} para continuar.
-              </p>
-            )}
-            {formError && <p className="rounded-xl bg-danger p-3 text-sm font-bold text-on-danger">{formError}</p>}
-          </div>
-
-          {!isLogin && (
-            <Input label="Nome" name="name" autoComplete="name" value={values.name} onChange={set('name')} error={errors.name} />
-          )}
-          <Input
-            label="E-mail"
-            name="email"
-            type="email"
-            autoComplete="email"
-            inputMode="email"
-            value={values.email}
-            onChange={set('email')}
-            error={errors.email}
+        {!isLogin && (
+          <Input label="Nome" name="name" autoComplete="name" value={values.name} onChange={set('name')} error={errors.name} />
+        )}
+        <Input
+          label="E-mail"
+          name="email"
+          type="email"
+          autoComplete="email"
+          inputMode="email"
+          value={values.email}
+          onChange={set('email')}
+          error={errors.email}
+        />
+        <div>
+          <PasswordInput
+            label="Senha"
+            name="password"
+            autoComplete={isLogin ? 'current-password' : 'new-password'}
+            hint={isLogin ? undefined : 'Mínimo de 8 caracteres.'}
+            value={values.password}
+            onChange={set('password')}
+            error={errors.password}
           />
-          <div>
-            <PasswordInput
-              label="Senha"
-              name="password"
-              autoComplete={isLogin ? 'current-password' : 'new-password'}
-              hint={isLogin ? undefined : 'Mínimo de 8 caracteres.'}
-              value={values.password}
-              onChange={set('password')}
-              error={errors.password}
-            />
-            {!isLogin && <PasswordStrength password={values.password} />}
+          {!isLogin && <PasswordStrength password={values.password} />}
+        </div>
+        {!isLogin && (
+          <PasswordInput
+            label="Confirmar senha"
+            name="confirm"
+            autoComplete="new-password"
+            value={values.confirm}
+            onChange={set('confirm')}
+            error={errors.confirm}
+          />
+        )}
+        {isLogin && (
+          <div className="-mt-1 text-right">
+            <button
+              type="button"
+              onClick={() => setNote('A recuperação de senha chega numa fase futura.')}
+              className="min-h-9 cursor-pointer rounded-lg px-1 text-sm font-bold text-link underline underline-offset-4"
+            >
+              Esqueci minha senha
+            </button>
           </div>
-          {!isLogin && (
-            <PasswordInput
-              label="Confirmar senha"
-              name="confirm"
-              autoComplete="new-password"
-              value={values.confirm}
-              onChange={set('confirm')}
-              error={errors.confirm}
-            />
-          )}
-          {isLogin && (
-            <div className="-mt-1 text-right">
-              <button
-                type="button"
-                onClick={() => setNote('A recuperação de senha chega numa fase futura.')}
-                className="min-h-9 cursor-pointer rounded-lg px-1 text-sm font-bold text-link underline underline-offset-4"
-              >
-                Esqueci minha senha
-              </button>
-            </div>
-          )}
-          <Button type="submit" size="lg" className="w-full" disabled={busy} aria-busy={busy}>
-            {busy ? 'Entrando…' : isLogin ? 'Entrar' : 'Criar conta'}
-          </Button>
-        </form>
-      </Card>
+        )}
+        <Button type="submit" size="lg" className="w-full" disabled={busy} aria-busy={busy}>
+          {busy ? 'Entrando…' : isLogin ? 'Entrar' : 'Criar conta'}
+        </Button>
+      </form>
+
+      <div className="my-6 flex items-center gap-3 text-sm text-muted" aria-hidden="true">
+        <span className="h-px flex-1 bg-line" />
+        ou
+        <span className="h-px flex-1 bg-line" />
+      </div>
+
+      <Button
+        variant="secondary"
+        className="w-full"
+        onClick={() => setNote('O login com Google chega numa fase futura. Por enquanto, use e-mail e senha.')}
+      >
+        <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" focusable="false">
+          <path fill="#4285F4" d="M22 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.6a4.8 4.8 0 0 1-2.1 3.1v2.6h3.4c2-1.8 3.1-4.5 3.1-7.5z" />
+          <path fill="#34A853" d="M12 22c2.8 0 5.2-.9 6.9-2.5l-3.4-2.6c-.9.6-2.1 1-3.5 1-2.7 0-5-1.8-5.800-4.300H2.700v2.700A10 10 0 0 0 12 22z" />
+          <path fill="#FBBC05" d="M6.200 13.600a6 6 0 0 1 0-3.800V7.100H2.700a10 10 0 0 0 0 9.200z" />
+          <path fill="#EA4335" d="M12 5.900c1.500 0 2.900.5 4 1.500l3-3A10 10 0 0 0 2.700 7.100l3.500 2.700C7 7.700 9.300 5.900 12 5.900z" />
+        </svg>
+        Entrar com Google
+      </Button>
+      <p role="status" className="mt-2 min-h-5 text-sm text-muted empty:hidden">
+        {note}
+      </p>
 
       <p className="mt-6 text-center text-muted">
         {isLogin ? 'Ainda não tem conta? ' : 'Já tem conta? '}

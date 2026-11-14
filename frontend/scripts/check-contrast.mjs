@@ -81,11 +81,14 @@ const PAIRS = [
   ['on-ok', 'canvas', TEXT, 'texto de acerto sobre o fundo'],
   ['brand', 'surface', UI, 'ícones e bordas de marca em cartões'],
   ['accent', 'surface', UI, 'ícones na cor secundária em cartões'],
+  // Acentos editoriais fixos da lateral de login/cadastro (ver components/auth/brandColors.ts).
+  ['wine', 'canvas', TEXT, 'vinho da lateral de login (texto sobre o fundo)'],
+  ['navy', 'canvas', TEXT, 'azul-marinho da lateral de login (texto sobre o fundo)'],
 ]
 
 let failures = 0
 for (const accent of ['us', 'uk']) {
-  const t = readTokens(accent)
+  const t = { ...readTokens(accent), wine: '#9b1c2e', navy: '#012169' }
   console.log(`\nTema ${accent.toUpperCase()}`)
   for (const [fg, bg, min, label] of PAIRS) {
     const fgHex = t[fg]
