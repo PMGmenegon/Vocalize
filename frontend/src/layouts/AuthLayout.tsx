@@ -7,7 +7,7 @@ import SkipLink from '../components/SkipLink'
 
 /**
  * Layout de login e cadastro: formulário à esquerda e painel de identidade visual à direita
- * (≥ lg: 40/60; tablet: 55/45; celular: sem painel, só uma faixa fina no topo).
+ * (≥ lg: 40/60; tablet: 55/45; celular: sem painel, só uma faixa editorial fina no topo).
  * O painel fica fixo; só o formulário troca (com uma transição suave) ao ir de login a cadastro.
  */
 export default function AuthLayout() {
@@ -33,8 +33,11 @@ export default function AuthLayout() {
         </div>
       </main>
 
-      <div className="relative hidden md:block">
-        <BrandPanel />
+      {/* A lateral acompanha a rolagem: em telas baixas (formulário maior que a janela) ela continua inteira à vista */}
+      <div className="hidden border-l border-line bg-surface md:block">
+        <div className="sticky top-0 h-dvh">
+          <BrandPanel />
+        </div>
       </div>
     </div>
   )

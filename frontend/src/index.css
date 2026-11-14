@@ -406,18 +406,9 @@ html[data-accent="uk"] {
   background-size: 18px 18px;
 }
 
-/* Painel de identidade visual (login/cadastro): formas que flutuam poucos pixels, em ciclos longos. */
-@keyframes auth-float {
-  from {
-    transform: translateY(-6px);
-  }
-  to {
-    transform: translateY(8px);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .auth-float {
-    animation: auth-float 12s ease-in-out infinite alternate;
+/* Tipografia editorial (lateral de login/cadastro): serifa elegante com fallbacks do sistema. */
+@layer components {
+  .font-editorial {
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Times New Roman", serif;
   }
 }
