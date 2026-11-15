@@ -12,15 +12,15 @@ interface ChoiceGroupProps<T extends string | number> {
   value: T
   options: readonly Choice<T>[]
   onChange: (value: T) => void
-  /** card: cartões com borda · list: linhas com divisórias (sem caixas) · pill: botões compactos em linha. */
-  variant?: 'card' | 'list' | 'pill'
-  /** Classes de grade (variantes card e list). */
+  /** list: linhas com divisórias e barra de seleção (padrão) · pill: botões compactos em linha. */
+  variant?: 'list' | 'pill'
+  /** Classes de grade da variante list (ex.: "sm:grid-cols-2"). */
   columns?: string
   /** Esconde a legenda visualmente (continua para leitores de tela). */
   hideLegend?: boolean
 }
 
-const focus = 'has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-(--focus)'
+const focus = 'has-[:focus-visible]:outline-3 has-[:focus-visible]:-outline-offset-3 has-[:focus-visible]:outline-(--focus)'
 
 /**
  * Seleção de uma opção entre várias, com botões de rádio nativos (as setas do teclado
@@ -31,35 +31,33 @@ export default function ChoiceGroup<T extends string | number>({
   value,
   options,
   onChange,
-  variant = 'card',
-  columns = 'sm:grid-cols-2',
+  variant = 'list',
+  columns = '',
   hideLegend = false,
 }: ChoiceGroupProps<T>) {
   const name = useId()
-  const wrapper = variant === 'pill' ? 'flex flex-wrap gap-2' : variant === 'list' ? `grid border-t border-line ${columns}` : `grid gap-3 ${columns}`
+  const pill = variant === 'pill'
 
   return (
     <fieldset>
-      <legend className={hideLegend ? 'sr-only' : 'mb-2 text-sm font-bold text-ink'}>{legend}</legend>
-      <div className={wrapper}>
+      <legend className={hideLegend ? 'sr-only' : 'type-eyebrow mb-2'}>{legend}</legend>
+      <div className={pill ? 'flex flex-wrap gap-2' : `grid border-t border-line ${columns}`}>
         {options.map((opt) => {
           const checked = opt.value === value
-          const box =
-            variant === 'pill'
-              ? `min-h-11 items-center rounded-full border-2 px-4 py-1.5 ${checked ? 'border-brand bg-brand text-on-brand' : 'border-control bg-card text-ink hover:bg-surface'}`
-              : variant === 'list'
-                ? `items-center border-b border-line px-3 py-4 ${checked ? 'bg-surface' : 'hover:bg-surface'}`
-                : `rounded-xl border-2 p-4 pr-10 ${checked ? 'border-brand bg-surface' : 'border-line bg-card hover:bg-surface'}`
+          const box = pill
+            ? `min-h-11 items-center rounded-full border-2 px-4 py-1.5 ${checked ? 'border-brand bg-brand text-on-brand' : 'border-control bg-card text-ink hover:bg-surface'} ${focus.replace('-outline-offset-3', 'outline-offset-2')}`
+            : `group items-center border-b border-line py-4 pr-3 pl-5 ${checked ? 'bg-surface' : 'hover:bg-surface/70'} ${focus}`
           return (
-            <label key={opt.value} className={`relative flex cursor-pointer gap-3 transition-colors ${box} ${focus}`}>
+            <label key={opt.value} className={`relative flex cursor-pointer gap-3 transition-colors ${box}`}>
               <input type="radio" name={name} value={opt.value} checked={checked} onChange={() => onChange(opt.value)} className="sr-only" />
+              {!pill && <span aria-hidden="true" className={`absolute inset-y-0 left-0 w-1 transition-colors ${checked ? 'bg-brand' : 'bg-transparent group-hover:bg-line'}`} />}
               {opt.icon && <span className="shrink-0 text-brand">{opt.icon}</span>}
               <span className="min-w-0 flex-1">
-                <span className={`block font-black ${variant === 'pill' ? 'text-sm' : ''}`}>{opt.label}</span>
-                {opt.description && <span className="mt-0.5 block text-sm text-muted">{opt.description}</span>}
+                <span className={`block font-black ${pill ? 'text-sm' : 'text-lg'}`}>{opt.label}</span>
+                {opt.description && <span className="mt-0.5 block text-muted">{opt.description}</span>}
               </span>
               {checked && (
-                <span aria-hidden="true" className={variant === 'card' ? 'absolute right-3 top-3 text-lg font-black text-brand' : variant === 'pill' ? 'font-black' : 'shrink-0 text-lg font-black text-brand'}>
+                <span aria-hidden="true" className={pill ? 'font-black' : 'shrink-0 text-lg font-black text-brand'}>
                   ✓
                 </span>
               )}

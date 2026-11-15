@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ReactNode, Ref } from 'react'
 
 /** Contêiner padrão das páginas da área logada. `narrow` serve às telas de fluxo (uma coluna). */
 export function Page({ children, narrow = false }: { children: ReactNode; narrow?: boolean }) {
@@ -16,17 +16,19 @@ interface PageHeaderProps {
   stats?: ReactNode
   /** Ação à direita (botão, seletor). */
   action?: ReactNode
+  /** Para levar o foco ao título quando a tela muda (fluxos em etapas). */
+  titleRef?: Ref<HTMLHeadingElement>
   className?: string
 }
 
 /** Cabeçalho padrão de página: etiqueta, título editorial, descrição e números. */
-export default function PageHeader({ eyebrow, title, description, stats, action, className = '' }: PageHeaderProps) {
+export default function PageHeader({ eyebrow, title, description, stats, action, titleRef, className = '' }: PageHeaderProps) {
   return (
     <header className={`mb-8 sm:mb-10 ${className}`}>
       <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
         <div className="min-w-0">
           <p className="type-eyebrow text-brand">{eyebrow}</p>
-          <h1 className="type-display mt-2 text-4xl sm:text-5xl">{title}</h1>
+          <h1 ref={titleRef} tabIndex={titleRef ? -1 : undefined} className="type-display mt-2 text-4xl focus:outline-none sm:text-5xl">{title}</h1>
         </div>
         {action}
       </div>

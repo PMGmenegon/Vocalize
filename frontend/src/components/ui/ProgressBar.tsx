@@ -18,7 +18,7 @@ export default function ProgressBar({ value, max = 100, label, valueText, classN
       aria-valuemax={max}
       aria-valuenow={Math.min(value, max)}
       aria-valuetext={valueText}
-      className={`h-3 w-full overflow-hidden rounded-full border border-control bg-card ${className}`}
+      className={`h-1.5 w-full overflow-hidden rounded-full bg-line ${className}`}
     >
       <div className="h-full rounded-full bg-brand transition-[width] duration-500" style={{ width: `${pct}%` }} />
     </div>
