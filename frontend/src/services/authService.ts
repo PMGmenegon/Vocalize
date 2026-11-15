@@ -1,6 +1,6 @@
 import { db } from '../mocks/db'
 import { DEMO_USER } from '../mocks/users'
-import type { Accent, DailyGoal, Level, User } from '../types'
+import type { Accent, Level, PlacementRecord, User } from '../types'
 import { simulate } from './runtime'
 
 export interface Credentials {
@@ -13,7 +13,8 @@ export interface Registration extends Credentials {
 export interface Preferences {
   level: Level
   accent: Accent
-  dailyGoalMinutes: DailyGoal
+  /** Resultado do teste de nivelamento, quando o nível veio dele. Sem ele, o nível foi escolhido na mão. */
+  placement?: PlacementRecord
 }
 
 function nameFromEmail(email: string) {
@@ -52,7 +53,6 @@ export const authService = {
         email,
         level: 'B1',
         accent: 'en-US',
-        dailyGoalMinutes: 15,
         onboarded: false,
         createdAt: new Date().toISOString(),
       }
@@ -68,12 +68,12 @@ export const authService = {
     }, 150)
   },
 
-  /** Salva nível, sotaque e meta. Também conclui o onboarding. */
+  /** Salva nível, sotaque e (opcional) o resultado do teste de nivelamento. Também conclui o onboarding. */
   savePreferences(prefs: Preferences): Promise<User> {
     return simulate(() => {
       const current = db.getUser()
       if (!current) throw new Error('Sessão expirada.')
-      const user: User = { ...current, ...prefs, onboarded: true }
+      const user: User = { ...current, level: prefs.level, accent: prefs.accent, placement: prefs.placement, onboarded: true }
       db.setUser(user)
       return user
     }, 400)

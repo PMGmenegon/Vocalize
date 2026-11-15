@@ -18,6 +18,11 @@ export function formatDate(iso: string): string {
   return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '')
 }
 
+/** Data completa DD/MM/AAAA. */
+export function formatFullDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+}
+
 export function formatDuration(seconds: number): string {
   if (seconds < 60) return `${seconds} s`
   const m = Math.floor(seconds / 60)

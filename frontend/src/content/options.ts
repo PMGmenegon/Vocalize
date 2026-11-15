@@ -1,6 +1,6 @@
 import { ACCENT_LABEL } from '../lib/format'
 import type { Choice } from '../components/ui/ChoiceGroup'
-import type { Accent, DailyGoal, Level } from '../types'
+import type { Accent, Level } from '../types'
 
 export const LEVEL_OPTIONS: Choice<Level>[] = [
   { value: 'A2', label: 'A2 · Básico', description: 'Entendo frases simples e situações do dia a dia.' },
@@ -14,15 +14,10 @@ export const ACCENT_OPTIONS: Choice<Accent>[] = [
   { value: 'en-GB', label: ACCENT_LABEL['en-GB'], description: 'Sotaque do Reino Unido. Tema azul-marinho.' },
 ]
 
-const GOAL_HINT: Record<DailyGoal, string> = {
-  10: 'Um empurrãozinho diário.',
-  15: 'O ritmo mais comum.',
-  20: 'Para evoluir mais rápido.',
-  30: 'Treino intenso.',
+/** Frase do resultado do teste de nivelamento, por nível. */
+export const LEVEL_VERDICT: Record<Level, string> = {
+  A2: 'Você entende e usa frases simples do dia a dia. É um ótimo ponto de partida para treinar o ouvido com calma.',
+  B1: 'Você se vira em situações comuns e acompanha conversas sobre temas conhecidos. Agora é hora de ganhar velocidade e vocabulário.',
+  B2: 'Você entende bem textos e conversas mais longos e usa estruturas variadas. O foco agora é nuance, sotaque e fala natural.',
+  C1: 'Você usa o inglês com naturalidade e domina estruturas complexas. Vamos afinar o ouvido para ritmos e sotaques mais desafiadores.',
 }
-
-export const GOAL_OPTIONS: Choice<DailyGoal>[] = ([10, 15, 20, 30] as const).map((minutes) => ({
-  value: minutes,
-  label: `${minutes} minutos por dia`,
-  description: GOAL_HINT[minutes],
-}))

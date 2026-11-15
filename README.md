@@ -39,6 +39,7 @@ Abra o endereço que o Vite mostrar no terminal (normalmente `http://localhost:5
 | `npm run preview` | serve o build de produção localmente |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | TypeScript (strict), sem gerar arquivos |
+| `npm run test` | testes unitários (Vitest), como o cálculo do nível do teste de nivelamento |
 | `npm run check:contrast` | verifica o contraste WCAG AA das cores dos dois temas |
 
 ## Dados falsos (mock) e camada de serviços
@@ -71,9 +72,9 @@ Para testar os estados de erro e vazio, abra qualquer tela da área logada com `
 
 Rotas públicas: `/` (landing), `/login`, `/cadastro`. Todas as rotas `/app/*` exigem login.
 
-- `/cadastro` e `/login` — validação (e-mail, senha de 8+ caracteres, confirmação). Ao entrar aparece a splash e depois o onboarding (conta nova) ou o início.
-- `/app/onboarding` — 3 etapas: nível, sotaque (o tema muda na hora) e meta diária.
-- `/app` — saudação do modo, sequência, meta de hoje, nível, recomendação, "Praticar agora", últimas sessões e palavras para revisar.
+- `/cadastro` e `/login` — validação (e-mail, senha de 8+ caracteres, confirmação). Ao entrar o usuário vai direto ao onboarding (conta nova) ou ao início.
+- `/app/onboarding` — sotaque (o tema muda na hora) e teste de nivelamento: 6 perguntas fixas de múltipla escolha em inglês, resultado com nível, acertos por nível e revisão. Dá para escolher o nível na mão (A2–C1) ou ajustar o do teste. A lógica fica em `src/domain/placement.ts` (funções puras) e as perguntas em `src/data/placementQuestions.ts`.
+- `/app` — saudação do modo, sequência, nível, recomendação, "Praticar agora", últimas sessões e palavras para revisar.
 - `/app/praticar` — escolha da **situação** (restaurante, conversa na rua, aeroporto, hotel, compras, entrevista, bate-papo virtual), nível e sotaque.
 - `/app/praticar/:sessaoId` — introdução da situação e botão "Começar"; depois o layout definido nos dados da situação:
   - **Treino** (situações presenciais): tela focada com player (forma de onda, play/pause, voltar 3 s, repetir, 0.75×), transcrição, resultado palavra por palavra, resposta e correção, roteiro lateral recolhível e atalhos de teclado (Ctrl+Espaço, Ctrl+R, Ctrl+S, Enter).
@@ -82,7 +83,7 @@ Rotas públicas: `/` (landing), `/login`, `/cadastro`. Todas as rotas `/app/*` e
 - `/app/praticar/:sessaoId/resumo` — resumo da sessão.
 - `/app/estatisticas` — gráficos (Recharts) com filtro de 7 dias, 30 dias ou tudo.
 - `/app/revisao` — flashcards com avaliação (Errei, Difícil, Bom, Fácil).
-- `/app/perfil` — dados, edição de nível/sotaque/meta e "Sair".
+- `/app/perfil` — dados, edição de nível/sotaque, "Nível definido por teste em DD/MM/AAAA", "Refazer teste de nivelamento" e "Sair".
 - Seletor **US / UK** no cabeçalho troca o tema; em telas pequenas o menu vira hambúrguer.
 
 ## Decisões de arquitetura

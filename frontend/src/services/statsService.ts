@@ -128,8 +128,6 @@ export const statsService = {
         }))
       return {
         streakDays: streaks(rows).current,
-        todayMinutes: rows.filter((r) => r.daysAgo === 0).reduce((s, r) => s + r.minutes, 0),
-        dailyGoalMinutes: user.dailyGoalMinutes,
         recommendation,
         recentSessions,
         reviewWords: dueToday().slice(0, 6),

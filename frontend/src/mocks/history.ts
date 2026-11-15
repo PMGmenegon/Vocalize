@@ -20,7 +20,7 @@ export interface HistoryRow {
 const US: Accent = 'en-US'
 const GB: Accent = 'en-GB'
 
-// Do mais antigo para o mais recente. Hoje: 9 min (meta 15). Sequência atual: 9 dias.
+// Do mais antigo para o mais recente. Hoje: 9 min. Sequência atual: 9 dias.
 export const HISTORY: HistoryRow[] = [
   { daysAgo: 20, scenarioId: 'street', accent: US, minutes: 10, accuracy: 64, repetitions: 3.2, turns: 5, corrections: 4, wrong: ['through', 'thought', 'the'] },
   { daysAgo: 18, scenarioId: 'restaurant', accent: US, minutes: 12, accuracy: 67, repetitions: 3.0, turns: 5, corrections: 4, wrong: ['would', 'a', 'menu'] },

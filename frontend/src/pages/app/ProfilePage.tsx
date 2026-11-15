@@ -4,8 +4,8 @@ import { useAuth, useUser } from '../../auth/useAuth'
 import Button from '../../components/ui/Button'
 import ChoiceGroup from '../../components/ui/ChoiceGroup'
 import PageHeader, { Page } from '../../components/ui/PageHeader'
-import { ACCENT_OPTIONS, GOAL_OPTIONS, LEVEL_OPTIONS } from '../../content/options'
-import { themeOf } from '../../lib/format'
+import { ACCENT_OPTIONS, LEVEL_OPTIONS } from '../../content/options'
+import { formatFullDate, themeOf } from '../../lib/format'
 import { useTheme } from '../../theme/useTheme'
 
 export default function ProfilePage() {
@@ -15,17 +15,17 @@ export default function ProfilePage() {
   const navigate = useNavigate()
   const [level, setLevel] = useState(user.level)
   const [accent, setAccentChoice] = useState(user.accent)
-  const [goal, setGoal] = useState(user.dailyGoalMinutes)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null)
 
-  const dirty = level !== user.level || accent !== user.accent || goal !== user.dailyGoalMinutes
+  const dirty = level !== user.level || accent !== user.accent
 
   async function save() {
     setBusy(true)
     setMessage(null)
     try {
-      await savePreferences({ level, accent, dailyGoalMinutes: goal })
+      // Mudar o nível na mão não apaga o registro do teste; ele só deixa de ser "o nível definido por teste".
+      await savePreferences({ level, accent, placement: user.placement })
       setMessage({ ok: true, text: '✓ Preferências salvas.' })
     } catch {
       setMessage({ ok: false, text: '✗ Não foi possível salvar. Tente de novo.' })
@@ -67,7 +67,21 @@ export default function ProfilePage() {
       >
         <h2 className="border-b border-line pb-2 text-xl font-black text-ink">Preferências de estudo</h2>
         <div className="space-y-8 pt-6">
-          <ChoiceGroup legend="Nível" variant="list" value={level} onChange={setLevel} options={LEVEL_OPTIONS} columns="sm:grid-cols-2" />
+          <div>
+            <ChoiceGroup legend="Nível" variant="list" value={level} onChange={setLevel} options={LEVEL_OPTIONS} columns="sm:grid-cols-2" />
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+              <p className="text-sm text-muted">
+                {!user.placement
+                  ? 'Nível escolhido por você.'
+                  : user.placement.level === user.level
+                    ? `Nível definido por teste em ${formatFullDate(user.placement.takenAt)}`
+                    : `Nível ajustado por você. O teste de ${formatFullDate(user.placement.takenAt)} indicou ${user.placement.level}.`}
+              </p>
+              <Button variant="ghost" onClick={() => navigate('/app/onboarding', { state: { redo: true } })}>
+                Refazer teste de nivelamento
+              </Button>
+            </div>
+          </div>
           <ChoiceGroup
             legend="Sotaque"
             variant="pill"
@@ -78,7 +92,6 @@ export default function ProfilePage() {
               setAccent(themeOf(next))
             }}
           />
-          <ChoiceGroup legend="Meta diária" variant="pill" value={goal} onChange={setGoal} options={GOAL_OPTIONS.map((o) => ({ value: o.value, label: `${o.value} min` }))} />
           <div className="flex flex-wrap items-center gap-4">
             <Button type="submit" disabled={busy || !dirty} aria-busy={busy}>
               {busy ? 'Salvando…' : 'Salvar alterações'}

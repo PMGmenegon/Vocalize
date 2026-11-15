@@ -6,9 +6,6 @@ export const LEVELS: readonly Level[] = ['A2', 'B1', 'B2', 'C1']
 /** Sotaque do conteúdo (locale). Não confundir com o tema visual `Accent` de src/theme ('us' | 'uk'). */
 export type Accent = 'en-US' | 'en-GB'
 
-export type DailyGoal = 10 | 15 | 20 | 30
-export const DAILY_GOALS: readonly DailyGoal[] = [10, 15, 20, 30]
-
 export type ScenarioId = 'restaurant' | 'street' | 'airport' | 'hotel' | 'shopping' | 'job-interview' | 'virtual-chat'
 
 /** Como a prática é apresentada: tela de treino focada ou conversa por mensagens. */
@@ -17,13 +14,21 @@ export type PracticeLayout = 'training' | 'chat'
 /** Chave do ícone da situação (ver ScenarioIcon em components/appIcons.tsx). */
 export type ScenarioIconKey = 'utensils' | 'pin' | 'plane' | 'bed' | 'bag' | 'briefcase' | 'chat'
 
+/** Resultado salvo do teste de nivelamento. */
+export interface PlacementRecord {
+  level: Level
+  /** Data do teste (ISO). */
+  takenAt: string
+}
+
 export interface User {
   id: string
   name: string
   email: string
   level: Level
   accent: Accent
-  dailyGoalMinutes: DailyGoal
+  /** Resultado do teste de nivelamento (nível recomendado pelo teste + data). Ausente se o nível foi escolhido na mão. */
+  placement?: PlacementRecord
   /** false até concluir o onboarding. */
   onboarded: boolean
   createdAt: string
@@ -149,8 +154,6 @@ export interface LevelRecommendation {
 
 export interface DashboardData {
   streakDays: number
-  todayMinutes: number
-  dailyGoalMinutes: DailyGoal
   recommendation: LevelRecommendation
   recentSessions: SessionListItem[]
   reviewWords: Flashcard[]

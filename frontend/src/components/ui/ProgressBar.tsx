@@ -1,9 +1,9 @@
 interface ProgressBarProps {
   value: number
   max?: number
-  /** Nome acessível ("Meta de hoje"). */
+  /** Nome acessível ("Progresso do onboarding"). */
   label: string
-  /** Texto legível do valor ("9 de 15 min"). */
+  /** Texto legível do valor ("Etapa 2 de 3"). */
   valueText?: string
   className?: string
 }

@@ -15,8 +15,7 @@ function DashboardSkeleton() {
   return (
     <div role="status" aria-live="polite" className="space-y-6">
       <span className="sr-only">Carregando seu painel…</span>
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Skeleton className="h-32" />
+      <div className="grid gap-4 sm:grid-cols-2">
         <Skeleton className="h-32" />
         <Skeleton className="h-32" />
       </div>
@@ -46,10 +45,9 @@ export default function DashboardPage() {
 
       <Async state={state} skeleton={<DashboardSkeleton />} errorMessage="Não foi possível carregar o seu painel.">
         {(d) => {
-          const goalDone = d.todayMinutes >= d.dailyGoalMinutes
           return (
             <div className="space-y-10">
-              <dl className="grid gap-6 border-y border-line py-6 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-line">
+              <dl className="grid gap-6 border-y border-line py-6 sm:grid-cols-2 sm:gap-0 sm:divide-x sm:divide-line">
                 <div className="sm:pr-8">
                   <dt className="flex items-center gap-2 text-sm font-bold text-muted">
                     <FlameIcon className="h-5 w-5 text-brand" /> Sequência
@@ -58,16 +56,6 @@ export default function DashboardPage() {
                     {d.streakDays} <span className="text-lg font-bold">{d.streakDays === 1 ? 'dia' : 'dias'}</span>
                   </dd>
                   <dd className="text-sm text-muted">{d.streakDays > 0 ? 'Estudando em dias seguidos.' : 'Comece hoje a sua sequência.'}</dd>
-                </div>
-                <div className="sm:px-8">
-                  <dt className="text-sm font-bold text-muted">Meta de hoje</dt>
-                  <dd className="mt-1 text-4xl font-black text-ink">
-                    {d.todayMinutes} <span className="text-lg font-bold">/ {d.dailyGoalMinutes} min</span>
-                  </dd>
-                  <dd>
-                    <ProgressBar className="mt-2" label="Meta de hoje" value={d.todayMinutes} max={d.dailyGoalMinutes} valueText={`${d.todayMinutes} de ${d.dailyGoalMinutes} minutos`} />
-                    <span className="mt-1 block text-sm text-muted">{goalDone ? '✓ Meta cumprida. Parabéns!' : `Faltam ${d.dailyGoalMinutes - d.todayMinutes} min.`}</span>
-                  </dd>
                 </div>
                 <div className="sm:pl-8">
                   <dt className="text-sm font-bold text-muted">Nível atual</dt>

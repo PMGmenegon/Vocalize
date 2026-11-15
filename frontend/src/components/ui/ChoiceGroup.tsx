@@ -49,7 +49,7 @@ export default function ChoiceGroup<T extends string | number>({
               ? `min-h-11 items-center rounded-full border-2 px-4 py-1.5 ${checked ? 'border-brand bg-brand text-on-brand' : 'border-control bg-card text-ink hover:bg-surface'}`
               : variant === 'list'
                 ? `items-center border-b border-line px-3 py-4 ${checked ? 'bg-surface' : 'hover:bg-surface'}`
-                : `rounded-xl border-2 p-4 ${checked ? 'border-brand bg-surface' : 'border-line bg-card hover:bg-surface'}`
+                : `rounded-xl border-2 p-4 pr-10 ${checked ? 'border-brand bg-surface' : 'border-line bg-card hover:bg-surface'}`
           return (
             <label key={opt.value} className={`relative flex cursor-pointer gap-3 transition-colors ${box} ${focus}`}>
               <input type="radio" name={name} value={opt.value} checked={checked} onChange={() => onChange(opt.value)} className="sr-only" />
