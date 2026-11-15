@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react'
+import { useId, type ReactNode } from 'react'
+import Section from '../ui/Section'
 
 interface ChartCardProps {
   title: string
@@ -12,15 +13,15 @@ interface ChartCardProps {
 
 /** Gráfico direto na página (sem caixa): título, descrição, alternativa em texto e tabela de dados. */
 export default function ChartCard({ title, description, summary, table, children }: ChartCardProps) {
+  const id = useId()
   return (
-    <section aria-label={title}>
-      <h2 className="border-b border-line pb-2 text-xl font-black text-ink">{title}</h2>
-      <p className="mt-2 text-sm text-muted">{description}</p>
+    <Section id={id} title={title}>
+      <p className="mt-3 text-muted">{description}</p>
       <div role="img" aria-label={`${title}. ${summary}`} className="mt-4 h-64 w-full text-ink">
         {children}
       </div>
       <details className="mt-3">
-        <summary className="inline-flex min-h-11 cursor-pointer items-center rounded-lg px-1 text-sm font-bold text-link underline underline-offset-4">
+        <summary className="inline-flex min-h-11 cursor-pointer items-center rounded-lg text-sm font-bold text-link underline underline-offset-4">
           Ver dados em tabela
         </summary>
         <div className="mt-2 overflow-x-auto">
@@ -49,6 +50,6 @@ export default function ChartCard({ title, description, summary, table, children
           </table>
         </div>
       </details>
-    </section>
+    </Section>
   )
 }
