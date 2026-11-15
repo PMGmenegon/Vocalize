@@ -18,6 +18,14 @@ export interface Character {
   avatar: AvatarSpec
 }
 
+/** Como cada tipo de prática é apresentado na tela de escolha. */
+export const EXPERIENCE: Record<PracticeLayout, { label: string; hint: string }> = {
+  training: { label: 'Treino', hint: 'Você ouve a fala, transcreve e responde.' },
+  chat: { label: 'Chat', hint: 'Mensagens de voz: você ouve, transcreve e responde por texto.' },
+}
+
+export const SETTING_LABEL: Record<Scenario['setting'], string> = { 'in-person': 'Presencial', online: 'Online' }
+
 /** Limite padrão de rodadas por sessão (a sessão também termina quando o usuário encerra). */
 export const DEFAULT_MAX_TURNS = 8
 
