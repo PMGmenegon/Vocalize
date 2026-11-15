@@ -94,7 +94,7 @@ export function ReplyForm({ busy, onSend }: { busy: boolean; onSend: (text: stri
         submit()
       }}
     >
-      <h2 className="text-xl font-black text-ink">Agora responda</h2>
+      <h2 className="type-display text-2xl">Agora responda</h2>
       <Textarea
         label="Sua resposta em inglês"
         lang="en"
@@ -126,16 +126,16 @@ export function ReplyForm({ busy, onSend }: { busy: boolean; onSend: (text: stri
 export function CorrectionView({ correction }: { correction: Correction }) {
   return (
     <section aria-label="Correção" className="mt-8 space-y-5 border-t border-line pt-6">
-      <h2 className="text-xl font-black text-ink">Correção</h2>
+      <h2 className="type-display text-2xl">Correção</h2>
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="border-l-4 border-line pl-4">
-          <p className="text-sm font-bold text-muted">Sua resposta</p>
+        <div className="border-l-2 border-line pl-4">
+          <p className="type-eyebrow">Sua resposta</p>
           <p lang="en" className={`mt-1 text-lg ${correction.changed ? 'text-ink line-through decoration-on-danger decoration-2' : 'font-bold text-ink'}`}>
             {correction.original}
           </p>
         </div>
-        <div className="border-l-4 border-on-ok pl-4">
-          <p className="text-sm font-bold text-on-ok">
+        <div className="border-l-2 border-on-ok pl-4">
+          <p className="type-eyebrow text-on-ok">
             <span aria-hidden="true">✓ </span>Versão corrigida
           </p>
           <p lang="en" className="mt-1 text-lg font-bold text-ink">
@@ -144,12 +144,12 @@ export function CorrectionView({ correction }: { correction: Correction }) {
         </div>
       </div>
       <div>
-        <h3 className="font-black text-ink">Por quê?</h3>
+        <h3 className="type-eyebrow">Por quê?</h3>
         <p className="mt-1 text-ink">{correction.explanation}</p>
       </div>
       <div>
-        <h3 className="font-black text-ink">Vocabulário-chave</h3>
-        <ul className="mt-2 divide-y divide-line border-y border-line">
+        <h3 className="type-eyebrow">Vocabulário-chave</h3>
+        <ul className="mt-2 divide-y divide-line border-b border-line">
           {correction.vocabulary.map((v) => (
             <li key={v.term} className="flex justify-between gap-3 py-2">
               <span lang="en" className="font-bold text-ink">

@@ -1,10 +1,12 @@
-import { characterFor, introFor, situationFor } from '../../data/scenarios'
+import { characterFor, EXPERIENCE, introFor, situationFor } from '../../data/scenarios'
 import { ACCENT_LABEL } from '../../lib/format'
 import type { Session } from '../../types'
 import { ScenarioIcon } from '../appIcons'
 import Avatar from '../chat/Avatar'
 import Button from '../ui/Button'
-import { Page } from '../ui/PageHeader'
+import PageHeader, { Page } from '../ui/PageHeader'
+import { Stat, StatList } from '../ui/Stat'
+import StickyActionBar from '../ui/StickyActionBar'
 
 /** Introdução curta da situação, antes de a sessão começar. */
 export default function SessionIntro({ session, onStart }: { session: Session; onStart: () => void }) {
@@ -12,35 +14,43 @@ export default function SessionIntro({ session, onStart }: { session: Session; o
   const character = characterFor(session.scenarioId, session.accent)
   return (
     <Page narrow>
-      <div className="flex items-center gap-3 text-brand">
-        <ScenarioIcon icon={situation.icon} className="h-8 w-8" />
-        <p className="text-sm font-bold uppercase tracking-wide">{situation.title}</p>
-      </div>
-      <h1 className="mt-3 text-3xl font-black text-ink sm:text-4xl">{introFor(session.scenarioId, session.accent)}</h1>
-      <div className="mt-6 flex items-center gap-4 border-y border-line py-4">
+      <PageHeader
+        eyebrow={`${EXPERIENCE[situation.layout].label} · antes de começar`}
+        title={situation.title}
+        description={introFor(session.scenarioId, session.accent)}
+        stats={
+          <StatList>
+            <Stat label="Nível" value={session.level} />
+            <Stat label="Sotaque" value={ACCENT_LABEL[session.accent]} />
+            <Stat label="Rodadas" value={`até ${session.maxTurns}`} />
+          </StatList>
+        }
+      />
+      <div className="flex items-center gap-4 border-y border-line py-5">
         <Avatar spec={character.avatar} className="h-14 w-14" />
-        <div>
-          <p className="font-black text-ink">
-            {character.name} <span className="font-bold text-muted">· {character.role}</span>
-          </p>
+        <div className="min-w-0 flex-1">
+          <p className="font-black text-ink">{character.name}</p>
           <p className="text-sm text-muted">
-            Nível {session.level} · {ACCENT_LABEL[session.accent]} · até {session.maxTurns} rodadas
+            {character.role} · {character.place}
           </p>
         </div>
+        <span className="text-brand">
+          <ScenarioIcon icon={situation.icon} className="h-8 w-8" />
+        </span>
       </div>
-      <p className="mt-4 text-muted">
+      <p className="mt-6 max-w-xl text-lg text-ink">
         {situation.layout === 'chat'
           ? 'As falas chegam como mensagens de voz. Transcreva o que ouviu e responda por texto.'
           : 'Ouça cada fala, transcreva o que entendeu, veja seus erros palavra por palavra e responda para continuar a conversa.'}
       </p>
-      <div className="mt-8 flex flex-wrap gap-3">
-        <Button size="lg" onClick={onStart}>
-          Começar
-        </Button>
+      <StickyActionBar label="Sua sessão" summary={`${situation.title} · ${session.level}`}>
         <Button to="/app/praticar" variant="ghost" size="lg">
           Voltar
         </Button>
-      </div>
+        <Button size="lg" onClick={onStart} className="px-8">
+          Começar
+        </Button>
+      </StickyActionBar>
     </Page>
   )
 }

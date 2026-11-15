@@ -15,7 +15,7 @@ interface ChatInputProps {
 }
 
 const MODE_INFO = {
-  transcribe: { pill: 'Transcrever o áudio', label: 'Escreva o que você ouviu', placeholder: 'Ex.: Good evening! Do you have…' },
+  transcribe: { pill: 'Transcrever o áudio', label: 'Escreva o que você ouviu', placeholder: 'Escreva o que você ouviu…' },
   reply: { pill: 'Responder', label: 'Responda em inglês', placeholder: 'Escreva sua resposta…' },
 } as const
 
@@ -67,7 +67,7 @@ export default function ChatInput({ mode, busy, characterName, getHint, onSubmit
       }}
     >
       <div className="flex flex-wrap items-center gap-2">
-        <span className="surface-brand rounded-full bg-brand px-2.5 py-0.5 text-xs font-bold text-on-brand">{info ? info.pill : 'Aguardando a próxima mensagem'}</span>
+        <span className="type-eyebrow text-brand">{info ? info.pill : 'Aguardando a próxima mensagem'}</span>
         {mode === 'transcribe' && (
           <>
             <button type="button" onClick={() => void askHint('count')} className="min-h-9 cursor-pointer rounded-lg px-2 text-xs font-bold text-link underline underline-offset-4 hover:bg-surface">

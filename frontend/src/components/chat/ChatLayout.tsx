@@ -1,9 +1,11 @@
 import { useEffect } from 'react'
-import { characterFor } from '../../data/scenarios'
+import { characterFor, EXPERIENCE, introFor } from '../../data/scenarios'
+import { ACCENT_LABEL } from '../../lib/format'
 import { usePracticeSession } from '../../hooks/usePracticeSession'
 import type { Session, Turn } from '../../types'
 import EndSession from '../practice/EndSession'
 import Button from '../ui/Button'
+import { Stat, StatList } from '../ui/Stat'
 import ChatInput, { type InputMode } from './ChatInput'
 import ChatPanel from './ChatPanel'
 import VoiceMessage from './VoiceMessage'
@@ -15,7 +17,7 @@ const clock = (iso?: string) => (iso ? new Date(iso).toLocaleTimeString('pt-BR',
 /** Avatar de contato com iniciais (sem ilustração, como num app de mensagens). */
 function Initials({ name }: { name: string }) {
   return (
-    <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-canvas text-base font-black text-brand">
+    <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand text-base font-black text-on-brand">
       {name.slice(0, 2).toUpperCase()}
     </span>
   )
@@ -27,7 +29,7 @@ function UserMessage({ turn }: { turn: Turn }) {
   return (
     <div className="bubble-in space-y-1.5">
       <div className="flex justify-end">
-        <p lang="en" className="surface-brand max-w-[85%] rounded-2xl rounded-tr-sm bg-brand px-3.5 py-2 text-on-brand shadow-sm">
+        <p lang="en" className="surface-brand max-w-[85%] rounded-2xl rounded-tr-sm bg-brand px-3.5 py-2 text-on-brand">
           <span className="sr-only">Você: </span>
           {turn.reply}
           <span className="mt-0.5 flex justify-end gap-1 text-[11px] opacity-90" aria-hidden="true">
@@ -91,22 +93,34 @@ export default function ChatLayout({ session }: { session: Session }) {
   const status = phase === 'preparing' ? 'gravando áudio...' : phase === 'prepare-error' ? 'sem conexão' : 'online'
 
   return (
-    <div className="flex justify-center lg:px-4 lg:py-5">
-      <div className="relative flex h-[calc(100dvh-7.25rem)] w-full flex-col overflow-hidden bg-canvas lg:h-[min(46rem,calc(100dvh-9rem))] lg:max-w-sm lg:rounded-[2.5rem] lg:border-[10px] lg:border-ink lg:shadow-2xl">
+    <div className="mx-auto max-w-6xl lg:grid lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-center lg:gap-x-16 lg:px-6 lg:py-8">
+      <div className="hidden lg:block">
+        <p className="type-eyebrow text-brand">{EXPERIENCE.chat.label} · {ACCENT_LABEL[session.accent]}</p>
+        <p className="type-display mt-2 text-5xl">Bate-papo virtual</p>
+        <p className="mt-3 max-w-md text-lg text-muted">{introFor(session.scenarioId, session.accent)}</p>
+        <StatList>
+          <Stat label="Nível" value={session.level} />
+          <Stat label="Rodadas" value={`até ${session.maxTurns}`} />
+        </StatList>
+        <p className="mt-8 max-w-md border-t border-line pt-4 text-sm text-muted">
+          Ouça a mensagem de voz, transcreva o que entendeu e responda por texto. A correção aparece como nota logo abaixo da sua resposta.
+        </p>
+      </div>
+      <div className="relative flex h-[calc(100dvh-4.5rem)] w-full flex-col overflow-hidden bg-canvas lg:h-[min(46rem,calc(100dvh-9rem))] lg:rounded-3xl lg:border lg:border-ink">
         <ChatPanel
           scrollKey={`${turns.length}-${phase}-${turns.filter((t) => t.reply).length}`}
           header={
-            <header className="surface-brand flex items-center gap-3 bg-brand px-3 py-2.5 text-on-brand">
+            <header className="flex items-center gap-3 border-b border-ink bg-canvas px-3 py-2.5">
               <Initials name={contact.name} />
               <div className="min-w-0 flex-1">
-                <h1 className="truncate text-base font-black">
-                  {contact.name} <span className="text-xs font-bold opacity-90">· {contact.role}</span>
+                <h1 className="truncate text-base font-black text-ink">
+                  {contact.name} <span className="text-xs font-bold text-muted">· {contact.role}</span>
                 </h1>
-                <p role="status" aria-live="polite" className="text-xs">
+                <p role="status" aria-live="polite" className="text-xs text-muted">
                   {status}
                 </p>
               </div>
-              <EndSession busy={ctrl.busy} onEnd={() => void ctrl.finish()} tone="on-brand" />
+              <EndSession busy={ctrl.busy} onEnd={() => void ctrl.finish()} />
             </header>
           }
           footer={

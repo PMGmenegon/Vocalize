@@ -42,8 +42,8 @@ export default function TranscriptionResult({ result, large = false }: { result:
     <div className="mt-2 space-y-3">
       <p className="sr-only">{summary}</p>
       <div aria-hidden="true">
-        <p className={`font-black text-ink ${large ? 'text-6xl' : 'text-2xl'}`}>
-          {result.accuracy}% <span className={`font-bold ${large ? 'text-xl' : 'text-sm'}`}>de acerto</span>
+        <p className={`type-display ${large ? 'text-6xl' : 'text-2xl'}`}>
+          {result.accuracy}% <span className={`font-sans font-bold ${large ? 'text-xl' : 'text-sm'}`}>de acerto</span>
         </p>
       </div>
       <ProgressBar label="Acerto do ditado" value={result.accuracy} valueText={`${result.accuracy}%`} />

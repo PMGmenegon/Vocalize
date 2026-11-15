@@ -5,6 +5,7 @@ import { usePracticeSession, type PracticeController } from '../../hooks/usePrac
 import { ACCENT_LABEL } from '../../lib/format'
 import type { Session, Turn } from '../../types'
 import Avatar from '../chat/Avatar'
+import { Page } from '../ui/PageHeader'
 import Button from '../ui/Button'
 import ErrorState from '../ui/ErrorState'
 import ProgressBar from '../ui/ProgressBar'
@@ -21,30 +22,31 @@ function TopBar({ ctrl }: { ctrl: PracticeController }) {
   const elapsed = useElapsed(session.startedAt)
   const situation = situationFor(session.scenarioId)
   return (
-    <header className="border-b border-line pb-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-3">
-          <Avatar spec={character.avatar} className="h-11 w-11" />
+    <header className="mb-8 sm:mb-10">
+      <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+        <div className="flex min-w-0 items-center gap-4">
+          <Avatar spec={character.avatar} className="h-14 w-14" />
           <div className="min-w-0">
-            <h1 className="truncate text-lg font-black text-ink">{situation.title}</h1>
-            <p className="truncate text-sm text-muted">
-              {character.name} ({character.role.toLowerCase()}) · {session.level} · {ACCENT_LABEL[session.accent]}
+            <p className="type-eyebrow text-brand">Treino · {ACCENT_LABEL[session.accent]}</p>
+            <h1 className="type-display mt-1 text-3xl sm:text-4xl">{situation.title}</h1>
+            <p className="text-muted">
+              Com {character.name}, {character.role.toLowerCase()} · nível {session.level}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-4">
-          <p className="text-sm font-bold text-ink" aria-label="Tempo de sessão">
-            <span aria-hidden="true">⏱ </span>
-            <span className="tabular-nums">{formatClock(elapsed)}</span>
-          </p>
+        <div className="flex items-end gap-6">
+          <dl>
+            <dt className="type-eyebrow">Tempo</dt>
+            <dd className="mt-0.5 text-xl font-black tabular-nums text-ink">{formatClock(elapsed)}</dd>
+          </dl>
           <EndSession busy={ctrl.busy} onEnd={() => void ctrl.finish()} />
         </div>
       </div>
-      <div className="mt-3 flex items-center gap-3">
-        <p className="shrink-0 text-sm font-bold text-muted">
+      <div className="mt-5 border-t border-ink pt-3">
+        <p className="type-eyebrow">
           Rodada {Math.max(1, ctrl.turns.length)} de {session.maxTurns}
         </p>
-        <ProgressBar className="flex-1" label="Progresso da sessão" value={ctrl.done} max={session.maxTurns} valueText={`${ctrl.done} de ${session.maxTurns} rodadas concluídas`} />
+        <ProgressBar className="mt-2" label="Progresso da sessão" value={ctrl.done} max={session.maxTurns} valueText={`${ctrl.done} de ${session.maxTurns} rodadas concluídas`} />
       </div>
     </header>
   )
@@ -109,19 +111,19 @@ function TrainingTurn({ ctrl, turn }: { ctrl: PracticeController; turn: Turn }) 
   )
 }
 
-/** Layout de treino: tela focada, sem chat, no estilo de uma ferramenta de listening. */
+/** Layout de treino: tela focada, sem chat, focada na escuta. */
 export default function TrainingLayout({ session }: { session: Session }) {
   const ctrl = usePracticeSession(session)
   const { phase, current } = ctrl
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
+    <Page>
       <TopBar ctrl={ctrl} />
-      <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
-        <main aria-label="Prática de listening" className="min-w-0">
+      <div className="grid gap-x-12 gap-y-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
+        <main aria-label="Prática de escuta" className="min-w-0">
           {phase === 'preparing' ? (
             <div className="space-y-3" aria-live="polite">
-              <p className="font-bold text-ink">Preparando a próxima fala…</p>
+              <p className="type-eyebrow">Preparando a próxima fala…</p>
               <SkeletonBlock lines={3} label="Preparando a próxima fala…" />
             </div>
           ) : phase === 'prepare-error' ? (
@@ -138,6 +140,6 @@ export default function TrainingLayout({ session }: { session: Session }) {
         </main>
         <SessionScript turns={ctrl.turns} />
       </div>
-    </div>
+    </Page>
   )
 }
