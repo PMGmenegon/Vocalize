@@ -42,6 +42,31 @@ export interface Scenario {
   description: string
   icon: ScenarioIconKey
   layout: PracticeLayout
+  /** Onde a cena acontece: pessoalmente ou por mensagens/online. */
+  setting: ScenarioSetting
+  /** Duração estimada de uma sessão, em minutos. */
+  minutes: number
+  /** O que a situação treina (3 itens curtos). */
+  skills: string[]
+  /** Três palavras típicas da situação, por sotaque. */
+  vocab: Record<Accent, string[]>
+}
+
+export type ScenarioSetting = 'in-person' | 'online'
+
+/** Histórico da pessoa em uma situação (tela de escolha da prática). */
+export interface ScenarioHistory {
+  scenarioId: ScenarioId
+  sessions: number
+  averageAccuracy: number
+  lastAccuracy: number
+  /** Data (ISO) da última sessão. */
+  lastDate: string
+}
+
+export interface PracticeOverview {
+  history: ScenarioHistory[]
+  recommendation: { scenarioId: ScenarioId; reason: string }
 }
 
 /** Situação de cada palavra na comparação do ditado. */

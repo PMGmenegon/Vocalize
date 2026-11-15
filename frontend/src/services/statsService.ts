@@ -1,6 +1,8 @@
 import { db } from '../mocks/db'
+import { SCENARIOS } from '../data/scenarios'
+import { recommendScenario } from '../domain/practiceRecommendation'
 import { LEVEL_TIMELINE, WORD_ERROR_TYPE } from '../mocks/history'
-import type { Accent, DashboardData, LevelRecommendation, ScenarioId, SessionListItem, Stats, StatsPeriod } from '../types'
+import type { Accent, DashboardData, LevelRecommendation, PracticeOverview, ScenarioHistory, ScenarioId, SessionListItem, Stats, StatsPeriod } from '../types'
 import { activeHistory, nextLevel, type HistoryEntry } from './history'
 import { dueToday } from './reviewService'
 import { scenarioTitle } from './scenarioService'
@@ -91,6 +93,20 @@ export const statsService = {
           : [],
       }
     }, 500)
+  },
+
+  /** Histórico por situação + situação recomendada (tela de escolha da prática). */
+  getPracticeOverview(): Promise<PracticeOverview> {
+    return simulate(() => {
+      const rows = activeHistory()
+      const history: ScenarioHistory[] = SCENARIOS.flatMap((s) => {
+        const mine = rows.filter((r) => r.scenarioId === s.id)
+        if (mine.length === 0) return []
+        const last = mine.reduce((a, b) => (b.daysAgo <= a.daysAgo ? b : a))
+        return [{ scenarioId: s.id, sessions: mine.length, averageAccuracy: avg(mine.map((r) => r.accuracy)), lastAccuracy: last.accuracy, lastDate: daysAgoIso(last.daysAgo) }]
+      })
+      return { history, recommendation: recommendScenario(SCENARIOS.map((s) => s.id), history) }
+    }, 400)
   },
 
   getDashboard(): Promise<DashboardData> {

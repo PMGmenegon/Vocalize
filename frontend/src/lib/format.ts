@@ -6,6 +6,12 @@ export const ACCENT_LABEL: Record<Accent, string> = {
   'en-GB': 'Britânico (UK)',
 }
 
+/** Forma curta, para resumos e barras. */
+export const ACCENT_SHORT: Record<Accent, string> = {
+  'en-US': 'US English',
+  'en-GB': 'UK English',
+}
+
 /** Sotaque do conteúdo (locale) → tema visual. */
 export const themeOf = (accent: Accent): ThemeAccent => (accent === 'en-GB' ? 'uk' : 'us')
 export const localeOf = (theme: ThemeAccent): Accent => ACCENTS[theme].locale
