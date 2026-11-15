@@ -14,7 +14,7 @@ export default function RequireAuth() {
 
   if (status === 'loading') {
     return (
-      <div className="mx-auto max-w-md p-8">
+      <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
         <SkeletonBlock lines={3} label="Verificando sua sessão…" />
       </div>
     )

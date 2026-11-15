@@ -1,18 +1,19 @@
-import { Link } from 'react-router-dom'
+import Button from '../components/ui/Button'
 
 /** Rota desconhecida. */
 export default function NotFoundPage() {
   return (
-    <section className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6">
-      <p className="text-sm font-bold tracking-widest text-accent uppercase">Erro 404</p>
-      <h1 className="mt-3 text-4xl font-black text-ink">Página não encontrada</h1>
-      <p className="mt-3 text-muted">O endereço que você tentou abrir não existe.</p>
-      <Link
-        to="/"
-        className="mt-8 inline-flex items-center justify-center rounded-xl bg-brand px-7 py-3.5 font-bold text-on-brand transition-colors hover:bg-brand-strong"
-      >
-        Voltar ao início
-      </Link>
+    <section aria-labelledby="erro-titulo" className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-24">
+      <p className="type-eyebrow text-brand">Erro 404</p>
+      <h1 id="erro-titulo" className="type-display mt-2 text-4xl sm:text-5xl">
+        Página não encontrada
+      </h1>
+      <p className="mt-3 max-w-xl text-lg text-muted">O endereço que você tentou abrir não existe ou foi movido.</p>
+      <div className="mt-8 border-t border-line pt-6">
+        <Button to="/" size="lg" className="px-8">
+          Voltar ao início
+        </Button>
+      </div>
     </section>
   )
 }

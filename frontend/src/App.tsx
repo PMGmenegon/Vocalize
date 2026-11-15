@@ -47,7 +47,7 @@ export default function App() {
             <Route
               path="estatisticas"
               element={
-                <Suspense fallback={<div className="mx-auto max-w-6xl p-8"><SkeletonBlock lines={4} label="Carregando estatísticas…" /></div>}>
+                <Suspense fallback={<div className="mx-auto max-w-6xl px-4 py-12 sm:px-6"><SkeletonBlock lines={4} label="Carregando estatísticas…" /></div>}>
                   <StatsPage />
                 </Suspense>
               }

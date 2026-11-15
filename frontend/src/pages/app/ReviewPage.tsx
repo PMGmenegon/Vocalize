@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { PlayIcon } from '../../components/appIcons'
 import Async from '../../components/ui/Async'
-import Badge from '../../components/ui/Badge'
 import Button from '../../components/ui/Button'
-import Card from '../../components/ui/Card'
+import DetailPanel from '../../components/ui/DetailPanel'
 import { Input } from '../../components/ui/Input'
+import { List } from '../../components/ui/List'
 import PageHeader, { Page } from '../../components/ui/PageHeader'
+import Section from '../../components/ui/Section'
 import Skeleton from '../../components/ui/Skeleton'
 import { useAsync } from '../../hooks/useAsync'
 import { reviewService } from '../../services'
@@ -52,114 +53,111 @@ function Flashcards({ cards }: { cards: Flashcard[] }) {
     }
   }
 
+  const right = card ? norm(typed) === norm(card.word) : false
+
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_18rem]">
-      <div>
-        {done || !card ? (
-          <section className="border-y border-line py-10 text-center">
-            <p role="status" className="text-2xl font-black text-ink">
-              ✓ Revisão de hoje concluída!
-            </p>
-            <p className="mt-2 text-muted">Você revisou {cards.length} {cards.length === 1 ? 'palavra' : 'palavras'}. Volte amanhã para mais.</p>
-            <div className="mt-5 flex justify-center">
-              <Button to="/app">Ir para o início</Button>
-            </div>
-          </section>
-        ) : (
-          <Card>
-            <p className="text-sm font-bold text-muted">
-              Cartão {index + 1} de {cards.length}
-            </p>
-
-            {!flipped ? (
-              <form
-                className="mt-4 space-y-5"
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  setFlipped(true)
-                }}
-              >
-                <h2 className="text-2xl font-black text-brand">Ouça e digite a palavra</h2>
-                <div className="flex flex-wrap items-center gap-3">
-                  <Button variant="secondary" onClick={() => setPlayed(true)}>
-                    <PlayIcon className="h-5 w-5" /> Ouvir
-                  </Button>
-                  <p role="status" className="text-sm text-muted">
-                    {played ? 'O áudio chega numa fase futura; por enquanto é só o visual.' : ''}
-                  </p>
-                </div>
-                <Input
-                  label="Palavra que você ouviu"
-                  lang="en"
-                  value={typed}
-                  onChange={(e) => setTyped(e.target.value)}
-                  autoComplete="off"
-                  autoCapitalize="none"
-                  spellCheck={false}
-                />
-                <Button type="submit" size="lg">
-                  Virar cartão
-                </Button>
-              </form>
-            ) : (
-              <div className="mt-4 space-y-5">
-                <h2 ref={answer} tabIndex={-1} className="text-2xl font-black text-brand focus:outline-none">
-                  Resposta
-                </h2>
-                <div role="status">
-                  {norm(typed) === norm(card.word) ? (
-                    <Badge tone="ok">✓ Você acertou</Badge>
-                  ) : (
-                    <Badge tone="danger">
-                      ✗ Você digitou: <span lang="en">{typed.trim() || '(nada)'}</span>
-                    </Badge>
-                  )}
-                </div>
-                <div className="rounded-xl bg-surface p-5">
-                  <p lang="en" className="text-4xl font-black text-ink">
-                    {card.word}
-                  </p>
-                  <p className="mt-1 text-lg text-ink">{card.meaning}</p>
-                  <p lang="en" className="mt-3 text-muted">
-                    “{card.example}”
-                  </p>
-                </div>
-                <fieldset>
-                  <legend className="mb-2 text-sm font-bold text-ink">Como foi lembrar essa palavra?</legend>
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                    {RATINGS.map((r) => (
-                      <Button key={r.value} variant={r.value === 'again' ? 'danger' : 'secondary'} disabled={busy} onClick={() => void rate(r.value)} className="flex-col !gap-0">
-                        <span>{r.label}</span>
-                        <span className="text-xs font-normal">{r.hint}</span>
-                      </Button>
-                    ))}
-                  </div>
-                </fieldset>
+    <>
+      <div className="grid gap-x-12 gap-y-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
+        <div className="min-w-0">
+          {done || !card ? (
+            <section className="border-y border-line py-12">
+              <p role="status" className="type-display text-3xl">
+                ✓ Revisão de hoje concluída!
+              </p>
+              <p className="mt-3 text-lg text-muted">
+                Você revisou {cards.length} {cards.length === 1 ? 'palavra' : 'palavras'}. Volte amanhã para mais.
+              </p>
+              <div className="mt-6">
+                <Button to="/app">Ir para o início</Button>
               </div>
-            )}
-            <p role="alert" className="mt-3 text-sm font-bold text-on-danger">
-              {error}
-            </p>
-          </Card>
-        )}
-      </div>
+            </section>
+          ) : (
+            <section aria-label={`Cartão ${index + 1} de ${cards.length}`}>
+              <p className="type-eyebrow border-b border-ink pb-2">
+                Cartão {index + 1} de {cards.length}
+              </p>
 
-      <aside aria-labelledby="queue-title" className="lg:border-l lg:border-line lg:pl-6">
-        <h2 id="queue-title" className="border-b border-line pb-2 text-lg font-black text-ink">
-          Fila de hoje
-        </h2>
-        <ol className="divide-y divide-line">
-          {cards.map((c, i) => (
-            <li key={c.id} className="flex items-center justify-between gap-2 py-2.5 text-sm">
-              <span lang="en" className={`font-bold ${i < index ? 'text-muted line-through' : 'text-ink'}`}>
-                {c.word}
-              </span>
-              <span className="text-muted">{i < index ? '✓ feita' : i === index && !done ? '● agora' : 'pendente'}</span>
-            </li>
-          ))}
-        </ol>
-      </aside>
-    </div>
+              {!flipped ? (
+                <form
+                  className="mt-6 space-y-6"
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    setFlipped(true)
+                  }}
+                >
+                  <h2 className="type-display text-3xl">Ouça e digite a palavra</h2>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Button variant="secondary" onClick={() => setPlayed(true)}>
+                      <PlayIcon className="h-5 w-5" /> Ouvir
+                    </Button>
+                    <p role="status" className="text-sm text-muted">
+                      {played ? 'O áudio chega numa fase futura; por enquanto é só o visual.' : ''}
+                    </p>
+                  </div>
+                  <Input label="Palavra que você ouviu" lang="en" value={typed} onChange={(e) => setTyped(e.target.value)} autoComplete="off" autoCapitalize="none" spellCheck={false} />
+                  <Button type="submit" size="lg" className="px-8">
+                    Virar cartão
+                  </Button>
+                </form>
+              ) : (
+                <div className="mt-6 space-y-6">
+                  <h2 ref={answer} tabIndex={-1} className="type-eyebrow text-brand focus:outline-none">
+                    Resposta
+                  </h2>
+                  <p role="status" className={`font-black ${right ? 'text-on-ok' : 'text-on-danger'}`}>
+                    {right ? (
+                      '✓ Você acertou'
+                    ) : (
+                      <>
+                        ✗ Você digitou: <span lang="en">{typed.trim() || '(nada)'}</span>
+                      </>
+                    )}
+                  </p>
+                  <div className="border-l-2 border-brand pl-5">
+                    <p lang="en" className="type-display text-5xl">
+                      {card.word}
+                    </p>
+                    <p className="mt-2 text-xl text-ink">{card.meaning}</p>
+                    <p lang="en" className="mt-3 text-muted">
+                      “{card.example}”
+                    </p>
+                  </div>
+                  <fieldset>
+                    <legend className="type-eyebrow mb-3">Como foi lembrar essa palavra?</legend>
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                      {RATINGS.map((r) => (
+                        <Button key={r.value} variant={r.value === 'again' ? 'danger' : 'secondary'} disabled={busy} onClick={() => void rate(r.value)} className="flex-col !gap-0">
+                          <span>{r.label}</span>
+                          <span className="text-xs font-normal">{r.hint}</span>
+                        </Button>
+                      ))}
+                    </div>
+                  </fieldset>
+                </div>
+              )}
+              <p role="alert" className="mt-3 text-sm font-bold text-on-danger empty:hidden">
+                {error}
+              </p>
+            </section>
+          )}
+        </div>
+
+        <DetailPanel label="Fila de hoje">
+          <Section id="queue-title" title="Fila de hoje" meta={cards.length}>
+            <List ordered>
+              {cards.map((c, i) => (
+                <li key={c.id} className="flex items-center justify-between gap-2 py-3 text-sm">
+                  <span lang="en" className={`font-bold ${i < index ? 'text-muted line-through' : 'text-ink'}`}>
+                    {c.word}
+                  </span>
+                  <span className={i === index && !done ? 'font-bold text-brand' : 'text-muted'}>{i < index ? '✓ feita' : i === index && !done ? '● agora' : 'pendente'}</span>
+                </li>
+              ))}
+            </List>
+          </Section>
+        </DetailPanel>
+      </div>
+    </>
   )
 }
 
@@ -167,11 +165,15 @@ export default function ReviewPage() {
   const state = useAsync(() => reviewService.getDue())
   return (
     <Page>
-      <PageHeader eyebrow="Revisão" title="Palavras do dia" description="Ouça a palavra, escreva como você ouviu e confira. Avalie para o app saber quando mostrá-la de novo." />
+      <PageHeader
+        eyebrow="Revisão"
+        title="Palavras do dia"
+        description="Ouça a palavra, escreva como você ouviu e confira. Avalie para o app saber quando mostrá-la de novo."
+      />
       <Async
         state={state}
         skeleton={
-          <div role="status" aria-live="polite" className="grid gap-6 lg:grid-cols-[1fr_18rem]">
+          <div role="status" aria-live="polite" className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
             <span className="sr-only">Carregando suas palavras…</span>
             <Skeleton className="h-80" />
             <Skeleton className="h-56" />

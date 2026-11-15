@@ -22,14 +22,6 @@ export const ReplayIcon = ({ className }: P) => (
   </Icon>
 )
 
-/** Tartaruga simplificada: velocidade reduzida. */
-export const SlowIcon = ({ className }: P) => (
-  <Icon className={className}>
-    <path d="M4 16a8 7 0 0 1 16 0z" />
-    <path d="M20 16h2M4 16l-2 1.5M8 20v-4M16 20v-4" />
-  </Icon>
-)
-
 export const MicIcon = ({ className }: P) => (
   <Icon className={className}>
     <rect x="9" y="3" width="6" height="11" rx="3" />
