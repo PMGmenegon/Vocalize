@@ -71,20 +71,20 @@ export default function AuthForm({ mode }: { mode: Mode }) {
   const errorCount = Object.keys(errors).length
 
   return (
-    <section className="w-full">
-      <h1 className="text-3xl font-black text-brand">{isLogin ? 'Bem-vindo de volta' : 'Crie sua conta'}</h1>
-      <p className="mt-2 text-muted">
+    <section className="auth-form flex w-full flex-1 flex-col">
+      <h1 className="type-display text-[length:var(--t-title-size)]">{isLogin ? 'Bem-vindo de volta' : 'Crie sua conta'}</h1>
+      <p className="mt-[var(--sp-1)] text-muted">
         {isLogin ? 'Continue de onde parou e treine seu ouvido.' : 'Em um minuto você começa a treinar seu ouvido.'}
       </p>
 
-      <form ref={formRef} onSubmit={onSubmit} noValidate className="mt-8 space-y-4">
+      <form ref={formRef} onSubmit={onSubmit} noValidate className="mt-[var(--sp-3)] space-y-[var(--sp-2)]">
         <div role="alert">
           {submitted && errorCount > 0 && (
-            <p className="rounded-xl bg-danger p-3 text-sm font-bold text-on-danger">
+            <p className="rounded-md bg-danger p-3 text-sm font-bold text-on-danger">
               Corrija {errorCount === 1 ? 'o campo destacado' : `os ${errorCount} campos destacados`} para continuar.
             </p>
           )}
-          {formError && <p className="rounded-xl bg-danger p-3 text-sm font-bold text-on-danger">{formError}</p>}
+          {formError && <p className="rounded-md bg-danger p-3 text-sm font-bold text-on-danger">{formError}</p>}
         </div>
         {!isLogin && (
           <Input label="Nome" name="name" autoComplete="name" value={values.name} onChange={set('name')} error={errors.name} />
@@ -126,7 +126,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
             <button
               type="button"
               onClick={() => setNote('A recuperação de senha chega numa fase futura.')}
-              className="min-h-9 cursor-pointer rounded-lg px-1 text-sm font-bold text-link underline underline-offset-4"
+              className="min-h-9 cursor-pointer px-1 text-sm font-bold text-link underline underline-offset-4"
             >
               Esqueci minha senha
             </button>
@@ -137,7 +137,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
         </Button>
       </form>
 
-      <div className="my-6 flex items-center gap-3 text-sm text-muted" aria-hidden="true">
+      <div className="my-[var(--sp-3)] flex items-center gap-3 text-sm text-muted" aria-hidden="true">
         <span className="h-px flex-1 bg-line" />
         ou
         <span className="h-px flex-1 bg-line" />
@@ -145,7 +145,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
 
       <Button
         variant="secondary"
-        className="w-full"
+        className="btn-line w-full"
         onClick={() => setNote('O login com Google chega numa fase futura. Por enquanto, use e-mail e senha.')}
       >
         <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" focusable="false">
@@ -160,7 +160,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
         {note}
       </p>
 
-      <p className="mt-6 text-center text-muted">
+      <p className="mt-auto pt-[var(--sp-3)] text-muted">
         {isLogin ? 'Ainda não tem conta? ' : 'Já tem conta? '}
         <Link to={isLogin ? '/cadastro' : '/login'} className="font-bold text-link underline underline-offset-4">
           {isLogin ? 'Cadastre-se' : 'Entrar'}

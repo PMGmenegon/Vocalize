@@ -176,7 +176,7 @@ function Transcript() {
         className="transition-opacity ease-in-out"
         style={{ opacity: fading ? 0 : 1, transitionDuration: reduced ? '0ms' : `${FADE_MS}ms` }}
       >
-        <p className="text-[11px] font-bold uppercase leading-relaxed tracking-[0.16em] text-muted">
+        <p className="type-eyebrow leading-relaxed">
           {scene.title} · {scene.level} · {scene.accent} · <span className="tabular-nums">{mmss(elapsed)} / {mmss(scene.total)}</span>
         </p>
 
@@ -228,7 +228,7 @@ const ROWS: { label?: string; us: string; uk: string; ipa?: [string, string]; fi
 
 function Comparison({ accent }: { accent: 'us' | 'uk' }) {
   const col = (side: 'us' | 'uk') => (accent === side ? 'text-ink' : 'text-muted')
-  const head = (side: 'us' | 'uk') => `pb-2 text-left text-[11px] font-bold uppercase tracking-[0.16em] ${accent === side ? 'underline decoration-2 underline-offset-[6px]' : ''}`
+  const head = (side: 'us' | 'uk') => `type-eyebrow pb-2 text-left ${accent === side ? 'underline decoration-2 underline-offset-[6px]' : ''}`
   return (
     <table lang="en" className="w-full border-collapse text-left">
       <thead>
@@ -241,7 +241,7 @@ function Comparison({ accent }: { accent: 'us' | 'uk' }) {
       <tbody>
         {ROWS.map((r, i) => (
           <tr key={i} className={r.first ? 'border-t border-line' : ''}>
-            <th scope="row" className="py-1.5 pr-3 align-baseline text-[11px] font-bold uppercase tracking-[0.16em] text-muted">
+            <th scope="row" className="type-eyebrow py-1.5 pr-3 align-baseline">
               {r.label}
             </th>
             {(['us', 'uk'] as const).map((side, k) => (
@@ -273,12 +273,12 @@ export default function BrandPanel() {
   return (
     <div
       aria-hidden="true"
-      className="absolute inset-0 flex flex-col overflow-hidden px-[clamp(1.75rem,5vw,5rem)] py-[clamp(1.5rem,4.5vh,3.5rem)]"
+      className="absolute inset-0 flex flex-col justify-between overflow-hidden py-[var(--auth-pad-y)]"
     >
-      <div className="my-auto w-full max-w-[40rem] space-y-[clamp(1.25rem,3.4vh,2.25rem)]">
+      <div className="w-full max-w-[40rem] space-y-[clamp(1.25rem,3.4vh,2.25rem)]">
         <header lang="en">
-          <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted">Vocalize · Listening Lab</p>
-          <h2 className="font-editorial mt-3 text-[clamp(2rem,3.5vw,4.25rem)] font-medium leading-[1.04] tracking-tight text-ink">
+          <p className="type-eyebrow">Vocalize · Listening Lab</p>
+          <h2 className="type-display mt-3 text-[length:var(--t-display-size)]">
             The world speaks.
             <br />
             <em className="font-normal" style={{ color: WINE }}>
@@ -301,7 +301,7 @@ export default function BrandPanel() {
 
       <footer
         lang="en"
-        className="hidden w-full max-w-[40rem] items-baseline justify-between gap-4 border-t border-line pt-3 text-[11px] font-bold uppercase tracking-[0.16em] text-muted lg:flex [@media(max-height:700px)]:!hidden"
+        className="hidden w-full max-w-[40rem] items-baseline justify-between gap-4 border-t border-line pt-3 type-eyebrow lg:flex [@media(max-height:700px)]:!hidden"
       >
         <p>
           NYC <span className="tabular-nums text-ink">{NYC.format(now)}</span>
