@@ -52,7 +52,7 @@ export default function StatsPage() {
 
   return (
     <Page>
-      <PageHeader title="Estatísticas" description="Acompanhe sua evolução no listening, os erros mais comuns e o ritmo de estudo." />
+      <PageHeader eyebrow="Estatísticas" title="Sua evolução" description="Acompanhe sua evolução no listening, os erros mais comuns e o ritmo de estudo." />
       <div className="mb-6">
         <ChoiceGroup legend="Período" variant="pill" value={period} onChange={setPeriod} options={PERIODS} />
       </div>

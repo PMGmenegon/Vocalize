@@ -48,8 +48,6 @@ export interface Scenario {
   minutes: number
   /** O que a situação treina (3 itens curtos). */
   skills: string[]
-  /** Três palavras típicas da situação, por sotaque. */
-  vocab: Record<Accent, string[]>
 }
 
 export type ScenarioSetting = 'in-person' | 'online'

@@ -6,12 +6,13 @@ interface EmptyStateProps {
   action?: ReactNode
 }
 
+/** Estado vazio: sem caixa, só linhas finas e espaço. */
 export default function EmptyState({ title, description, action }: EmptyStateProps) {
   return (
-    <div className="rounded-2xl border-2 border-dashed border-line bg-surface p-8 text-center">
-      <p className="text-lg font-black text-ink">{title}</p>
-      {description && <p className="mx-auto mt-2 max-w-md text-muted">{description}</p>}
-      {action && <div className="mt-5 flex justify-center">{action}</div>}
+    <div className="border-y border-line py-12">
+      <p className="type-display text-3xl">{title}</p>
+      {description && <p className="mt-3 max-w-xl text-lg text-muted">{description}</p>}
+      {action && <div className="mt-6">{action}</div>}
     </div>
   )
 }

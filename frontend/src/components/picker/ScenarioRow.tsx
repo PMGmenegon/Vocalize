@@ -33,7 +33,7 @@ export default function ScenarioRow({ scenario, accent, history, name, checked, 
   const character = characterFor(scenario.id, accent)
   return (
     <label
-      className={`group relative grid cursor-pointer grid-cols-[auto_1fr] gap-x-4 gap-y-3 border-b border-line py-5 pr-3 pl-5 transition-colors has-[:focus-visible]:outline-3 has-[:focus-visible]:-outline-offset-3 has-[:focus-visible]:outline-(--focus) sm:grid-cols-[auto_1fr_auto] ${
+      className={`group relative grid cursor-pointer grid-cols-[auto_1fr] gap-x-4 gap-y-3 py-5 pr-3 pl-5 transition-colors has-[:focus-visible]:outline-3 has-[:focus-visible]:-outline-offset-3 has-[:focus-visible]:outline-(--focus) sm:grid-cols-[auto_1fr_auto] ${
         checked ? 'bg-surface' : 'hover:bg-surface/70'
       }`}
     >
@@ -60,12 +60,6 @@ export default function ScenarioRow({ scenario, accent, history, name, checked, 
           <span className="mt-1 block text-ink">{scenario.description}</span>
           <span className="mt-1 block text-sm text-muted">
             Com {character.name}, {character.role.toLowerCase()}
-          </span>
-          <span className="mt-2 block text-sm text-muted">
-            <span className="sr-only">Vocabulário típico: </span>
-            <span lang="en" className="italic">
-              {scenario.vocab[accent].join(' · ')}
-            </span>
           </span>
         </span>
       </span>

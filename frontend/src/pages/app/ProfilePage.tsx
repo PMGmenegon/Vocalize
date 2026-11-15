@@ -41,7 +41,7 @@ export default function ProfilePage() {
 
   return (
     <Page narrow>
-      <PageHeader title="Perfil" />
+      <PageHeader eyebrow="Conta" title="Perfil" />
       <section aria-labelledby="data-title">
         <h2 id="data-title" className="border-b border-line pb-2 text-xl font-black text-ink">
           Seus dados

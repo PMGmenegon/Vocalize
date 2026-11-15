@@ -167,7 +167,7 @@ export default function ReviewPage() {
   const state = useAsync(() => reviewService.getDue())
   return (
     <Page>
-      <PageHeader title="Revisão" description="Ouça a palavra, escreva como você ouviu e confira. Avalie para o app saber quando mostrá-la de novo." />
+      <PageHeader eyebrow="Revisão" title="Palavras do dia" description="Ouça a palavra, escreva como você ouviu e confira. Avalie para o app saber quando mostrá-la de novo." />
       <Async
         state={state}
         skeleton={

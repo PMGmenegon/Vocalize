@@ -18,8 +18,6 @@ interface HeaderProps {
   trackActive?: boolean
   /** Botão de destaque ao lado da navegação. */
   cta?: NavItem
-  /** Saudação do modo atual (área logada). Mostra uma faixa com ilustração sob o cabeçalho. */
-  greeting?: string
 }
 
 const baseLink = 'rounded-lg px-3 py-2 text-sm font-semibold transition-colors'
@@ -30,7 +28,7 @@ const ctaClass =
  * Cabeçalho compartilhado pelo site público e pela área logada.
  * Em telas >= md mostra a navegação inline; abaixo disso vira menu hambúrguer.
  */
-export default function Header({ logoTo, items, trackActive = false, cta, greeting }: HeaderProps) {
+export default function Header({ logoTo, items, trackActive = false, cta }: HeaderProps) {
   const [open, setOpen] = useState(false)
   const menuButton = useRef<HTMLButtonElement>(null)
   const menuId = 'menu-principal'
@@ -108,14 +106,6 @@ export default function Header({ logoTo, items, trackActive = false, cta, greeti
           </button>
         </div>
       </div>
-
-      {greeting && (
-        <div className="relative isolate overflow-hidden border-t border-line bg-surface">
-          <p className="mx-auto flex h-11 max-w-6xl items-center px-4 text-sm font-bold text-ink sm:px-6">
-            <span lang="en" className="text-base font-black text-brand">{greeting}</span>
-          </p>
-        </div>
-      )}
 
       {open && (
         <nav id={menuId} aria-label="Principal" className="border-t border-line bg-canvas px-4 pb-4 pt-2 lg:hidden">

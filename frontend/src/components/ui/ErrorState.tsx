@@ -8,13 +8,13 @@ interface ErrorStateProps {
 /** Erro de carregamento. role="alert" faz o leitor de tela anunciar na hora. */
 export default function ErrorState({ message = 'Não foi possível carregar esta informação.', onRetry }: ErrorStateProps) {
   return (
-    <div role="alert" className="rounded-2xl border-2 border-on-danger bg-danger p-6 text-on-danger">
-      <p className="font-black">
-        <span aria-hidden="true">✗ </span>
-        {message}
+    <div role="alert" className="border-y border-line py-10">
+      <p className="type-eyebrow text-on-danger">
+        <span aria-hidden="true">✗ </span>Algo deu errado
       </p>
+      <p className="type-display mt-2 text-3xl">{message}</p>
       {onRetry && (
-        <div className="mt-4">
+        <div className="mt-6">
           <Button variant="secondary" onClick={onRetry}>
             Tentar de novo
           </Button>

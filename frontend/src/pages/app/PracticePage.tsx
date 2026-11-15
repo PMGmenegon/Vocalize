@@ -6,8 +6,13 @@ import ScenarioDetail from '../../components/picker/ScenarioDetail'
 import ScenarioRow from '../../components/picker/ScenarioRow'
 import Async from '../../components/ui/Async'
 import Button from '../../components/ui/Button'
-import { Page } from '../../components/ui/PageHeader'
+import DetailPanel from '../../components/ui/DetailPanel'
+import { List } from '../../components/ui/List'
+import PageHeader, { Page } from '../../components/ui/PageHeader'
+import Section from '../../components/ui/Section'
 import Skeleton from '../../components/ui/Skeleton'
+import { Stat, StatList } from '../../components/ui/Stat'
+import StickyActionBar from '../../components/ui/StickyActionBar'
 import { characterFor, EXPERIENCE, SETTING_LABEL } from '../../data/scenarios'
 import { useAsync } from '../../hooks/useAsync'
 import { useMediaQuery } from '../../hooks/useMediaQuery'
@@ -68,21 +73,17 @@ export default function PracticePage() {
 
   return (
     <Page>
-      <header className="mb-8 sm:mb-10">
-        <p className="type-eyebrow text-brand">Praticar</p>
-        <h1 className="type-display mt-2 text-4xl sm:text-5xl">O que vamos ouvir hoje?</h1>
-        <p className="mt-3 max-w-2xl text-lg text-muted">Escolha uma situação do dia a dia. Em cada rodada você ouve, transcreve e responde, no seu nível e no sotaque que quiser treinar.</p>
-        <dl className="mt-5 flex flex-wrap gap-x-10 gap-y-3">
-          <div>
-            <dt className="type-eyebrow">Nível</dt>
-            <dd className="mt-0.5 text-xl font-black text-ink">{level}</dd>
-          </div>
-          <div>
-            <dt className="type-eyebrow">Sotaque</dt>
-            <dd className="mt-0.5 text-xl font-black text-ink">{ACCENT_LABEL[accent]}</dd>
-          </div>
-        </dl>
-      </header>
+      <PageHeader
+        eyebrow="Praticar"
+        title="O que vamos ouvir hoje?"
+        description="Escolha uma situação do dia a dia. Em cada rodada você ouve, transcreve e responde, no seu nível e no sotaque que quiser treinar."
+        stats={
+          <StatList>
+            <Stat label="Nível" value={level} />
+            <Stat label="Sotaque" value={ACCENT_LABEL[accent]} />
+          </StatList>
+        }
+      />
 
       <Async
         state={state}
@@ -138,60 +139,41 @@ export default function PracticePage() {
                       const group = scenarios.filter((s) => s.setting === setting)
                       if (group.length === 0) return null
                       return (
-                        <div key={setting}>
-                          <h2 className="type-eyebrow flex items-baseline justify-between border-b border-ink pb-2">
-                            <span>{SETTING_LABEL[setting]}</span>
-                            <span>{group.length}</span>
-                          </h2>
-                          <ul>
+                        <Section key={setting} id={`grupo-${setting}`} title={SETTING_LABEL[setting]} meta={group.length}>
+                          <List className="border-b border-line">
                             {group.map((s) => (
                               <li key={s.id}>
                                 <ScenarioRow scenario={s} accent={accent} history={historyOf(s.id)} name={groupName} checked={s.id === scenarioId} onSelect={() => setScenarioId(s.id)} />
-                                {!isDesktop && s.id === scenarioId && <div className="border-b border-line bg-surface px-5 pt-2 pb-6">{detail(s)}</div>}
+                                {!isDesktop && s.id === scenarioId && <div className="bg-surface px-5 pt-2 pb-6">{detail(s)}</div>}
                               </li>
                             ))}
-                          </ul>
-                        </div>
+                          </List>
+                        </Section>
                       )
                     })}
                   </div>
                 </fieldset>
 
                 {isDesktop && (
-                  <aside aria-label="Detalhes da situação" className="self-start lg:sticky lg:top-24 lg:max-h-[calc(100dvh-12rem)] lg:overflow-y-auto">
-                    <div className="border-l border-line pl-8">
-                      {selected ? (
-                        detail(selected)
-                      ) : (
-                        <div>
-                          <p className="type-eyebrow">Detalhes</p>
-                          <p className="type-display mt-2 text-2xl">Escolha uma situação</p>
-                          <p className="mt-3 text-muted">Aqui aparecem a cena, o que você vai treinar e os ajustes de nível e sotaque.</p>
-                        </div>
-                      )}
-                    </div>
-                  </aside>
+                  <DetailPanel label="Detalhes da situação">
+                    {selected ? (
+                      detail(selected)
+                    ) : (
+                      <div>
+                        <p className="type-eyebrow">Detalhes</p>
+                        <p className="type-display mt-2 text-2xl">Escolha uma situação</p>
+                        <p className="mt-3 text-muted">Aqui aparecem a cena, o que você vai treinar e os ajustes de nível e sotaque.</p>
+                      </div>
+                    )}
+                  </DetailPanel>
                 )}
               </div>
 
-              <div className="sticky bottom-0 z-30 -mx-4 mt-8 border-t border-ink bg-canvas px-4 py-3 sm:-mx-6 sm:px-6">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="min-w-0">
-                    <p className="type-eyebrow">Sua sessão</p>
-                    {selected ? (
-                      <p className="font-black text-ink">{summary}</p>
-                    ) : (
-                      <p className="text-muted">Escolha uma situação para começar.</p>
-                    )}
-                    <p role="alert" className="text-sm font-bold text-on-danger empty:hidden">
-                      {error}
-                    </p>
-                  </div>
-                  <Button type="submit" size="lg" disabled={!selected || busy} aria-busy={busy} className="shrink-0 px-8">
-                    {busy ? 'Preparando…' : 'Começar'}
-                  </Button>
-                </div>
-              </div>
+              <StickyActionBar label="Sua sessão" summary={selected ? summary : <span className="font-normal text-muted">Escolha uma situação para começar.</span>} error={error}>
+                <Button type="submit" size="lg" disabled={!selected || busy} aria-busy={busy} className="px-8">
+                  {busy ? 'Preparando…' : 'Começar'}
+                </Button>
+              </StickyActionBar>
             </form>
           )
         }}

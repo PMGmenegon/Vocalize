@@ -46,7 +46,7 @@ export default function SummaryPage() {
       >
         {(s) => (
           <>
-            <PageHeader title="Sessão concluída" description={`${s.scenarioTitle} · ${s.turnsCompleted} ${s.turnsCompleted === 1 ? 'rodada' : 'rodadas'}`} />
+            <PageHeader eyebrow="Resumo" title="Sessão concluída" description={`${s.scenarioTitle} · ${s.turnsCompleted} ${s.turnsCompleted === 1 ? 'rodada' : 'rodadas'}`} />
             <dl className="grid gap-4 border-y border-line py-5 sm:grid-cols-4 sm:gap-0 sm:divide-x sm:divide-line">
               <Metric label="Acerto médio" value={`${s.averageAccuracy}%`} />
               <Metric label="Tempo" value={formatDuration(s.durationSeconds)} />
