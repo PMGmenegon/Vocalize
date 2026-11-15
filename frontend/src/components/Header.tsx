@@ -74,7 +74,12 @@ export default function Header({ logoTo, items, trackActive = false, cta, greeti
       <div className="accent-stripe" aria-hidden="true" />
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-4 sm:gap-4 sm:px-6">
         <Link to={logoTo} aria-label="Vocalize — página inicial" className="rounded-lg">
-          <Logo />
+          <span className="sm:hidden">
+            <Logo variant="mark" />
+          </span>
+          <span className="hidden sm:inline-flex">
+            <Logo />
+          </span>
         </Link>
 
         <nav aria-label="Principal" className="hidden items-center gap-1 lg:flex">
