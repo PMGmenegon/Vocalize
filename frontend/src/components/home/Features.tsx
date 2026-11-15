@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import ExpandCard from '../ExpandCard'
+import HomeSection from './HomeSection'
 import { ChartIcon, CheckNoteIcon, DictationIcon, GlobeIcon, PinIcon, StairsIcon } from '../icons'
 
 interface Feature {
@@ -12,7 +13,7 @@ interface Feature {
 const FEATURES: readonly Feature[] = [
   {
     title: 'Diálogos em cenários reais',
-    description: 'Restaurante, entrevista, aeroporto, hotel, compras e small talk.',
+    description: 'Restaurante, entrevista, aeroporto, hotel, compras e bate-papo por mensagens de voz.',
     details:
       'Você escolhe um cenário e a IA conversa com você como se fosse a situação real, adaptando as falas ao seu nível.',
     icon: <PinIcon />,
@@ -57,22 +58,12 @@ const FEATURES: readonly Feature[] = [
 /** Grade de funcionalidades. */
 export default function Features() {
   return (
-    <section id="funcionalidades" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-16 sm:px-6 sm:py-20">
-      <h2 className="text-3xl font-black text-ink sm:text-4xl">Funcionalidades</h2>
-      <p className="mt-3 max-w-2xl text-muted">O essencial do Vocalize. Clique em um cartão para saber mais.</p>
-
-      <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <HomeSection id="funcionalidades" eyebrow="Funcionalidades" title="O essencial do Vocalize" description="Toque em “Saiba mais” para ver os detalhes de cada uma.">
+      <ul className="grid gap-x-12 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
         {FEATURES.map((f, i) => (
-          <ExpandCard
-            key={f.title}
-            icon={f.icon}
-            title={f.title}
-            summary={f.description}
-            details={f.details}
-            delay={(i % 3) * 90}
-          />
+          <ExpandCard key={f.title} icon={f.icon} title={f.title} summary={f.description} details={f.details} delay={(i % 3) * 90} />
         ))}
       </ul>
-    </section>
+    </HomeSection>
   )
 }

@@ -18,7 +18,7 @@ const rest = (i: number, t = 0) => 0.28 + 0.14 * Math.sin(t * 1.2 + i * 0.45) + 
 export default function SoundStage() {
   const { accent } = useTheme()
   const reduced = usePrefersReducedMotion()
-  const phrase = MODE_COPY[accent].tagline
+  const phrase = MODE_COPY[accent].demoPhrase
   const locale = ACCENTS[accent].locale
 
   const words = useMemo(() => phrase.split(' '), [phrase])
@@ -130,7 +130,8 @@ export default function SoundStage() {
   }
 
   return (
-    <div className="rounded-3xl border-2 border-line bg-surface p-4 shadow-sm sm:p-6">
+    <div className="border-y border-ink py-5 sm:py-6">
+      <p className="type-eyebrow mb-4">Frase de exemplo</p>
       <div
         className="flex h-40 touch-pan-y items-center gap-[3px] sm:h-48"
         onPointerMove={setPointer}
@@ -161,7 +162,7 @@ export default function SoundStage() {
           onClick={play}
           aria-pressed={speaking}
           aria-label={speaking ? 'Parar a frase' : `Ouvir a frase em ${ACCENTS[accent].label.toLowerCase()}`}
-          className="inline-flex h-14 w-14 shrink-0 cursor-pointer items-center justify-center rounded-full bg-brand text-on-brand shadow-md transition-all hover:bg-brand-strong active:scale-90"
+          className="inline-flex h-14 w-14 shrink-0 cursor-pointer items-center justify-center rounded-full bg-brand text-on-brand transition-colors hover:bg-brand-strong motion-safe:active:scale-95"
         >
           <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor" aria-hidden="true">
             {speaking ? <path d="M7 6h3.5v12H7zM13.5 6H17v12h-3.5z" /> : <path d="M8 5.5v13l11-6.5z" />}
@@ -181,9 +182,8 @@ export default function SoundStage() {
           ))}
         </p>
       </div>
-      <p className="mt-3 text-sm text-muted">
-        Passe o mouse (ou o dedo) sobre as ondas e toque em play para ouvir no sotaque do seu modo.
-      </p>
+      <p className="mt-3 text-muted">Em português: {MODE_COPY[accent].demoTranslation}</p>
+      <p className="mt-1 text-sm text-muted">Passe o mouse (ou o dedo) sobre as ondas e toque em play para ouvir no sotaque do seu modo.</p>
       {voiceNote && (
         <p role="status" className="mt-2 text-sm font-bold text-ink">
           {voiceNote}

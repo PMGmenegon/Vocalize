@@ -1,10 +1,8 @@
 import type { CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import { ACCENTS, type Accent } from '../../theme/accents'
-import { MODE_COPY } from '../../theme/modeCopy'
 import { useTheme } from '../../theme/useTheme'
 import { Flag } from '../Flags'
-import Typewriter from '../Typewriter'
 import SoundStage from './SoundStage'
 
 const delay = (ms: number) => ({ '--d': `${ms}ms` }) as CSSProperties
@@ -12,40 +10,25 @@ const delay = (ms: number) => ({ '--d': `${ms}ms` }) as CSSProperties
 /** Topo da landing: nome, frase principal, palco sonoro interativo e botão "Começar". */
 export default function Hero() {
   const { accent, setAccent } = useTheme()
-  const copy = MODE_COPY[accent]
   const other: Accent = accent === 'us' ? 'uk' : 'us'
 
   return (
-    <section className="hero-glow relative isolate overflow-hidden">
-      <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[1.05fr_1fr] lg:gap-14 lg:py-24">
+    <section aria-labelledby="hero-titulo">
+      <div className="mx-auto grid max-w-6xl items-center gap-x-16 gap-y-12 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:py-24">
         <div>
-          <h1 className="rise">
-            <span className="block text-sm font-black tracking-[0.3em] text-brand">VOCALIZE</span>
-            <span className="mt-3 block text-4xl leading-tight font-black text-ink sm:text-5xl lg:text-6xl">
-              Aprenda inglês <span className="hl">ouvindo</span>, não lendo.
-            </span>
+          <p className="type-eyebrow rise text-brand">Vocalize · treino de escuta</p>
+          <h1 id="hero-titulo" className="type-display rise mt-3 text-5xl sm:text-6xl lg:text-7xl" style={delay(80)}>
+            Aprenda inglês <span className="hl">ouvindo</span>, não lendo.
           </h1>
 
-          <p
-            lang="en"
-            className="rise mt-6 min-h-9 text-2xl font-black text-brand sm:min-h-10 sm:text-3xl"
-            style={delay(120)}
-          >
-            <Typewriter key={accent} text={copy.tagline} />
-          </p>
-          <p className="rise text-sm text-muted" style={delay(200)}>
-            {copy.taglineTranslation}
+          <p className="rise mt-6 max-w-xl text-lg text-muted" style={delay(180)}>
+            A voz fala, com o texto escondido. Você escreve o que entendeu, vê seus erros palavra por palavra e responde para manter a conversa.
           </p>
 
-          <p className="rise mt-6 max-w-xl text-lg text-muted" style={delay(260)}>
-            A IA fala em áudio, com o texto escondido. Você escreve o que entendeu, vê seus erros palavra por
-            palavra e responde para manter a conversa.
-          </p>
-
-          <div className="rise mt-8 flex flex-wrap items-center gap-3" style={delay(360)}>
+          <div className="rise mt-8 flex flex-wrap items-center gap-3" style={delay(280)}>
             <Link
               to="/cadastro"
-              className="group inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-7 py-3.5 text-base font-bold text-on-brand shadow-lg transition-all hover:bg-brand-strong active:scale-95"
+              className="group inline-flex min-h-14 items-center justify-center gap-2 rounded-xl bg-brand px-8 py-3 text-lg font-bold text-on-brand transition-colors hover:bg-brand-strong"
             >
               Começar
               <Arrow />
@@ -53,7 +36,7 @@ export default function Hero() {
             <button
               type="button"
               onClick={() => setAccent(other)}
-              className="inline-flex min-h-12 cursor-pointer items-center gap-2 rounded-xl border-2 border-control px-5 text-base font-bold text-brand transition-all hover:bg-surface active:scale-95"
+              className="inline-flex min-h-14 cursor-pointer items-center gap-2 rounded-xl border-2 border-control bg-card px-6 text-lg font-bold text-link transition-colors hover:bg-surface"
             >
               <Flag accent={other} />
               Mudar para {ACCENTS[other].short}
@@ -61,7 +44,7 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="rise" style={delay(240)}>
+        <div className="rise" style={delay(220)}>
           <SoundStage key={accent} />
         </div>
       </div>

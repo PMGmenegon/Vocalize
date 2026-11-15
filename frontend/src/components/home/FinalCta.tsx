@@ -2,16 +2,20 @@ import { Link } from 'react-router-dom'
 import Reveal from '../Reveal'
 import { Arrow } from './Hero'
 
-/** Chamada final antes do rodapé. */
+/** Chamada final antes do rodapé: linha escura, título e botão. */
 export default function FinalCta() {
   return (
-    <section className="surface-brand bg-brand text-on-brand">
-      <Reveal className="mx-auto max-w-6xl px-4 py-14 text-center sm:px-6 sm:py-16">
-        <h2 className="text-3xl font-black sm:text-4xl">Pronto para ouvir de verdade?</h2>
-        <p className="mx-auto mt-3 max-w-xl text-on-brand-soft">Escolha seu sotaque e comece sua primeira rodada.</p>
+    <section aria-labelledby="cta-titulo" className="border-t border-ink">
+      <Reveal className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-12 gap-y-6 px-4 py-14 sm:px-6 sm:py-16">
+        <div>
+          <h2 id="cta-titulo" className="type-display text-3xl sm:text-4xl">
+            Pronto para ouvir de verdade?
+          </h2>
+          <p className="mt-3 text-lg text-muted">Escolha seu sotaque e comece sua primeira rodada.</p>
+        </div>
         <Link
           to="/cadastro"
-          className="group mt-8 inline-flex items-center justify-center gap-2 rounded-xl bg-on-brand px-8 py-3.5 text-base font-bold text-brand shadow-lg transition-all hover:bg-on-brand-soft active:scale-95"
+          className="group inline-flex min-h-14 items-center justify-center gap-2 rounded-xl bg-brand px-8 py-3 text-lg font-bold text-on-brand transition-colors hover:bg-brand-strong"
         >
           Começar
           <Arrow />

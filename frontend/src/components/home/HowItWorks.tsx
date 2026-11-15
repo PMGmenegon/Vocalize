@@ -3,6 +3,7 @@ import ExpandCard from '../ExpandCard'
 import type { Accent } from '../../theme/accents'
 import { useTheme } from '../../theme/useTheme'
 import { ChatIcon, HeadphonesIcon, PencilIcon } from '../icons'
+import HomeSection from './HomeSection'
 
 interface Step {
   title: string
@@ -16,7 +17,7 @@ const STEPS: readonly Step[] = [
     title: 'Ouvir',
     details:
       'O texto fica escondido de propósito: assim você treina o ouvido, e não a leitura. Dá para ouvir de novo e também em velocidade menor.',
-    description: 'A IA fala em inglês e o texto fica escondido. Você treina o ouvido de verdade.',
+    description: 'A voz fala em inglês e o texto fica escondido. Você treina o ouvido de verdade.',
     icon: <HeadphonesIcon />,
   },
   {
@@ -29,14 +30,13 @@ const STEPS: readonly Step[] = [
   {
     title: 'Responder',
     details:
-      'Depois da correção, você responde à IA por texto ou voz e a conversa segue, sempre com a correção e uma explicação em português.',
-    description: 'Responda por texto ou voz. A IA corrige e a conversa continua.',
+      'Depois da correção, você responde por texto e a conversa segue, sempre com a correção e uma explicação em português.',
+    description: 'Responda por texto. A correção vem com explicação e a conversa continua.',
     icon: <ChatIcon />,
   },
 ]
 
 interface Round {
-  said: string
   before: string
   wrong: string
   after: string
@@ -48,7 +48,6 @@ interface Round {
 /** Exemplo de rodada; a palavra muda conforme o modo (check/bill). */
 const ROUNDS: Record<Accent, Round> = {
   us: {
-    said: 'Could we get the check, please?',
     before: 'Could we get the',
     wrong: 'chick',
     after: ', please?',
@@ -57,7 +56,6 @@ const ROUNDS: Record<Accent, Round> = {
     explanation: '"check" é a conta, no inglês americano. "chick" (pintinho) soa quase igual.',
   },
   uk: {
-    said: 'Could we have the bill, please?',
     before: 'Could we have the',
     wrong: 'bell',
     after: ', please?',
@@ -73,68 +71,53 @@ export default function HowItWorks() {
   const round = ROUNDS[accent]
 
   return (
-    <section id="como-funciona" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-16 sm:px-6 sm:py-20">
-      <h2 className="text-3xl font-black text-ink sm:text-4xl">Como funciona</h2>
-      <p className="mt-3 max-w-2xl text-muted">Cada rodada tem três passos. Poucos minutos por dia já ajudam.</p>
-
-      <ol className="mt-10 grid gap-6 md:grid-cols-3">
+    <HomeSection id="como-funciona" eyebrow="Como funciona" title="Três passos por rodada" description="Poucos minutos por dia já ajudam.">
+      <ol className="grid gap-x-12 gap-y-10 md:grid-cols-3">
         {STEPS.map((step, i) => (
-          <ExpandCard
-            key={step.title}
-            icon={step.icon}
-            title={step.title}
-            summary={step.description}
-            details={step.details}
-            eyebrow={`Passo ${i + 1}`}
-            delay={i * 120}
-          />
+          <ExpandCard key={step.title} icon={step.icon} title={step.title} summary={step.description} details={step.details} eyebrow={`Passo ${i + 1}`} delay={i * 100} />
         ))}
       </ol>
 
-      <div className="mt-10">
-        <h3 className="text-lg font-black text-ink">Exemplo de uma rodada</h3>
-        <ol className="mt-5 grid gap-4 lg:grid-cols-3">
-          <li className="rounded-xl bg-surface p-4">
-            <p className="flex items-center gap-2 text-sm font-bold text-accent">
-              <HeadphonesIcon className="h-5 w-5" /> 1. A IA fala
+      <div className="mt-16">
+        <h3 className="type-eyebrow border-b border-ink pb-2">Exemplo de uma rodada</h3>
+        <ol className="grid gap-x-12 gap-y-8 pt-6 lg:grid-cols-3">
+          <li>
+            <p className="flex items-center gap-2 font-black text-brand">
+              <HeadphonesIcon className="h-5 w-5" /> 1. A voz fala
             </p>
-            <p className="mt-3 text-ink">
-              Você ouve a frase em áudio, sem ver o texto.
-            </p>
+            <p className="mt-3 text-ink">Você ouve a frase em áudio, sem ver o texto.</p>
           </li>
 
-          <li className="rounded-xl bg-surface p-4">
-            <p className="flex items-center gap-2 text-sm font-bold text-accent">
+          <li>
+            <p className="flex items-center gap-2 font-black text-brand">
               <PencilIcon className="h-5 w-5" /> 2. Você transcreve
             </p>
-            <p lang="en" className="mt-3 text-ink">
+            <p lang="en" className="mt-3 text-lg text-ink">
               {round.before}{' '}
-              <span className="rounded bg-danger px-1.5 font-bold text-on-danger underline decoration-wavy">
-                {round.wrong}
-              </span>
+              <span className="rounded bg-danger px-1.5 font-bold text-on-danger underline decoration-wavy">{round.wrong}</span>
               <span className="sr-only"> (errado)</span>
               {round.after}
             </p>
             <p className="mt-2 text-sm text-muted">A palavra errada fica destacada.</p>
           </li>
 
-          <li className="rounded-xl bg-surface p-4">
-            <p className="flex items-center gap-2 text-sm font-bold text-accent">
+          <li>
+            <p className="flex items-center gap-2 font-black text-brand">
               <ChatIcon className="h-5 w-5" /> 3. Correção e resposta
             </p>
-            <p lang="en" className="mt-3 text-ink">
+            <p lang="en" className="mt-3 text-lg text-ink">
               {round.before}{' '}
               <span className="rounded bg-ok px-1.5 font-bold text-on-ok">{round.right}</span>
               <span className="sr-only"> (correto)</span>
               {round.after}
             </p>
             <p className="mt-2 text-sm text-muted">{round.explanation}</p>
-            <p lang="en" className="mt-3 rounded-lg bg-card p-2 text-sm text-ink">
+            <p lang="en" className="mt-3 border-l-2 border-line pl-3 text-sm text-ink">
               {round.reply}
             </p>
           </li>
         </ol>
       </div>
-    </section>
+    </HomeSection>
   )
 }

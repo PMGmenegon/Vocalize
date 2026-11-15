@@ -8,8 +8,6 @@ import Skeleton from '../../components/ui/Skeleton'
 import { useAsync } from '../../hooks/useAsync'
 import { ACCENT_LABEL, formatDate } from '../../lib/format'
 import { statsService } from '../../services'
-import { MODE_COPY } from '../../theme/modeCopy'
-import { useTheme } from '../../theme/useTheme'
 
 function DashboardSkeleton() {
   return (
@@ -31,15 +29,13 @@ function DashboardSkeleton() {
 
 export default function DashboardPage() {
   const user = useUser()
-  const { accent } = useTheme()
   const state = useAsync(() => statsService.getDashboard())
-  const hello = MODE_COPY[accent].greeting.replace(/!$/, '')
   const firstName = user.name.split(' ')[0]
 
   return (
     <Page>
       <h1 className="text-3xl font-black text-brand sm:text-4xl">
-        <span lang="en">{hello}</span>, {firstName}!
+        Olá, {firstName}!
       </h1>
       <p className="mt-1 mb-8 text-muted">Pronto para treinar o ouvido hoje?</p>
 

@@ -1,6 +1,8 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
 import { cancelSpeech, failureMessage, speak, speechSupported } from '../../lib/speech'
 import { diffWords, type DiffResult } from '../../lib/diff'
+import Button from '../ui/Button'
+import HomeSection from './HomeSection'
 import { ACCENTS, type Accent } from '../../theme/accents'
 import { useTheme } from '../../theme/useTheme'
 
@@ -71,32 +73,17 @@ function Round({ accent }: { accent: Accent }) {
   const perfect = result !== null && result.correct === result.total && result.typed.every((w) => w.ok)
 
   return (
-    <section id="experimente" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-16 sm:px-6 sm:py-20">
-      <h2 className="text-3xl font-black text-ink sm:text-4xl">Experimente agora</h2>
-      <p className="mt-3 max-w-2xl text-muted">
-        Ouça a frase no sotaque do seu modo, escreva o que entendeu e veja a correção na hora.
-      </p>
-
-      <div className="mt-8 rounded-2xl bg-surface p-5 sm:p-8">
+    <HomeSection id="experimente" eyebrow="Experimente" title="Uma rodada, agora" description="Ouça a frase no sotaque do seu modo, escreva o que entendeu e veja a correção na hora.">
+      <div className="max-w-3xl">
         <div className="flex flex-wrap items-center gap-3">
-          <button
-            type="button"
-            onClick={() => play(0.95)}
-            disabled={!speechSupported}
-            className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl bg-brand px-5 font-bold text-on-brand transition-all hover:bg-brand-strong active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
-          >
+          <Button size="lg" onClick={() => play(0.95)} disabled={!speechSupported}>
             {speaking ? 'Ouvindo…' : 'Ouvir frase'}
-          </button>
-          <button
-            type="button"
-            onClick={() => play(0.6)}
-            disabled={!speechSupported}
-            className="inline-flex min-h-11 cursor-pointer items-center rounded-xl border-2 border-control bg-card px-5 font-bold text-brand transition-all hover:bg-card/60 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
-          >
+          </Button>
+          <Button size="lg" variant="secondary" onClick={() => play(0.6)} disabled={!speechSupported}>
             Ouvir devagar
-          </button>
-          <span className="text-sm text-muted">
-            Sotaque: {ACCENTS[accent].label} ({ACCENTS[accent].locale})
+          </Button>
+          <span className="type-eyebrow">
+            {ACCENTS[accent].label} ({ACCENTS[accent].locale})
           </span>
         </div>
         {voiceNote && (
@@ -111,7 +98,7 @@ function Round({ accent }: { accent: Accent }) {
         )}
 
         <form onSubmit={check} className="mt-6">
-          <label htmlFor={inputId} className="block text-sm font-bold text-ink">
+          <label htmlFor={inputId} className="type-eyebrow block">
             O que você ouviu?
           </label>
           <div className="mt-2 flex flex-col gap-3 sm:flex-row">
@@ -125,27 +112,24 @@ function Round({ accent }: { accent: Accent }) {
               autoCapitalize="off"
               spellCheck={false}
               placeholder="Digite em inglês…"
-              className="min-h-11 flex-1 rounded-xl border-2 border-control bg-card px-4 text-ink placeholder:text-muted"
+              className="min-h-14 flex-1 rounded-xl border-2 border-control bg-card px-4 text-lg text-ink placeholder:text-muted"
             />
-            <button
-              type="submit"
-              className="min-h-11 cursor-pointer rounded-xl bg-accent px-6 font-bold text-on-accent transition-all hover:opacity-90 active:scale-95"
-            >
+            <Button type="submit" size="lg">
               Conferir
-            </button>
+            </Button>
           </div>
         </form>
 
         <div aria-live="polite" className="mt-6 min-h-4">
           {result && (
-            <div className="fade-swap rounded-xl bg-card p-4 sm:p-5">
+            <div className="fade-swap border-l-2 border-brand pl-5">
               <p className="font-black text-ink">
                 {perfect
                   ? 'Perfeito! Você acertou todas as palavras.'
                   : `Você acertou ${result.correct} de ${result.total} palavras.`}
               </p>
 
-              <p className="mt-4 text-sm font-bold text-muted">Frase correta</p>
+              <p className="type-eyebrow mt-4">Frase correta</p>
               <p lang="en" className="mt-1 flex flex-wrap gap-1.5 text-lg">
                 {result.expected.map((w, i) => (
                   <Word key={i} {...w} wrongLabel="faltou ou errou" rightLabel="certo" />
@@ -154,7 +138,7 @@ function Round({ accent }: { accent: Accent }) {
 
               {!perfect && (
                 <>
-                  <p className="mt-4 text-sm font-bold text-muted">O que você escreveu</p>
+                  <p className="type-eyebrow mt-4">O que você escreveu</p>
                   <p lang="en" className="mt-1 flex flex-wrap gap-1.5 text-lg">
                     {result.typed.map((w, i) => (
                       <Word key={i} {...w} wrongLabel="não bate" rightLabel="certo" strike />
@@ -167,13 +151,9 @@ function Round({ accent }: { accent: Accent }) {
         </div>
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
-          <button
-            type="button"
-            onClick={next}
-            className="min-h-10 cursor-pointer rounded-lg border-2 border-control px-4 text-sm font-bold text-brand hover:bg-card active:scale-95"
-          >
+          <Button variant="ghost" onClick={next}>
             Outra frase
-          </button>
+          </Button>
           <button
             type="button"
             aria-pressed={revealed}
@@ -189,7 +169,7 @@ function Round({ accent }: { accent: Accent }) {
           )}
         </div>
       </div>
-    </section>
+    </HomeSection>
   )
 }
 

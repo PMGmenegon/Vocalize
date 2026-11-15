@@ -2,12 +2,10 @@ import type { Accent } from './accents'
 
 /** Textos e grafias que mudam conforme o modo (US ou UK). */
 export interface ModeCopy {
-  /** Saudação curta no cabeçalho da área logada. */
-  greeting: string
-  /** Frase de destaque do hero (em inglês). */
-  tagline: string
-  /** Tradução da frase de destaque. */
-  taglineTranslation: string
+  /** Frase de exemplo que o palco sonoro da landing fala (conteúdo de exercício, em inglês). */
+  demoPhrase: string
+  /** Tradução da frase de exemplo. */
+  demoTranslation: string
   /** Nome do modo para aparecer no texto ("americano" / "britânico"). */
   adjective: string
   /** Grafias de palavras em inglês exibidas na interface. */
@@ -21,16 +19,14 @@ export interface ModeCopy {
 
 export const MODE_COPY: Record<Accent, ModeCopy> = {
   us: {
-    greeting: 'Hey there!',
-    tagline: 'Sound like a New Yorker.',
-    taglineTranslation: 'Fale como um nova-iorquino.',
+    demoPhrase: 'Could we get the check, please?',
+    demoTranslation: 'Podemos pedir a conta, por favor?',
     adjective: 'americano',
     spelling: { color: 'color', center: 'center', practice: 'practice' },
   },
   uk: {
-    greeting: 'Hiya!',
-    tagline: 'Sound like a Londoner.',
-    taglineTranslation: 'Fale como um londrino.',
+    demoPhrase: 'Could we have the bill, please?',
+    demoTranslation: 'Podemos pedir a conta, por favor?',
     adjective: 'britânico',
     spelling: { color: 'colour', center: 'centre', practice: 'practise' },
   },

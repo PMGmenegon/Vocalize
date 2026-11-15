@@ -20,7 +20,7 @@ export default function PublicLayout() {
       <main id="conteudo" className="flex-1">
         <Outlet />
       </main>
-      <footer className="border-t border-line bg-surface">
+      <footer className="border-t border-ink">
         <div className="mx-auto max-w-6xl px-4 py-6 text-sm text-muted sm:px-6">
           Vocalize · projeto de portfólio · interface em português, conteúdo de estudo em inglês.
         </div>

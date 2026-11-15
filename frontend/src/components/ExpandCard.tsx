@@ -14,51 +14,41 @@ interface ExpandCardProps {
 }
 
 /**
- * Cartão que abre uma explicação ao clicar. O título é um botão (aria-expanded) e
- * o cartão inteiro é clicável; o texto escondido fica fora do foco enquanto fechado.
+ * Item com explicação que abre ao clicar, sem caixa: linha escura no topo, ícone, título e resumo.
+ * O botão "Saiba mais" é um disclosure (aria-expanded); o texto escondido fica fora do foco enquanto fechado.
  */
 export default function ExpandCard({ icon, title, summary, details, eyebrow, delay = 0 }: ExpandCardProps) {
   const [open, setOpen] = useState(false)
   const panelId = useId()
 
   return (
-    <Reveal
-      as="li"
-      delay={delay}
-      className={[
-        'group relative rounded-2xl border-2 bg-surface p-6 transition-all duration-200 hover:border-brand hover:shadow-lg motion-safe:hover:-translate-y-1',
-        open ? 'border-brand shadow-md' : 'border-line',
-      ].join(' ')}
-    >
-      <div className="flex items-center gap-3">
-        <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand text-on-brand transition-transform duration-200 motion-safe:group-hover:scale-110 motion-safe:group-hover:-rotate-6">
-          {icon}
-        </span>
-        {eyebrow && <span className="text-sm font-bold tracking-widest text-accent uppercase">{eyebrow}</span>}
+    <Reveal as="li" delay={delay} className="group border-t border-ink pt-5">
+      <div className="flex items-center gap-3 text-brand">
+        <span className="transition-transform duration-200 motion-safe:group-hover:-translate-y-0.5">{icon}</span>
+        {eyebrow && <span className="type-eyebrow text-brand">{eyebrow}</span>}
       </div>
 
-      <h3 className="mt-4 text-lg font-black text-ink">
-        <button
-          type="button"
-          aria-expanded={open}
-          aria-controls={panelId}
-          onClick={() => setOpen((v) => !v)}
-          className="block w-full cursor-pointer text-left after:absolute after:inset-0 after:rounded-2xl focus-visible:outline-none focus-visible:after:outline-3 focus-visible:after:outline-offset-2 focus-visible:after:outline-solid focus-visible:after:outline-(--focus)"
-        >
-          {title}
-        </button>
-      </h3>
-      <p className="mt-1 text-muted">{summary}</p>
+      <h3 className="type-display mt-4 text-2xl">{title}</h3>
+      <p className="mt-2 text-ink">{summary}</p>
 
-      <div
-        id={panelId}
-        className={`grid transition-[grid-template-rows] duration-300 ease-out ${open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-controls={panelId}
+        onClick={() => setOpen((v) => !v)}
+        className="mt-3 inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-lg text-sm font-bold text-link hover:underline"
       >
+        {open ? 'Mostrar menos' : 'Saiba mais'}
+        <span aria-hidden="true" className={`inline-block transition-transform duration-200 ${open ? 'rotate-45' : ''}`}>
+          +
+        </span>
+      </button>
+
+      <div id={panelId} className={`grid transition-[grid-template-rows] duration-300 ease-out ${open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
         <div className="overflow-hidden" inert={!open}>
-          <p className="mt-4 rounded-xl bg-card p-3 text-sm text-ink">{details}</p>
+          <p className="border-l-2 border-brand pl-4 text-sm text-muted">{details}</p>
         </div>
       </div>
-
     </Reveal>
   )
 }
