@@ -4,11 +4,16 @@ App web para **aprender inglês ouvindo e conversando**. A IA fala em inglês (o
 
 1. **Ouvir** — a fala da IA toca em áudio, sem texto.
 2. **Transcrever** — você digita o que entendeu; o backend compara palavra por palavra.
-3. **Responder** — você responde por texto ou voz; a IA corrige e segue a conversa.
+3. **Responder** — você responde por texto ou voz; não existe uma única resposta certa, então a IA avalia se faz sentido na conversa e no seu nível, corrige a sua frase e sugere outras formas de responder.
 
 Interface em português (Brasil); conteúdo de estudo em inglês. Dois temas visuais conforme o sotaque: **US** (vermelho, estrelas e listras) e **UK** (azul-marinho, cruz da Union Jack).
 
 > **Status:** Fase 2 (todas as telas com dados falsos). O backend (FastAPI), o login real, o áudio e a IA vêm nas próximas fases.
+
+## Próximas fases
+
+- **Fase 9:** backend (FastAPI) como fonte oficial da comparação do ditado.
+- **Fase 10:** IA avaliando as **respostas** da conversa (coerência, adequação ao nível, frase corrigida, pontos de melhoria e respostas sugeridas), devolvendo um `ReplyFeedback` em JSON validado. Até lá o serviço devolve uma avaliação neutra simulada. O ditado continua com comparação exata, sem IA. Ver [docs/decisions/0006-avaliacao-de-respostas-por-ia.md](docs/decisions/0006-avaliacao-de-respostas-por-ia.md).
 
 ## Estrutura
 
