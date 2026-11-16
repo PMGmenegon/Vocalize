@@ -34,6 +34,32 @@ export interface User {
   createdAt: string
 }
 
+/** Quem conversa com o usuário numa situação (sorteado por sessão). */
+export interface Interlocutor {
+  id: string
+  /** Função neutra em gênero, exibida na interface ("Recepção"). */
+  role: string
+  /** Quem o usuário é na conversa ("Hóspede"). */
+  userRole: string
+  /** Objetivo e tema da conversa, em 1 ou 2 frases (será parte do prompt da IA na Fase 10). */
+  context: string
+  /** Cenas possíveis (clima + apresentação de quem fala); uma é sorteada por sessão. */
+  scenes: string[]
+}
+
+/** Quem conversa com o usuário numa situação (sorteado por sessão). */
+export interface Interlocutor {
+  id: string
+  /** Função neutra em gênero, exibida na interface ("Recepção"). */
+  role: string
+  /** Quem o usuário é na conversa ("Hóspede"). */
+  userRole: string
+  /** Objetivo e tema da conversa, em 1 ou 2 frases (será parte do prompt da IA na Fase 10). */
+  context: string
+  /** Cenas possíveis (clima + apresentação de quem fala); uma é sorteada por sessão. */
+  scenes: string[]
+}
+
 /** Uma situação de listening. O campo `layout` escolhe a tela de prática. */
 export interface Scenario {
   id: ScenarioId
@@ -140,6 +166,8 @@ export interface Session {
   endedAt?: string
   /** Limite de rodadas. A sessão também termina quando o usuário encerra. */
   maxTurns: number
+  /** Interlocutor sorteado ao iniciar a sessão (id em data/scenarios); fixo até o fim. */
+  interlocutorId: string
   /** Cena sorteada ao iniciar a sessão (texto em português); fixa até o fim. */
   scene: string
   /** As falas chegam uma a uma (assíncronas), então a lista cresce durante a sessão. */
@@ -150,6 +178,8 @@ export interface SessionSummary {
   sessionId: string
   scenarioId: ScenarioId
   scenarioTitle: string
+  /** Função de quem conversou com o usuário. */
+  interlocutorRole: string
   /** Cena em que a conversa aconteceu. */
   scene: string
   averageAccuracy: number

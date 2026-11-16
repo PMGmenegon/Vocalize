@@ -1,8 +1,9 @@
-import { DEFAULT_MAX_TURNS, pickScene, SCENARIOS } from '../data/scenarios'
+import { DEFAULT_MAX_TURNS, interlocutorFor, SCENARIOS, situationFor } from '../data/scenarios'
 import { BANK, resolveItem } from '../mocks/bank'
 import { compareTranscription } from '../domain/transcription'
 import { db } from '../mocks/db'
-import { LEVELS, type Accent, type Level, type ReplyFeedback, type ScenarioId, type Session, type SessionSummary, type TranscriptionResult, type Turn } from '../types'
+import { type Accent, type Level, type ReplyFeedback, type ScenarioId, type Session, type SessionSummary, type TranscriptionResult, type Turn } from '../types'
+import { drawInterlocutor } from './drawInterlocutor'
 import { summarize } from './history'
 import { scenarioTitle } from './scenarioService'
 import { simulate } from './runtime'
@@ -22,7 +23,7 @@ const NEXT_TURN_FAILURE_RATE = 0.1
 /** Lê a sessão do "banco"; erro se não existir ou se for de uma versão antiga (link velho, outro navegador...). */
 function load(id: string): Session {
   const session = db.getSessions()[id]
-  if (!session || !session.maxTurns || !session.scene || !SCENARIOS.some((s) => s.id === session.scenarioId)) throw new Error('Sessão não encontrada.')
+  if (!session || !session.maxTurns || !session.scene || !session.interlocutorId || !SCENARIOS.some((s) => s.id === session.scenarioId)) throw new Error('Sessão não encontrada.')
   return session
 }
 
@@ -36,23 +37,11 @@ function turnOf(session: Session, index: number): Turn {
   return turn
 }
 
-/** O item do banco que deu origem à rodada (só o mock sabe qual foi). */
+/** A fala da rodada no diálogo mock do interlocutor da sessão (as rodadas seguem a ordem do diálogo). */
 function itemOf(session: Session, index: number) {
-  const pick = db.getPicks()[session.id]?.[index]
-  const item = pick === undefined ? undefined : BANK[session.scenarioId][pick]
+  const item = BANK[session.interlocutorId]?.[index]
   if (!item) throw new Error('Rodada inexistente.')
   return resolveItem(item, session.accent)
-}
-
-/** Sorteia uma fala adequada ao nível (do nível do usuário ±1), evitando repetir na mesma sessão. */
-function pickIndex(session: Session): number {
-  const bank = BANK[session.scenarioId]
-  const used = new Set(db.getPicks()[session.id] ?? [])
-  const at = LEVELS.indexOf(session.level)
-  const fits = bank.map((item, idx) => ({ idx, ok: Math.abs(LEVELS.indexOf(item.lv) - at) <= 1 })).filter((x) => x.ok).map((x) => x.idx)
-  const fresh = fits.filter((idx) => !used.has(idx))
-  const pool = fresh.length > 0 ? fresh : fits.length > 0 ? fits : bank.map((_, idx) => idx)
-  return pool[Math.floor(Math.random() * pool.length)]!
 }
 
 const randomDelay = () => 700 + Math.floor(Math.random() * 1300)
@@ -65,14 +54,18 @@ const randomDelay = () => 700 + Math.floor(Math.random() * 1300)
 export const sessionService = {
   start({ scenarioId, level, accent, maxTurns = DEFAULT_MAX_TURNS }: StartSessionInput): Promise<Session> {
     return simulate(() => {
+      // MOCK: na Fase 10 o backend escolhe o interlocutor e a cena (ver docs/decisions/0006).
+      const { interlocutor, scene } = drawInterlocutor(situationFor(scenarioId).interlocutors)
       const session: Session = {
         id: `s-${Date.now().toString(36)}`,
         scenarioId,
         level,
         accent,
         startedAt: new Date().toISOString(),
-        maxTurns,
-        scene: pickScene(scenarioId),
+        // O diálogo mock tem 4 a 6 rodadas: a sessão não passa disso.
+        maxTurns: Math.min(maxTurns, BANK[interlocutor.id]?.length ?? maxTurns),
+        interlocutorId: interlocutor.id,
+        scene,
         turns: [],
       }
       save(session)
@@ -90,11 +83,9 @@ export const sessionService = {
       const session = load(id)
       if (session.turns.length >= session.maxTurns) throw new Error('Limite de rodadas atingido.')
       if (Math.random() < NEXT_TURN_FAILURE_RATE) throw new Error('Falha ao preparar a fala.')
-      const pick = pickIndex(session)
-      db.setPicks({ ...db.getPicks(), [id]: [...(db.getPicks()[id] ?? []), pick] })
       const turn: Turn = {
         index: session.turns.length,
-        wordCount: resolveItem(BANK[session.scenarioId][pick]!, session.accent).ai.split(/\s+/).length,
+        wordCount: itemOf(session, session.turns.length).ai.split(/\s+/).length,
         repetitions: 0,
         createdAt: new Date().toISOString(),
       }
@@ -188,6 +179,7 @@ function toSummary(session: Session): SessionSummary {
     sessionId: session.id,
     scenarioId: session.scenarioId,
     scenarioTitle: scenarioTitle(session.scenarioId),
+    interlocutorRole: interlocutorFor(session.scenarioId, session.interlocutorId).role,
     scene: session.scene,
     averageAccuracy: s.accuracy,
     durationSeconds: s.seconds,
