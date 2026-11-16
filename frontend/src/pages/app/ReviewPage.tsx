@@ -9,7 +9,10 @@ import PageHeader, { Page } from '../../components/ui/PageHeader'
 import Section from '../../components/ui/Section'
 import Skeleton from '../../components/ui/Skeleton'
 import { useAsync } from '../../hooks/useAsync'
+import { useSpeechPlayer } from '../../hooks/useSpeechPlayer'
 import { reviewService } from '../../services'
+import { localeOf } from '../../lib/format'
+import { useTheme } from '../../theme/useTheme'
 import type { Flashcard, ReviewRating } from '../../types'
 
 const RATINGS: { value: ReviewRating; label: string; hint: string }[] = [
@@ -21,11 +24,26 @@ const RATINGS: { value: ReviewRating; label: string; hint: string }[] = [
 
 const norm = (s: string) => s.trim().toLowerCase()
 
+/** Botão "Ouvir" do cartão: fala a palavra no sotaque do modo escolhido. Recriado a cada cartão (key). */
+function ListenButton({ word }: { word: string }) {
+  const { accent } = useTheme()
+  const player = useSpeechPlayer({ text: word, locale: localeOf(accent) })
+  return (
+    <>
+      <Button variant="secondary" onClick={() => player.play()} disabled={!player.ready}>
+        <PlayIcon className="h-5 w-5" /> {player.playing ? 'Tocando…' : 'Ouvir'}
+      </Button>
+      <p role="status" className="text-sm text-muted empty:hidden">
+        {player.notice}
+      </p>
+    </>
+  )
+}
+
 function Flashcards({ cards }: { cards: Flashcard[] }) {
   const [index, setIndex] = useState(0)
   const [flipped, setFlipped] = useState(false)
   const [typed, setTyped] = useState('')
-  const [played, setPlayed] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const answer = useRef<HTMLHeadingElement>(null)
@@ -45,7 +63,6 @@ function Flashcards({ cards }: { cards: Flashcard[] }) {
       setIndex(index + 1)
       setFlipped(false)
       setTyped('')
-      setPlayed(false)
     } catch {
       setError('Não foi possível salvar sua avaliação. Tente de novo.')
     } finally {
@@ -87,12 +104,7 @@ function Flashcards({ cards }: { cards: Flashcard[] }) {
                 >
                   <h2 className="type-display text-3xl">Ouça e digite a palavra</h2>
                   <div className="flex flex-wrap items-center gap-3">
-                    <Button variant="secondary" onClick={() => setPlayed(true)}>
-                      <PlayIcon className="h-5 w-5" /> Ouvir
-                    </Button>
-                    <p role="status" className="text-sm text-muted">
-                      {played ? 'O áudio chega numa fase futura; por enquanto é só o visual.' : ''}
-                    </p>
+                    <ListenButton key={card.id} word={card.word} />
                   </div>
                   <Input label="Palavra que você ouviu" lang="en" value={typed} onChange={(e) => setTyped(e.target.value)} autoComplete="off" autoCapitalize="none" spellCheck={false} />
                   <Button type="submit" size="lg" className="px-8">

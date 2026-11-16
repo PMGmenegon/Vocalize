@@ -1,10 +1,11 @@
-import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
-import { cancelSpeech, failureMessage, speak, speechSupported } from '../../lib/speech'
-import { diffWords, type DiffResult } from '../../lib/diff'
+import { useId, useRef, useState, type FormEvent } from 'react'
+import { compareTranscription } from '../../domain/transcription'
+import { useSpeechPlayer } from '../../hooks/useSpeechPlayer'
 import Button from '../ui/Button'
 import HomeSection from './HomeSection'
 import { ACCENTS, type Accent } from '../../theme/accents'
 import { useTheme } from '../../theme/useTheme'
+import type { TranscriptionResult } from '../../types'
 
 const SENTENCES: Record<Accent, readonly string[]> = {
   us: [
@@ -32,35 +33,26 @@ function Round({ accent }: { accent: Accent }) {
   const inputId = useId()
   const [index, setIndex] = useState(0)
   const [typed, setTyped] = useState('')
-  const [result, setResult] = useState<DiffResult | null>(null)
+  const [result, setResult] = useState<TranscriptionResult | null>(null)
   const [revealed, setRevealed] = useState(false)
-  const [speaking, setSpeaking] = useState(false)
-  const [voiceNote, setVoiceNote] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
   const sentence = sentences[index % sentences.length] ?? sentences[0]!
 
-  // Para a fala ao sair da página ou trocar de frase/modo.
-  useEffect(() => {
-    return () => {
-      cancelSpeech()
-    }
-  }, [sentence])
+  // Voz do navegador (src/audio): cala ao trocar de frase/modo ou sair da página (o hook cuida disso).
+  const player = useSpeechPlayer({ text: sentence, locale, baseRate: 0.95 })
+  const speaking = player.playing
+  const speechSupported = player.supported
 
   function play(rate: number) {
-    setVoiceNote('')
-    void speak(sentence, locale, {
-      rate,
-      onStart: () => setSpeaking(true),
-      onEnd: () => setSpeaking(false),
-    }).then((result) => setVoiceNote(failureMessage(result)))
+    player.play(rate)
     inputRef.current?.focus()
   }
 
   function check(e: FormEvent) {
     e.preventDefault()
     if (!typed.trim()) return
-    setResult(diffWords(sentence, typed))
+    setResult(compareTranscription(sentence, typed))
   }
 
   function next() {
@@ -70,32 +62,30 @@ function Round({ accent }: { accent: Accent }) {
     setRevealed(false)
   }
 
-  const perfect = result !== null && result.correct === result.total && result.typed.every((w) => w.ok)
+  const perfect = result !== null && result.words.every((w) => w.status === 'correct')
+
+  // Marcação palavra por palavra a partir da comparação (frase correta × o que foi escrito).
+  const expectedMarks = (result?.words ?? []).filter((w) => w.expected !== undefined).map((w) => ({ word: w.expected ?? '', ok: w.status === 'correct' }))
+  const typedMarks = (result?.words ?? []).filter((w) => w.typed).map((w) => ({ word: w.typed ?? '', ok: w.status === 'correct' }))
 
   return (
     <HomeSection id="experimente" eyebrow="Experimente" title="Uma rodada, agora" description="Ouça a frase no sotaque do seu modo, escreva o que entendeu e veja a correção na hora.">
       <div className="max-w-3xl">
         <div className="flex flex-wrap items-center gap-3">
-          <Button size="lg" onClick={() => play(0.95)} disabled={!speechSupported}>
+          <Button size="lg" onClick={() => play(0.95)} disabled={!player.ready}>
             {speaking ? 'Ouvindo…' : 'Ouvir frase'}
           </Button>
-          <Button size="lg" variant="secondary" onClick={() => play(0.6)} disabled={!speechSupported}>
+          <Button size="lg" variant="secondary" onClick={() => play(0.6)} disabled={!player.ready}>
             Ouvir devagar
           </Button>
           <span className="type-eyebrow">
             {ACCENTS[accent].label} ({ACCENTS[accent].locale})
           </span>
         </div>
-        {voiceNote && (
-          <p role="status" className="mt-3 text-sm font-bold text-ink">
-            {voiceNote}
-          </p>
-        )}
-        {!speechSupported && (
-          <p className="mt-3 text-sm text-muted">
-            Seu navegador não tem voz sintetizada. Use o Chrome para ouvir, ou clique em "Mostrar o texto".
-          </p>
-        )}
+        <p role="status" className="mt-3 text-sm font-bold text-ink empty:hidden">
+          {player.notice}
+        </p>
+        {!speechSupported && <p className="mt-3 text-sm text-muted">Você ainda pode clicar em "Mostrar o texto".</p>}
 
         <form onSubmit={check} className="mt-6">
           <label htmlFor={inputId} className="type-eyebrow block">
@@ -126,12 +116,12 @@ function Round({ accent }: { accent: Accent }) {
               <p className="font-black text-ink">
                 {perfect
                   ? 'Perfeito! Você acertou todas as palavras.'
-                  : `Você acertou ${result.correct} de ${result.total} palavras.`}
+                  : `Você acertou ${result.correctCount} de ${result.totalExpected} palavras.`}
               </p>
 
               <p className="type-eyebrow mt-4">Frase correta</p>
               <p lang="en" className="mt-1 flex flex-wrap gap-1.5 text-lg">
-                {result.expected.map((w, i) => (
+                {expectedMarks.map((w, i) => (
                   <Word key={i} {...w} wrongLabel="faltou ou errou" rightLabel="certo" />
                 ))}
               </p>
@@ -140,7 +130,7 @@ function Round({ accent }: { accent: Accent }) {
                 <>
                   <p className="type-eyebrow mt-4">O que você escreveu</p>
                   <p lang="en" className="mt-1 flex flex-wrap gap-1.5 text-lg">
-                    {result.typed.map((w, i) => (
+                    {typedMarks.map((w, i) => (
                       <Word key={i} {...w} wrongLabel="não bate" rightLabel="certo" strike />
                     ))}
                   </p>

@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
-import { ACCENTS } from '../../theme/accents'
-import { cancelSpeech, failureMessage, speak, speechSupported } from '../../lib/speech'
+import { useSpeechPlayer } from '../../hooks/useSpeechPlayer'
+import { ACCENTS, type Accent } from '../../theme/accents'
 import { MODE_COPY } from '../../theme/modeCopy'
 import { useTheme } from '../../theme/useTheme'
 
@@ -17,24 +17,26 @@ const rest = (i: number, t = 0) => 0.28 + 0.14 * Math.sin(t * 1.2 + i * 0.45) + 
  */
 export default function SoundStage() {
   const { accent } = useTheme()
+  // key: ao trocar de modo a fala em andamento é cortada e o palco recomeça do zero.
+  return <Stage key={accent} accent={accent} />
+}
+
+function Stage({ accent }: { accent: Accent }) {
   const reduced = usePrefersReducedMotion()
   const phrase = MODE_COPY[accent].demoPhrase
   const locale = ACCENTS[accent].locale
 
   const words = useMemo(() => phrase.split(' '), [phrase])
-  // Posição (em caracteres) onde cada palavra começa, para casar com os eventos de fala.
-  const starts = useMemo(
-    () => words.map((_, i) => (i === 0 ? 0 : words.slice(0, i).join(' ').length + 1)),
-    [words],
-  )
-
   const barRefs = useRef<(HTMLSpanElement | null)[]>([])
   const pointer = useRef<number | null>(null)
   const speakingRef = useRef(false)
-  const [speaking, setSpeaking] = useState(false)
-  const [active, setActive] = useState(-1)
-  const ticker = useRef<number | undefined>(undefined)
-  const [voiceNote, setVoiceNote] = useState('')
+  // Voz do navegador (src/audio): só toca quando a pessoa clica em play.
+  const player = useSpeechPlayer({ text: phrase, locale, baseRate: 0.9 })
+  const speaking = player.playing
+  const active = player.activeWord
+  useEffect(() => {
+    speakingRef.current = speaking
+  }, [speaking])
 
   // Animação das barras.
   useEffect(() => {
@@ -69,59 +71,9 @@ export default function SoundStage() {
     return () => cancelAnimationFrame(raf)
   }, [reduced])
 
-  // Ao sair da página ou trocar de modo, interrompe a voz e o karaokê.
-  useEffect(() => {
-    return () => {
-      window.clearInterval(ticker.current)
-      cancelSpeech()
-    }
-  }, [])
-
-  function finish() {
-    window.clearInterval(ticker.current)
-    speakingRef.current = false
-    setSpeaking(false)
-    setActive(-1)
-  }
-
   function play() {
-    if (speakingRef.current) {
-      cancelSpeech()
-      finish()
-      return
-    }
-    speakingRef.current = true
-    setSpeaking(true)
-    setActive(0)
-    setVoiceNote('')
-
-    // Plano B: se o navegador não avisar a palavra atual, avançamos por tempo.
-    let gotBoundary = false
-    let fallbackIndex = 0
-    window.clearInterval(ticker.current)
-    ticker.current = window.setInterval(() => {
-      if (gotBoundary) return
-      fallbackIndex += 1
-      if (fallbackIndex >= words.length) {
-        if (!speechSupported) finish()
-        return
-      }
-      setActive(fallbackIndex)
-    }, 420)
-
-    if (!speechSupported) return
-    void speak(phrase, locale, {
-      rate: 0.9,
-      onEnd: finish,
-      onBoundary: (charIndex) => {
-        gotBoundary = true
-        let idx = 0
-        starts.forEach((st, i) => {
-          if (charIndex >= st) idx = i
-        })
-        setActive(idx)
-      },
-    }).then((result) => setVoiceNote(failureMessage(result)))
+    if (speaking) player.stop()
+    else player.play()
   }
 
   const setPointer = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -160,9 +112,10 @@ export default function SoundStage() {
         <button
           type="button"
           onClick={play}
+          disabled={!player.ready}
           aria-pressed={speaking}
           aria-label={speaking ? 'Parar a frase' : `Ouvir a frase em ${ACCENTS[accent].label.toLowerCase()}`}
-          className="inline-flex h-14 w-14 shrink-0 cursor-pointer items-center justify-center rounded-full bg-brand text-on-brand transition-colors hover:bg-brand-strong motion-safe:active:scale-95"
+          className="inline-flex h-14 w-14 shrink-0 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 items-center justify-center rounded-full bg-brand text-on-brand transition-colors hover:bg-brand-strong motion-safe:active:scale-95"
         >
           <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor" aria-hidden="true">
             {speaking ? <path d="M7 6h3.5v12H7zM13.5 6H17v12h-3.5z" /> : <path d="M8 5.5v13l11-6.5z" />}
@@ -184,11 +137,9 @@ export default function SoundStage() {
       </div>
       <p className="mt-3 text-muted">Em português: {MODE_COPY[accent].demoTranslation}</p>
       <p className="mt-1 text-sm text-muted">Passe o mouse (ou o dedo) sobre as ondas e toque em play para ouvir no sotaque do seu modo.</p>
-      {voiceNote && (
-        <p role="status" className="mt-2 text-sm font-bold text-ink">
-          {voiceNote}
-        </p>
-      )}
+      <p role="status" className="mt-2 text-sm font-bold text-ink empty:hidden">
+        {player.notice}
+      </p>
     </div>
   )
 }
