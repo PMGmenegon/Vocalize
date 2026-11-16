@@ -38,6 +38,10 @@ export default function SummaryPage() {
         {(s) => (
           <>
             <PageHeader eyebrow="Sessão concluída" title={s.scenarioTitle} description={`${s.turnsCompleted} ${s.turnsCompleted === 1 ? 'rodada concluída' : 'rodadas concluídas'}.`} />
+            <p className="mt-4 max-w-xl text-muted">
+              <span className="type-eyebrow mr-2">Cena</span>
+              {s.scene}
+            </p>
             <StatList divided>
               <Stat divided large label="Acerto médio" value={`${s.averageAccuracy}%`} />
               <Stat divided large label="Tempo" value={formatDuration(s.durationSeconds)} />

@@ -1,8 +1,7 @@
-import { characterFor, EXPERIENCE, introFor, situationFor } from '../../data/scenarios'
+import { EXPERIENCE, situationFor, speakerRoleFor } from '../../data/scenarios'
 import { ACCENT_LABEL } from '../../lib/format'
 import type { Session } from '../../types'
 import { ScenarioIcon } from '../appIcons'
-import Avatar from '../chat/Avatar'
 import Button from '../ui/Button'
 import PageHeader, { Page } from '../ui/PageHeader'
 import { Stat, StatList } from '../ui/Stat'
@@ -11,13 +10,11 @@ import StickyActionBar from '../ui/StickyActionBar'
 /** Introdução curta da situação, antes de a sessão começar. */
 export default function SessionIntro({ session, onStart }: { session: Session; onStart: () => void }) {
   const situation = situationFor(session.scenarioId)
-  const character = characterFor(session.scenarioId, session.accent)
   return (
     <Page narrow>
       <PageHeader
         eyebrow={`${EXPERIENCE[situation.layout].label} · antes de começar`}
         title={situation.title}
-        description={introFor(session.scenarioId, session.accent)}
         stats={
           <StatList>
             <Stat label="Nível" value={session.level} />
@@ -26,18 +23,13 @@ export default function SessionIntro({ session, onStart }: { session: Session; o
           </StatList>
         }
       />
-      <div className="flex items-center gap-4 border-y border-line py-5">
-        <Avatar spec={character.avatar} className="h-14 w-14" />
-        <div className="min-w-0 flex-1">
-          <p className="font-black text-ink">{character.name}</p>
-          <p className="text-sm text-muted">
-            {character.role} · {character.place}
-          </p>
-        </div>
+      <div className="flex items-start gap-4 border-y border-line py-5">
+        <p className="type-display min-w-0 flex-1 text-2xl sm:text-3xl">{session.scene}</p>
         <span className="text-brand">
           <ScenarioIcon icon={situation.icon} className="h-8 w-8" />
         </span>
       </div>
+      <p className="mt-3 text-sm text-muted">Quem fala: {speakerRoleFor(session.scenarioId)}</p>
       <p className="mt-6 max-w-xl text-lg text-ink">
         {situation.layout === 'chat'
           ? 'As falas chegam como mensagens de voz. Transcreva o que ouviu e responda por texto.'

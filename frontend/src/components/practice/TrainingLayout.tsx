@@ -1,12 +1,11 @@
 import { useEffect } from 'react'
-import { characterFor, situationFor } from '../../data/scenarios'
+import { situationFor, speakerRoleFor } from '../../data/scenarios'
 import { useElapsed } from '../../hooks/useElapsed'
 import { useSpeechPlayer } from '../../hooks/useSpeechPlayer'
 import { useSpokenText } from '../../hooks/useSpokenText'
 import { usePracticeSession, type PracticeController } from '../../hooks/usePracticeSession'
 import { ACCENT_LABEL, formatClock } from '../../lib/format'
 import type { Session, Turn } from '../../types'
-import Avatar from '../chat/Avatar'
 import { Page } from '../ui/PageHeader'
 import Button from '../ui/Button'
 import ErrorState from '../ui/ErrorState'
@@ -20,20 +19,17 @@ import TranscriptionResult from './TranscriptionResult'
 
 function TopBar({ ctrl }: { ctrl: PracticeController }) {
   const { session } = ctrl
-  const character = characterFor(session.scenarioId, session.accent)
   const elapsed = useElapsed(session.startedAt)
   const situation = situationFor(session.scenarioId)
   return (
     <header className="mb-8 sm:mb-10">
       <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
         <div className="flex min-w-0 items-center gap-4">
-          <Avatar spec={character.avatar} className="h-14 w-14" />
           <div className="min-w-0">
             <p className="type-eyebrow text-brand">Treino · {ACCENT_LABEL[session.accent]}</p>
             <h1 className="type-display mt-1 text-3xl sm:text-4xl">{situation.title}</h1>
-            <p className="text-muted">
-              Com {character.name}, {character.role.toLowerCase()} · nível {session.level}
-            </p>
+            <p className="text-muted">Nível {session.level}</p>
+            <p className="mt-1 max-w-xl text-sm text-muted">{session.scene}</p>
           </div>
         </div>
         <div className="flex items-end gap-6">
@@ -87,6 +83,7 @@ function TrainingTurn({ ctrl, turn }: { ctrl: PracticeController; turn: Turn }) 
 
   return (
     <div>
+      <p className="type-eyebrow mb-2">{speakerRoleFor(ctrl.session.scenarioId)}</p>
       <AudioPlayer playback={playback} seed={turn.index + turn.wordCount} repetitions={turn.repetitions} />
       {phase === 'listen' && <TranscribeForm busy={ctrl.busy} getHint={ctrl.getHint} onCheck={(t) => void ctrl.check(t)} />}
 

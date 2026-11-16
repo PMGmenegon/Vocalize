@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { speechPlayer } from '../../audio'
-import { characterFor, EXPERIENCE, introFor } from '../../data/scenarios'
+import { EXPERIENCE, speakerRoleFor } from '../../data/scenarios'
 import { ACCENT_LABEL } from '../../lib/format'
 import { usePracticeSession } from '../../hooks/usePracticeSession'
 import { COHERENCE_LABEL, ISSUE_LABEL, LEVEL_FIT_LABEL } from '../../lib/replyFeedback'
@@ -16,11 +16,14 @@ const NEXT_VOICE_DELAY_MS = 2400
 
 const clock = (iso?: string) => (iso ? new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '')
 
-/** Avatar de contato com iniciais (sem ilustração, como num app de mensagens). */
-function Initials({ name }: { name: string }) {
+/** Ícone neutro de contato (sem iniciais nem ilustração). */
+function ContactIcon() {
   return (
-    <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand text-base font-black text-on-brand">
-      {name.slice(0, 2).toUpperCase()}
+    <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand text-on-brand">
+      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z" />
+      </svg>
     </span>
   )
 }
@@ -90,7 +93,7 @@ function UserMessage({ turn }: { turn: Turn }) {
 export default function ChatLayout({ session }: { session: Session }) {
   const ctrl = usePracticeSession(session)
   const { phase, turns, isLast } = ctrl
-  const contact = characterFor(session.scenarioId, session.accent)
+  const role = speakerRoleFor(session.scenarioId)
 
   // Depois da avaliação o contato "grava" outra mensagem de voz (depois de um tempo para ler a nota).
   const { next } = ctrl
@@ -114,7 +117,7 @@ export default function ChatLayout({ session }: { session: Session }) {
       <div className="hidden lg:block">
         <p className="type-eyebrow text-brand">{EXPERIENCE.chat.label} · {ACCENT_LABEL[session.accent]}</p>
         <p className="type-display mt-2 text-5xl">Bate-papo virtual</p>
-        <p className="mt-3 max-w-md text-lg text-muted">{introFor(session.scenarioId, session.accent)}</p>
+        <p className="mt-3 max-w-md text-lg text-muted">{session.scene}</p>
         <StatList>
           <Stat label="Nível" value={session.level} />
           <Stat label="Rodadas" value={`até ${session.maxTurns}`} />
@@ -128,10 +131,10 @@ export default function ChatLayout({ session }: { session: Session }) {
           scrollKey={`${turns.length}-${phase}-${turns.filter((t) => t.reply).length}`}
           header={
             <header className="flex items-center gap-3 border-b border-ink bg-canvas px-3 py-2.5">
-              <Initials name={contact.name} />
+              <ContactIcon />
               <div className="min-w-0 flex-1">
                 <h1 className="truncate text-base font-black text-ink">
-                  {contact.name} <span className="text-xs font-bold text-muted">· {contact.role}</span>
+                  {role}
                 </h1>
                 <p role="status" aria-live="polite" className="text-xs text-muted">
                   {status}
@@ -146,7 +149,7 @@ export default function ChatLayout({ session }: { session: Session }) {
                 key={`${turns.length}-${mode}`}
                 mode={mode}
                 busy={ctrl.busy}
-                characterName={contact.name}
+                contactName={role}
                 locale={session.accent}
                 getHint={ctrl.getHint}
                 onSubmit={(text) => void (mode === 'transcribe' ? ctrl.check(text) : ctrl.reply(text))}
@@ -160,9 +163,10 @@ export default function ChatLayout({ session }: { session: Session }) {
         >
           <div className="chat-pattern min-h-full space-y-3 px-3 py-4">
             <p className="mx-auto w-fit rounded-full bg-card px-3 py-1 text-xs font-bold text-muted shadow-sm">Hoje</p>
+            <p className="mx-auto max-w-[90%] rounded-xl bg-card px-3 py-2 text-center text-xs text-muted shadow-sm">{session.scene}</p>
             {turns.map((turn) => (
               <div key={turn.index} className="space-y-3">
-                <VoiceMessage sessionId={session.id} locale={session.accent} contactName={contact.name} turn={turn} time={clock(turn.createdAt)} onRestart={ctrl.addRepetition} />
+                <VoiceMessage sessionId={session.id} locale={session.accent} contactName={role} turn={turn} time={clock(turn.createdAt)} onRestart={ctrl.addRepetition} />
                 {turn.reply && <UserMessage turn={turn} />}
               </div>
             ))}

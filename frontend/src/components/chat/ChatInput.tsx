@@ -11,7 +11,7 @@ export type InputMode = 'transcribe' | 'reply' | 'locked' | 'finished'
 interface ChatInputProps {
   mode: InputMode
   busy: boolean
-  characterName: string
+  contactName: string
   /** Sotaque da sessão: o microfone reconhece este inglês. */
   locale: Accent
   getHint: (kind: HintKind) => Promise<string>
@@ -25,7 +25,7 @@ const MODE_INFO = {
 } as const
 
 /** Campo de mensagem na base do chat (o pai usa `key` para recriá-lo a cada rodada/modo, limpando o texto e levando o foco até ele). O modo (Transcrever / Responder) aparece num selo e no rótulo. */
-export default function ChatInput({ mode, busy, characterName, locale, getHint, onSubmit, onFinish }: ChatInputProps) {
+export default function ChatInput({ mode, busy, contactName, locale, getHint, onSubmit, onFinish }: ChatInputProps) {
   const [text, setText] = useState('')
   const [hint, setHint] = useState('')
   const [error, setError] = useState('')
@@ -95,7 +95,7 @@ export default function ChatInput({ mode, busy, characterName, locale, getHint, 
       </p>
 
       <label htmlFor="chat-input" className="sr-only">
-        {info ? info.label : `${characterName} está digitando`}
+        {info ? info.label : `${contactName} está digitando`}
       </label>
       <div className="flex items-end gap-2">
         <textarea
@@ -112,7 +112,7 @@ export default function ChatInput({ mode, busy, characterName, locale, getHint, 
               submit()
             }
           }}
-          placeholder={info ? info.placeholder : `${characterName} está digitando…`}
+          placeholder={info ? info.placeholder : `${contactName} está digitando…`}
           aria-describedby={error ? 'chat-input-error' : undefined}
           aria-invalid={error ? true : undefined}
           spellCheck={false}
