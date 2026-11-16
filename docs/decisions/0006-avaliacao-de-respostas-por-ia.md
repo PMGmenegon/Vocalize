@@ -19,3 +19,10 @@ Numa conversa não existe uma única resposta correta: várias respostas são v�
 ## Consequências
 - Até a Fase 10, `sessionService.submitReply` devolve uma avaliação neutra (`coherent`, `at`, sem correções), com as sugestões tiradas dos dados mock da fala. Ele não julga a resposta.
 - A resposta da IA precisa ser validada contra o formato de `ReplyFeedback` antes de chegar à tela.
+
+## Interlocutores e cenas por sessão (geração do diálogo na Fase 10)
+Cada situação tem vários interlocutores (`Interlocutor` em `src/types/`: `role`, `userRole`, `context`, `scenes`). O usuário escolhe só a situação, o nível e o sotaque.
+
+- **Hoje (mock):** ao iniciar a sessão, `drawInterlocutor` (`src/services/drawInterlocutor.ts`, função pura com a aleatoriedade injetada) sorteia um interlocutor da situação e uma cena dele; o diálogo vem de `src/mocks/bank.ts` (4 a 6 rodadas por interlocutor). Interlocutor e cena ficam fixos até o fim da sessão.
+- **Fase 10:** ao iniciar a sessão, o **backend** escolhe o interlocutor e a cena da situação (podendo variar e até criar cenas novas), e a **IA gera o diálogo** rodada a rodada a partir de `situation`, `interlocutor.role`, `interlocutor.userRole`, `interlocutor.context`, da cena, do nível e do sotaque. Assim as conversas nunca se repetem.
+- Funções e cenas são neutras em gênero, pois a voz pode ser masculina ou feminina. Estatísticas continuam por situação (não por interlocutor).
