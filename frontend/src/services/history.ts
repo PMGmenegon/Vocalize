@@ -25,7 +25,7 @@ export function summarize(session: Session) {
     accuracy,
     turnsCompleted: done.length,
     wrongWords: [...new Set(wrong.map((w) => w.toLowerCase()).filter(Boolean))],
-    corrections: session.turns.filter((t) => t.correction?.changed).length,
+    corrections: session.turns.filter((t) => t.feedback?.correctedReply).length,
     seconds,
     repetitions: done.length ? done.reduce((s, t) => s + t.repetitions, 0) / done.length : 0,
   }

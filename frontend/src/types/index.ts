@@ -88,14 +88,33 @@ export interface TranscriptionResult {
   expectedText: string
 }
 
-export interface Correction {
-  original: string
-  corrected: string
-  /** Explicação em português. */
+/** A resposta faz sentido como continuação da conversa? */
+export type ReplyCoherence = 'coherent' | 'partially_coherent' | 'off_topic'
+/** A resposta está adequada ao nível do usuário? */
+export type ReplyLevelFit = 'below' | 'at' | 'above'
+export type ReplyIssueCategory = 'verb_tense' | 'preposition' | 'article' | 'word_order' | 'vocabulary' | 'spelling' | 'other'
+
+export interface ReplyIssue {
+  category: ReplyIssueCategory
+  /** Explicação curta, em português. */
   explanation: string
-  vocabulary: { term: string; meaning: string }[]
-  /** false quando a resposta já estava ótima. */
-  changed: boolean
+}
+
+/**
+ * Avaliação da RESPOSTA do usuário ao personagem. Numa conversa não existe uma única resposta
+ * correta, então não há comparação com um gabarito. Será preenchido pela IA na Fase 10
+ * (ver docs/decisions/0006-avaliacao-de-respostas-por-ia.md). O ditado usa TranscriptionResult.
+ */
+export interface ReplyFeedback {
+  coherence: ReplyCoherence
+  levelFit: ReplyLevelFit
+  /** A frase do próprio usuário com os erros corrigidos, mantendo a ideia dele; null se não há erros. */
+  correctedReply: string | null
+  issues: ReplyIssue[]
+  /** 1 ou 2 exemplos de respostas naturais para o momento, no nível do usuário. */
+  suggestedReplies: string[]
+  /** Comentário curto e encorajador, em português. */
+  comment: string
 }
 
 export interface Turn {
@@ -109,7 +128,7 @@ export interface Turn {
   repetitions: number
   transcription?: TranscriptionResult
   reply?: string
-  correction?: Correction
+  feedback?: ReplyFeedback
 }
 
 export interface Session {
@@ -134,6 +153,8 @@ export interface SessionSummary {
   turnsCompleted: number
   wrongWords: string[]
   correctionsCount: number
+  /** Respostas do usuário na sessão, com a frase corrigida (se houve) e as sugestões. */
+  replies: { reply: string; correctedReply: string | null; suggestedReplies: string[] }[]
 }
 
 /** Item da lista "últimas sessões". */

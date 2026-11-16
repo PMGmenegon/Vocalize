@@ -11,7 +11,7 @@ export interface BankItem {
   lv: Level
   /** Fala do personagem (inglês americano). */
   ai: string
-  /** Resposta de referência (a "versão corrigida"). */
+  /** Exemplo de resposta natural a esta fala (vira uma "resposta sugerida"; não é um gabarito). */
   corrected: string
   explanation: string
   vocabulary: Vocab[]

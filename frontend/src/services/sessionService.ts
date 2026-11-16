@@ -1,9 +1,8 @@
 import { DEFAULT_MAX_TURNS, SCENARIOS } from '../data/scenarios'
 import { BANK, resolveItem } from '../mocks/bank'
 import { compareTranscription } from '../domain/transcription'
-import { sameText } from '../mocks/compare'
 import { db } from '../mocks/db'
-import { LEVELS, type Accent, type Correction, type Level, type ScenarioId, type Session, type SessionSummary, type TranscriptionResult, type Turn } from '../types'
+import { LEVELS, type Accent, type Level, type ReplyFeedback, type ScenarioId, type Session, type SessionSummary, type TranscriptionResult, type Turn } from '../types'
 import { summarize } from './history'
 import { scenarioTitle } from './scenarioService'
 import { simulate } from './runtime'
@@ -144,24 +143,27 @@ export const sessionService = {
     }, 400)
   },
 
-  /** Mock: a correção vem pronta do banco; a IA real corrigirá a resposta de verdade. */
-  submitReply(id: string, turnIndex: number, reply: string): Promise<Correction> {
+  /**
+   * MOCK — será substituído pela avaliação da IA na Fase 10 (ver docs/decisions/0006-avaliacao-de-respostas-por-ia.md).
+   * Ainda não há IA, então NÃO julga a resposta: devolve uma avaliação neutra, sem correções inventadas,
+   * com as respostas sugeridas vindas dos dados mock da fala atual.
+   */
+  submitReply(id: string, turnIndex: number, reply: string): Promise<ReplyFeedback> {
     return simulate(() => {
       const session = load(id)
-      const item = itemOf(session, turnIndex)
-      const changed = !sameText(reply, item.corrected)
-      const correction: Correction = {
-        original: reply,
-        corrected: item.corrected,
-        explanation: changed ? item.explanation : 'Sua resposta está natural e correta. Ótimo trabalho! Veja o vocabulário-chave abaixo.',
-        vocabulary: item.vocabulary,
-        changed,
+      const feedback: ReplyFeedback = {
+        coherence: 'coherent',
+        levelFit: 'at',
+        correctedReply: null,
+        issues: [],
+        suggestedReplies: [itemOf(session, turnIndex).corrected],
+        comment: 'Obrigado por responder! Em breve a avaliação será feita por IA, com correções e dicas para a sua frase.',
       }
       const turn = turnOf(session, turnIndex)
       turn.reply = reply
-      turn.correction = correction
+      turn.feedback = feedback
       save(session)
-      return correction
+      return feedback
     }, 600)
   },
 
@@ -190,5 +192,6 @@ function toSummary(session: Session): SessionSummary {
     turnsCompleted: s.turnsCompleted,
     wrongWords: s.wrongWords,
     correctionsCount: s.corrections,
+    replies: session.turns.flatMap((t) => (t.reply && t.feedback ? [{ reply: t.reply, correctedReply: t.feedback.correctedReply, suggestedReplies: t.feedback.suggestedReplies }] : [])),
   }
 }

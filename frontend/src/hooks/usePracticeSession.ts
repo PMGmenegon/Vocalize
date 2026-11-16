@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { sessionService, type HintKind } from '../services'
-import type { Correction, Session, TranscriptionResult, Turn } from '../types'
+import type { ReplyFeedback, Session, TranscriptionResult, Turn } from '../types'
 
 /**
  * Fases de uma rodada (iguais em qualquer layout):
  * preparing = esperando a próxima fala chegar · prepare-error = a fala falhou (dá para tentar de novo)
  * listen = fala pronta, aguardando a transcrição · reply = transcrição conferida, aguardando a resposta
- * reviewed = correção exibida · finished = limite de rodadas atingido e correção já lida
+ * reviewed = avaliação exibida · finished = limite de rodadas atingido e avaliação já lida
  */
 export type Phase = 'preparing' | 'prepare-error' | 'listen' | 'reply' | 'reviewed' | 'finished'
 
@@ -27,7 +27,7 @@ type Action =
   | { type: 'busy'; busy: boolean }
   | { type: 'error'; message: string }
   | { type: 'checked'; index: number; transcription: TranscriptionResult }
-  | { type: 'replied'; index: number; reply: string; correction: Correction; at: string }
+  | { type: 'replied'; index: number; reply: string; feedback: ReplyFeedback; at: string }
   | { type: 'repetition'; index: number }
   | { type: 'finished' }
 
@@ -48,7 +48,7 @@ function reducer(state: State, action: Action): State {
     case 'checked':
       return { ...state, turns: patch(state.turns, action.index, { transcription: action.transcription }), phase: 'reply', error: '' }
     case 'replied':
-      return { ...state, turns: patch(state.turns, action.index, { reply: action.reply, correction: action.correction, repliedAt: action.at }), phase: 'reviewed', error: '' }
+      return { ...state, turns: patch(state.turns, action.index, { reply: action.reply, feedback: action.feedback, repliedAt: action.at }), phase: 'reviewed', error: '' }
     case 'repetition': {
       const turn = state.turns.find((t) => t.index === action.index)
       return { ...state, turns: patch(state.turns, action.index, { repetitions: (turn?.repetitions ?? 0) + 1 }) }
@@ -60,7 +60,7 @@ function reducer(state: State, action: Action): State {
 
 function initialState(session: Session): State {
   const last = session.turns.at(-1)
-  const phase: Phase = !last ? 'preparing' : last.correction ? 'reviewed' : last.transcription ? 'reply' : 'listen'
+  const phase: Phase = !last ? 'preparing' : last.feedback ? 'reviewed' : last.transcription ? 'reply' : 'listen'
   return { turns: session.turns, phase, attempt: 0, busy: false, error: '' }
 }
 
@@ -88,7 +88,7 @@ export function usePracticeSession(session: Session) {
   const { turns, phase, busy, error } = state
   const current = turns.at(-1)
   const isLast = turns.length >= session.maxTurns
-  const done = turns.filter((t) => t.correction).length
+  const done = turns.filter((t) => t.feedback).length
 
   /** Executa uma ação do serviço com estado de "ocupado" e mensagem de erro. */
   const run = useCallback(async <T,>(action: () => Promise<T>, onOk: (value: T) => void, message: string) => {
@@ -113,7 +113,7 @@ export function usePracticeSession(session: Session) {
   const reply = useCallback(
     (text: string) => {
       if (!current) return Promise.resolve()
-      return run(() => sessionService.submitReply(session.id, current.index, text), (correction) => dispatch({ type: 'replied', index: current.index, reply: text, correction, at: new Date().toISOString() }), 'Algo deu errado ao enviar. Tente de novo.')
+      return run(() => sessionService.submitReply(session.id, current.index, text), (feedback) => dispatch({ type: 'replied', index: current.index, reply: text, feedback, at: new Date().toISOString() }), 'Algo deu errado ao enviar. Tente de novo.')
     },
     [current, run, session.id],
   )
