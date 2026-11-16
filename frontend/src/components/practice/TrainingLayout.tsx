@@ -1,8 +1,10 @@
 import { useEffect } from 'react'
 import { characterFor, situationFor } from '../../data/scenarios'
-import { fakeDuration, formatClock, useElapsed, useFakePlayback } from '../../hooks/useFakePlayback'
+import { useElapsed } from '../../hooks/useElapsed'
+import { useSpeechPlayer } from '../../hooks/useSpeechPlayer'
+import { useSpokenText } from '../../hooks/useSpokenText'
 import { usePracticeSession, type PracticeController } from '../../hooks/usePracticeSession'
-import { ACCENT_LABEL } from '../../lib/format'
+import { ACCENT_LABEL, formatClock } from '../../lib/format'
 import type { Session, Turn } from '../../types'
 import Avatar from '../chat/Avatar'
 import { Page } from '../ui/PageHeader'
@@ -55,7 +57,8 @@ function TopBar({ ctrl }: { ctrl: PracticeController }) {
 /** Uma rodada. Recriada a cada fala nova (key), então o player e os campos recomeçam do zero. */
 function TrainingTurn({ ctrl, turn }: { ctrl: PracticeController; turn: Turn }) {
   const { phase, isLast } = ctrl
-  const playback = useFakePlayback(fakeDuration(turn.wordCount), ctrl.addRepetition)
+  const text = useSpokenText(ctrl.session.id, turn.index)
+  const playback = useSpeechPlayer({ text, locale: ctrl.session.accent, onRestart: ctrl.addRepetition })
   const { toggle, repeat, toggleSpeed } = playback
   const onNext = () => (isLast ? void ctrl.finish() : ctrl.next())
 
@@ -92,7 +95,7 @@ function TrainingTurn({ ctrl, turn }: { ctrl: PracticeController; turn: Turn }) 
           <TranscriptionResult result={turn.transcription} large />
         </section>
       )}
-      {phase === 'reply' && <ReplyForm busy={ctrl.busy} onSend={(t) => void ctrl.reply(t)} />}
+      {phase === 'reply' && <ReplyForm locale={ctrl.session.accent} busy={ctrl.busy} onSend={(t) => void ctrl.reply(t)} />}
 
       {turn.correction && (
         <>

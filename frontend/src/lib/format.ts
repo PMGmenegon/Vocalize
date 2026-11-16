@@ -35,3 +35,9 @@ export function formatDuration(seconds: number): string {
   const s = seconds % 60
   return s ? `${m} min ${s} s` : `${m} min`
 }
+
+/** Relógio m:ss. */
+export function formatClock(seconds: number): string {
+  const s = Math.floor(seconds)
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
+}

@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { speechPlayer } from '../../audio'
 import { characterFor, EXPERIENCE, introFor } from '../../data/scenarios'
 import { ACCENT_LABEL } from '../../lib/format'
 import { usePracticeSession } from '../../hooks/usePracticeSession'
@@ -89,6 +90,12 @@ export default function ChatLayout({ session }: { session: Session }) {
     return () => window.clearTimeout(id)
   }, [phase, isLast, next])
 
+  // Chegou uma mensagem nova (rodada nova): corta qualquer áudio que ainda esteja tocando.
+  const turnCount = turns.length
+  useEffect(() => {
+    speechPlayer.cancel()
+  }, [turnCount])
+
   const mode: InputMode = phase === 'listen' ? 'transcribe' : phase === 'reply' ? 'reply' : phase === 'reviewed' && isLast ? 'finished' : 'locked'
   const status = phase === 'preparing' ? 'gravando áudio...' : phase === 'prepare-error' ? 'sem conexão' : 'online'
 
@@ -130,6 +137,7 @@ export default function ChatLayout({ session }: { session: Session }) {
                 mode={mode}
                 busy={ctrl.busy}
                 characterName={contact.name}
+                locale={session.accent}
                 getHint={ctrl.getHint}
                 onSubmit={(text) => void (mode === 'transcribe' ? ctrl.check(text) : ctrl.reply(text))}
                 onFinish={() => void ctrl.finish()}
@@ -144,7 +152,7 @@ export default function ChatLayout({ session }: { session: Session }) {
             <p className="mx-auto w-fit rounded-full bg-card px-3 py-1 text-xs font-bold text-muted shadow-sm">Hoje</p>
             {turns.map((turn) => (
               <div key={turn.index} className="space-y-3">
-                <VoiceMessage contactName={contact.name} turn={turn} time={clock(turn.createdAt)} onRestart={ctrl.addRepetition} />
+                <VoiceMessage sessionId={session.id} locale={session.accent} contactName={contact.name} turn={turn} time={clock(turn.createdAt)} onRestart={ctrl.addRepetition} />
                 {turn.reply && <UserMessage turn={turn} />}
               </div>
             ))}
