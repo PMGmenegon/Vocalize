@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import type { HintKind } from '../../services'
-import type { Correction } from '../../types'
-import { MicIcon, SendIcon } from '../appIcons'
+import type { Accent, Correction } from '../../types'
+import { useSpeechRecognition } from '../../hooks/useSpeechRecognition'
+import { SendIcon } from '../appIcons'
 import Button from '../ui/Button'
 import { Textarea } from '../ui/Input'
+import { MicButton, MicStatus } from './MicControls'
 
 /** Enter envia; Shift+Enter quebra linha. */
 const onEnter = (submit: () => void) => (e: React.KeyboardEvent) => {
@@ -73,11 +75,17 @@ export function TranscribeForm({ busy, getHint, onCheck }: { busy: boolean; getH
   )
 }
 
-/** Etapa "Responder": texto ou microfone (visual). */
-export function ReplyForm({ busy, onSend }: { busy: boolean; onSend: (text: string) => void }) {
+/** Etapa "Responder": digitando ou pelo microfone (o texto falado vai para o campo, para revisar antes de enviar). */
+export function ReplyForm({ locale, busy, onSend }: { locale: Accent; busy: boolean; onSend: (text: string) => void }) {
   const [text, setText] = useState('')
   const [error, setError] = useState('')
-  const [micNote, setMicNote] = useState('')
+  const mic = useSpeechRecognition({
+    lang: locale,
+    onText: (spoken) => {
+      setError('')
+      setText((prev) => (prev.trim() ? `${prev.trim()} ${spoken}` : spoken))
+    },
+  })
 
   function submit() {
     if (busy) return
@@ -111,13 +119,9 @@ export function ReplyForm({ busy, onSend }: { busy: boolean; onSend: (text: stri
         <Button type="submit" size="lg" disabled={busy} aria-busy={busy}>
           <SendIcon className="h-5 w-5" /> {busy ? 'Enviando…' : 'Enviar'}
         </Button>
-        <Button variant="secondary" onClick={() => setMicNote('A resposta por voz chega numa fase futura. Por enquanto, escreva.')}>
-          <MicIcon className="h-5 w-5" /> Responder por voz
-        </Button>
+        <MicButton input={mic} variant="labeled" />
       </div>
-      <p role="status" className="min-h-5 text-sm text-muted">
-        {micNote}
-      </p>
+      <MicStatus input={mic} />
     </form>
   )
 }

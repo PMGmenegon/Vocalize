@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import type { HintKind } from '../../services'
-import { MicIcon, SendIcon } from '../appIcons'
+import { useSpeechRecognition } from '../../hooks/useSpeechRecognition'
+import type { Accent } from '../../types'
+import { SendIcon } from '../appIcons'
+import { MicButton, MicStatus } from '../practice/MicControls'
 import Button from '../ui/Button'
 
 export type InputMode = 'transcribe' | 'reply' | 'locked' | 'finished'
@@ -9,6 +12,8 @@ interface ChatInputProps {
   mode: InputMode
   busy: boolean
   characterName: string
+  /** Sotaque da sessão: o microfone reconhece este inglês. */
+  locale: Accent
   getHint: (kind: HintKind) => Promise<string>
   onSubmit: (text: string) => void
   onFinish: () => void
@@ -20,11 +25,17 @@ const MODE_INFO = {
 } as const
 
 /** Campo de mensagem na base do chat (o pai usa `key` para recriá-lo a cada rodada/modo, limpando o texto e levando o foco até ele). O modo (Transcrever / Responder) aparece num selo e no rótulo. */
-export default function ChatInput({ mode, busy, characterName, getHint, onSubmit, onFinish }: ChatInputProps) {
+export default function ChatInput({ mode, busy, characterName, locale, getHint, onSubmit, onFinish }: ChatInputProps) {
   const [text, setText] = useState('')
   const [hint, setHint] = useState('')
   const [error, setError] = useState('')
-  const [micNote, setMicNote] = useState('')
+  const mic = useSpeechRecognition({
+    lang: locale,
+    onText: (spoken) => {
+      setError('')
+      setText((prev) => (prev.trim() ? `${prev.trim()} ${spoken}` : spoken))
+    },
+  })
 
   if (mode === 'finished') {
     return (
@@ -108,16 +119,7 @@ export default function ChatInput({ mode, busy, characterName, getHint, onSubmit
           autoCapitalize="none"
           className={`block max-h-32 min-h-12 w-full resize-none rounded-xl border-2 bg-card px-3 py-2 text-base text-ink placeholder:text-muted disabled:opacity-60 ${error ? 'border-on-danger' : 'border-control'}`}
         />
-        {mode === 'reply' && (
-          <button
-            type="button"
-            aria-label="Responder por voz (em breve)"
-            onClick={() => setMicNote('A resposta por voz chega numa fase futura. Por enquanto, escreva.')}
-            className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-xl border-2 border-control bg-card text-brand hover:bg-surface"
-          >
-            <MicIcon className="h-5 w-5" />
-          </button>
-        )}
+        {mode === 'reply' && <MicButton input={mic} variant="icon" />}
         <Button type="submit" disabled={locked || busy} aria-busy={busy} className="h-12 shrink-0" aria-label={mode === 'transcribe' ? 'Conferir' : 'Enviar'}>
           <SendIcon className="h-5 w-5" />
           <span className="hidden sm:inline">{busy ? '…' : mode === 'transcribe' ? 'Conferir' : 'Enviar'}</span>
@@ -126,9 +128,7 @@ export default function ChatInput({ mode, busy, characterName, getHint, onSubmit
       <p id="chat-input-error" role="alert" className="min-h-4 text-xs font-bold text-on-danger">
         {error}
       </p>
-      <p role="status" className="text-xs text-muted">
-        {micNote}
-      </p>
+      {mode === 'reply' && <MicStatus input={mic} className="!text-xs" />}
     </form>
   )
 }
