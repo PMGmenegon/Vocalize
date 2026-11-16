@@ -1,6 +1,7 @@
 import { DEFAULT_MAX_TURNS, SCENARIOS } from '../data/scenarios'
 import { BANK, resolveItem } from '../mocks/bank'
-import { compareDictation, sameText } from '../mocks/compare'
+import { compareTranscription } from '../domain/transcription'
+import { sameText } from '../mocks/compare'
 import { db } from '../mocks/db'
 import { LEVELS, type Accent, type Correction, type Level, type ScenarioId, type Session, type SessionSummary, type TranscriptionResult, type Turn } from '../types'
 import { summarize } from './history'
@@ -114,6 +115,14 @@ export const sessionService = {
     }, 80)
   },
 
+  /**
+   * Texto da fala, para o navegador sintetizar a voz. Só o mock devolve o texto ao cliente; com o
+   * backend real a fala virá como áudio (ou o texto só será liberado após a conferência).
+   */
+  getSpokenText(id: string, turnIndex: number): Promise<string> {
+    return simulate(() => itemOf(load(id), turnIndex).ai, 60)
+  },
+
   getHint(id: string, turnIndex: number, kind: HintKind): Promise<string> {
     return simulate(() => {
       const text = itemOf(load(id), turnIndex).ai
@@ -128,7 +137,7 @@ export const sessionService = {
   checkTranscription(id: string, turnIndex: number, typed: string): Promise<TranscriptionResult> {
     return simulate(() => {
       const session = load(id)
-      const result = compareDictation(itemOf(session, turnIndex).ai, typed)
+      const result = compareTranscription(itemOf(session, turnIndex).ai, typed)
       turnOf(session, turnIndex).transcription = result
       save(session)
       return result
