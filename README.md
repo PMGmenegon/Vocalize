@@ -8,7 +8,7 @@ App web para **aprender inglês ouvindo e conversando**. A IA fala em inglês (o
 
 Interface em português (Brasil); conteúdo de estudo em inglês. Dois temas visuais conforme o sotaque: **US** (vermelho, estrelas e listras) e **UK** (azul-marinho, cruz da Union Jack).
 
-> **Status:** Fase 2 (todas as telas com dados falsos). O backend (FastAPI), o login real, o áudio e a IA vêm nas próximas fases.
+> **Status:** frontend com dados falsos + fundação do backend (Fase 4). O login real, o áudio e a IA vêm nas próximas fases.
 
 ## Próximas fases
 
@@ -19,7 +19,7 @@ Interface em português (Brasil); conteúdo de estudo em inglês. Dois temas vis
 
 ```
 frontend/   React + Vite + TypeScript + Tailwind + Recharts
-backend/    FastAPI (ainda vazio)
+backend/    FastAPI (fundação: health, /api/v1, erros padronizados; sem banco/login/IA ainda)
 docs/       documentação e decisões de arquitetura (docs/decisions/)
 ```
 
@@ -46,6 +46,65 @@ Abra o endereço que o Vite mostrar no terminal (normalmente `http://localhost:5
 | `npm run typecheck` | TypeScript (strict), sem gerar arquivos |
 | `npm run test` | testes unitários (Vitest), como o cálculo do nível do teste de nivelamento |
 | `npm run check:contrast` | verifica o contraste WCAG AA das cores dos dois temas |
+
+## Como rodar o backend
+
+Pré-requisitos: [uv](https://docs.astral.sh/uv/) e Python 3.12+ (para o jeito local); [Docker Desktop](https://www.docker.com/products/docker-desktop/) (para o jeito com Docker). Todos os comandos são a partir da raiz do repositório.
+
+Primeiro, crie o arquivo de configuração (o `.env` real nunca vai para o Git):
+
+```bash
+cp backend/.env.example backend/.env
+```
+
+**Localmente, com uv:**
+
+```bash
+uv --directory backend sync
+uv --directory backend run uvicorn app.main:app --reload
+```
+
+**Com Docker Compose** (API + PostgreSQL 16; o banco ainda não é usado pela API, fica pronto para a Fase 5):
+
+```bash
+docker compose up --build
+docker compose down        # para tudo (o volume do banco é mantido)
+```
+
+Se a porta 5432 do seu computador já estiver em uso, defina outra: `DB_PORT=5433 docker compose up`.
+
+A API fica em `http://localhost:8000`:
+
+| URL | O que mostra |
+|---|---|
+| `/health` | `{"status": "ok"}` (monitoramento) |
+| `/api/v1/` | nome e versão da API |
+| `/docs` | documentação interativa (Swagger) da **Vocalize API** |
+
+### Testes e checks
+
+```bash
+uv --directory backend run pytest
+uv --directory backend run ruff check .
+uv --directory backend run ruff format --check .
+uv --directory backend run mypy
+```
+
+### Estrutura do backend
+
+```
+backend/app/
+  api/v1/        rotas finas (validam e chamam services)
+  services/      regras de negócio
+  domain/        lógica pura, sem I/O
+  repositories/  acesso ao banco
+  models/        tabelas (Fase 5)
+  schemas/       formatos de entrada e saída (Pydantic)
+  clients/       integrações externas (IA, Fase 10)
+  core/          configuração, logs e erros
+```
+
+Erros seguem sempre `{"error": {"code": "...", "message": "..."}}`. Configuração por variáveis de ambiente (`APP_ENV`, `CORS_ORIGINS`, `LOG_LEVEL`); em desenvolvimento o frontend em `http://localhost:5173` a `5199` já é aceito pelo CORS.
 
 ## Dados falsos (mock) e camada de serviços
 
@@ -99,6 +158,7 @@ Registradas em [`docs/decisions/`](docs/decisions/):
 - [0002 — Vite + React + React Router](docs/decisions/0002-vite-react-router.md)
 - [0003 — Temas com variáveis CSS e Tailwind v4](docs/decisions/0003-temas-css-variables-tailwind.md)
 - [0004 — TypeScript fixado na série 6.0](docs/decisions/0004-typescript-6.md)
+- [0007 — FastAPI e arquitetura em camadas](docs/decisions/0007-fastapi-arquitetura-em-camadas.md)
 
 ## Licença
 
