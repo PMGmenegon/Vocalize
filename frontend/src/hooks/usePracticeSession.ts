@@ -132,6 +132,17 @@ export function usePracticeSession(session: Session) {
     void sessionService.addRepetition(session.id, current.index).catch(() => undefined)
   }, [current, session.id])
 
+  /**
+   * Bip de início: só a primeira fala da sessão toca. Os layouts chamam isto quando a voz realmente
+   * começa; devolve true uma única vez por sessão (nova sessão = novo controle).
+   */
+  const beepSession = useRef<string | null>(null)
+  const claimStartBeep = useCallback(() => {
+    if (beepSession.current === session.id) return false
+    beepSession.current = session.id
+    return true
+  }, [session.id])
+
   const getHint = useCallback((kind: HintKind) => (current ? sessionService.getHint(session.id, current.index, kind) : Promise.resolve('')), [current, session.id])
 
   /** Encerra a sessão (por escolha do usuário ou ao fim) e vai para o resumo. */
@@ -146,7 +157,7 @@ export function usePracticeSession(session: Session) {
     }
   }, [navigate, session.id])
 
-  return { session, turns, current, phase, busy, error, isLast, done, check, reply, next, retry, addRepetition, getHint, finish }
+  return { session, turns, current, phase, busy, error, isLast, done, check, reply, next, retry, addRepetition, getHint, claimStartBeep, finish }
 }
 
 export type PracticeController = ReturnType<typeof usePracticeSession>

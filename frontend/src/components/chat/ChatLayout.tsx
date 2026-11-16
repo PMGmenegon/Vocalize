@@ -152,7 +152,7 @@ export default function ChatLayout({ session }: { session: Session }) {
             <p className="mx-auto w-fit rounded-full bg-card px-3 py-1 text-xs font-bold text-muted shadow-sm">Hoje</p>
             {turns.map((turn) => (
               <div key={turn.index} className="space-y-3">
-                <VoiceMessage sessionId={session.id} locale={session.accent} contactName={contact.name} turn={turn} time={clock(turn.createdAt)} onRestart={ctrl.addRepetition} />
+                <VoiceMessage sessionId={session.id} locale={session.accent} contactName={contact.name} turn={turn} time={clock(turn.createdAt)} onRestart={ctrl.addRepetition} claimStartBeep={ctrl.claimStartBeep} />
                 {turn.reply && <UserMessage turn={turn} />}
               </div>
             ))}

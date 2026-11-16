@@ -58,7 +58,7 @@ function TopBar({ ctrl }: { ctrl: PracticeController }) {
 function TrainingTurn({ ctrl, turn }: { ctrl: PracticeController; turn: Turn }) {
   const { phase, isLast } = ctrl
   const text = useSpokenText(ctrl.session.id, turn.index)
-  const playback = useSpeechPlayer({ text, locale: ctrl.session.accent, onRestart: ctrl.addRepetition })
+  const playback = useSpeechPlayer({ text, locale: ctrl.session.accent, onRestart: ctrl.addRepetition, claimStartBeep: ctrl.claimStartBeep })
   const { toggle, repeat, toggleSpeed } = playback
   const onNext = () => (isLast ? void ctrl.finish() : ctrl.next())
 
