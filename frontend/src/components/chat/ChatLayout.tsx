@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { speechPlayer } from '../../audio'
-import { EXPERIENCE, speakerRoleFor } from '../../data/scenarios'
+import { EXPERIENCE, interlocutorFor } from '../../data/scenarios'
 import { ACCENT_LABEL } from '../../lib/format'
 import { usePracticeSession } from '../../hooks/usePracticeSession'
 import { COHERENCE_LABEL, ISSUE_LABEL, LEVEL_FIT_LABEL } from '../../lib/replyFeedback'
@@ -93,7 +93,7 @@ function UserMessage({ turn }: { turn: Turn }) {
 export default function ChatLayout({ session }: { session: Session }) {
   const ctrl = usePracticeSession(session)
   const { phase, turns, isLast } = ctrl
-  const role = speakerRoleFor(session.scenarioId)
+  const role = interlocutorFor(session.scenarioId, session.interlocutorId).role
 
   // Depois da avaliação o contato "grava" outra mensagem de voz (depois de um tempo para ler a nota).
   const { next } = ctrl

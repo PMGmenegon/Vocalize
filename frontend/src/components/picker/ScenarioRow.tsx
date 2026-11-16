@@ -1,5 +1,5 @@
 import { useId } from 'react'
-import { EXPERIENCE, speakerRoleFor } from '../../data/scenarios'
+import { EXPERIENCE, interlocutorRolesFor } from '../../data/scenarios'
 import { formatDate } from '../../lib/format'
 import type { Scenario, ScenarioHistory } from '../../types'
 import { ScenarioIcon } from '../appIcons'
@@ -57,7 +57,7 @@ export default function ScenarioRow({ scenario, history, name, checked, onSelect
         <span id={`${id}-d`} className="block">
           <span className="mt-1 block text-ink">{scenario.description}</span>
           <span className="mt-1 block text-sm text-muted">
-            Quem fala: {speakerRoleFor(scenario.id)}
+            Você pode conversar com: {interlocutorRolesFor(scenario.id).join(', ')}
           </span>
         </span>
       </span>

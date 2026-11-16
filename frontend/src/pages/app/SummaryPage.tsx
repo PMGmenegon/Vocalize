@@ -39,7 +39,7 @@ export default function SummaryPage() {
           <>
             <PageHeader eyebrow="Sessão concluída" title={s.scenarioTitle} description={`${s.turnsCompleted} ${s.turnsCompleted === 1 ? 'rodada concluída' : 'rodadas concluídas'}.`} />
             <p className="mt-4 max-w-xl text-muted">
-              <span className="type-eyebrow mr-2">Cena</span>
+              <span className="type-eyebrow mr-2">{s.interlocutorRole}</span>
               {s.scene}
             </p>
             <StatList divided>

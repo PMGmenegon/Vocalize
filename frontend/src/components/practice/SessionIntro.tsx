@@ -1,4 +1,4 @@
-import { EXPERIENCE, situationFor, speakerRoleFor } from '../../data/scenarios'
+import { EXPERIENCE, interlocutorFor, situationFor } from '../../data/scenarios'
 import { ACCENT_LABEL } from '../../lib/format'
 import type { Session } from '../../types'
 import { ScenarioIcon } from '../appIcons'
@@ -10,6 +10,7 @@ import StickyActionBar from '../ui/StickyActionBar'
 /** Introdução curta da situação, antes de a sessão começar. */
 export default function SessionIntro({ session, onStart }: { session: Session; onStart: () => void }) {
   const situation = situationFor(session.scenarioId)
+  const interlocutor = interlocutorFor(session.scenarioId, session.interlocutorId)
   return (
     <Page narrow>
       <PageHeader
@@ -29,7 +30,9 @@ export default function SessionIntro({ session, onStart }: { session: Session; o
           <ScenarioIcon icon={situation.icon} className="h-8 w-8" />
         </span>
       </div>
-      <p className="mt-3 text-sm text-muted">Quem fala: {speakerRoleFor(session.scenarioId)}</p>
+      <p className="mt-3 text-sm text-muted">
+        {interlocutor.role} · Você: {interlocutor.userRole}
+      </p>
       <p className="mt-6 max-w-xl text-lg text-ink">
         {situation.layout === 'chat'
           ? 'As falas chegam como mensagens de voz. Transcreva o que ouviu e responda por texto.'

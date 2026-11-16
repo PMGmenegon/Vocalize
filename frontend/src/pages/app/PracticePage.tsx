@@ -13,7 +13,7 @@ import Section from '../../components/ui/Section'
 import Skeleton from '../../components/ui/Skeleton'
 import { Stat, StatList } from '../../components/ui/Stat'
 import StickyActionBar from '../../components/ui/StickyActionBar'
-import { EXPERIENCE, SETTING_LABEL, speakerRoleFor } from '../../data/scenarios'
+import { EXPERIENCE, SETTING_LABEL, interlocutorRolesFor } from '../../data/scenarios'
 import { useAsync } from '../../hooks/useAsync'
 import { useMediaQuery } from '../../hooks/useMediaQuery'
 import { ACCENT_LABEL, ACCENT_SHORT } from '../../lib/format'
@@ -108,7 +108,7 @@ export default function PracticePage() {
             >
               {/* Aviso para leitores de tela quando a seleção muda. */}
               <p role="status" aria-live="polite" className="sr-only">
-                {selected ? `${selected.title} selecionada. Quem fala: ${speakerRoleFor(selected.id).toLowerCase()}. ${EXPERIENCE[selected.layout].label}, cerca de ${selected.minutes} minutos.` : ''}
+                {selected ? `${selected.title} selecionada. Você pode conversar com: ${interlocutorRolesFor(selected.id).join(', ')}. ${EXPERIENCE[selected.layout].label}, cerca de ${selected.minutes} minutos.` : ''}
               </p>
 
               {recommended && overview && (

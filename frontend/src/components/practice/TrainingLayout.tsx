@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { situationFor, speakerRoleFor } from '../../data/scenarios'
+import { interlocutorFor, situationFor } from '../../data/scenarios'
 import { useElapsed } from '../../hooks/useElapsed'
 import { useSpeechPlayer } from '../../hooks/useSpeechPlayer'
 import { useSpokenText } from '../../hooks/useSpokenText'
@@ -83,7 +83,7 @@ function TrainingTurn({ ctrl, turn }: { ctrl: PracticeController; turn: Turn }) 
 
   return (
     <div>
-      <p className="type-eyebrow mb-2">{speakerRoleFor(ctrl.session.scenarioId)}</p>
+      <p className="type-eyebrow mb-2">{interlocutorFor(ctrl.session.scenarioId, ctrl.session.interlocutorId).role}</p>
       <AudioPlayer playback={playback} seed={turn.index + turn.wordCount} repetitions={turn.repetitions} />
       {phase === 'listen' && <TranscribeForm busy={ctrl.busy} getHint={ctrl.getHint} onCheck={(t) => void ctrl.check(t)} />}
 
