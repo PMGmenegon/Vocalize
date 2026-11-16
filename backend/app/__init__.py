@@ -1,1 +1,1 @@
-# Vocalize API: pacote principal da aplicacao FastAPI.
+# Vocalize API: pacote principal da aplicação FastAPI.

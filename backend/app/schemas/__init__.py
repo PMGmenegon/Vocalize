@@ -1,1 +1,1 @@
-# Schemas: formatos de entrada e saida da API (Pydantic).
+# Schemas: formatos de entrada e saída da API (Pydantic).

@@ -1,1 +1,1 @@
-# Core: configuracao, seguranca, logs e tratamento de erros.
+# Core: configuração, segurança, logs e tratamento de erros.

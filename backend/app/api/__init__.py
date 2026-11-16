@@ -1,1 +1,1 @@
-# Camada de API: rotas HTTP, agrupadas por versao.
+# Camada de API: rotas HTTP, agrupadas por versão.

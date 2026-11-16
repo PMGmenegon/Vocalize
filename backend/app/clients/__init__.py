@@ -1,1 +1,1 @@
-# Clients: integracoes externas, como a IA (Fase 10).
+# Clients: integrações externas, como a IA (Fase 10).
