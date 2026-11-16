@@ -1,22 +1,4 @@
-import type { Accent, PracticeLayout, Scenario, ScenarioId } from '../types'
-
-/** Aparência de um avatar ilustrado (desenhado em src/components/chat/Avatar.tsx). */
-export interface AvatarSpec {
-  skin: string
-  hair: string
-  hairStyle: 'short' | 'long' | 'bun' | 'cap' | 'bald' | 'wavy'
-  outfit: string
-  accessory?: 'apron' | 'tie' | 'vest' | 'glasses' | 'bowtie' | 'scarf' | 'badge'
-}
-
-export interface Character {
-  name: string
-  /** Papel na situação, em português ("Garçom"). */
-  role: string
-  /** Nome do lugar, em português ("Diner americano"). */
-  place: string
-  avatar: AvatarSpec
-}
+import type { PracticeLayout, Scenario, ScenarioId } from '../types'
 
 /** Como cada tipo de prática é apresentado na tela de escolha. */
 export const EXPERIENCE: Record<PracticeLayout, { label: string; hint: string }> = {
@@ -35,58 +17,75 @@ export const DEFAULT_MAX_TURNS = 8
  * prática escolhe o layout pelo campo `layout`; nenhum componente precisa mudar).
  */
 export interface Situation extends Scenario {
-  byAccent: Record<Accent, { character: Character; intro: string }>
+  /** Função neutra (em gênero) de quem fala, em português ("Atendente"). */
+  speakerRole: string
+  /** Variações de cena (clima + quem vai falar); uma é sorteada por sessão. */
+  scenes: string[]
 }
 
 export const SITUATIONS: Situation[] = [
   {
-    id: 'restaurant', title: 'Restaurante', description: 'Peça a mesa, escolha o prato e converse com o garçom.', icon: 'utensils', layout: 'training', setting: 'in-person', minutes: 12, skills: ['Pedidos e preferências', 'Números e preços', 'Pedidos educados'],
-    byAccent: {
-      'en-US': { intro: 'Você está num diner em Nova York. O garçom Mike vai atender você.', character: { name: 'Mike', role: 'Garçom', place: 'Diner americano', avatar: { skin: '#e8b98f', hair: '#4a3222', hairStyle: 'short', outfit: '#b22234', accessory: 'bowtie' } } },
-      'en-GB': { intro: 'Você está num pub em Londres. O barman Oliver vai atender você.', character: { name: 'Oliver', role: 'Barman', place: 'Pub britânico', avatar: { skin: '#f1c9a5', hair: '#a8552b', hairStyle: 'wavy', outfit: '#2f4a3a', accessory: 'apron' } } },
-    },
+    id: 'restaurant', title: 'Restaurante', description: 'Peça a mesa, escolha o prato e converse com o atendimento.', icon: 'utensils', layout: 'training', setting: 'in-person', minutes: 12, skills: ['Pedidos e preferências', 'Números e preços', 'Pedidos educados'],
+    speakerRole: 'Atendente',
+    scenes: [
+      'Restaurante movimentado, sexta à noite. Você acabou de sentar e o atendimento chega à sua mesa.',
+      'Almoço de domingo num restaurante cheio. O atendimento vem anotar o seu pedido.',
+      'Fim de noite, quase hora de fechar. Você pede a conta e o atendimento se aproxima.',
+    ],
   },
   {
     id: 'street', title: 'Conversa na rua', description: 'Peça informação e converse com alguém que você encontra na rua.', icon: 'pin', layout: 'training', setting: 'in-person', minutes: 10, skills: ['Pedir e entender direções', 'Conversa informal', 'Fala rápida do dia a dia'],
-    byAccent: {
-      'en-US': { intro: 'Você está numa calçada no centro de Chicago e uma moradora, a Chloe, para para conversar.', character: { name: 'Chloe', role: 'Moradora', place: 'Rua em Chicago', avatar: { skin: '#e8b98f', hair: '#7a3b1e', hairStyle: 'cap', outfit: '#e4872c', accessory: 'scarf' } } },
-      'en-GB': { intro: 'Você está na high street de uma cidade inglesa e um morador, o Edward, para para conversar.', character: { name: 'Edward', role: 'Morador', place: 'Rua em Manchester', avatar: { skin: '#f1c9a5', hair: '#8c8c8c', hairStyle: 'bald', outfit: '#3d6b5a', accessory: 'glasses' } } },
-    },
+    speakerRole: 'Pessoa na rua',
+    scenes: [
+      'Calçada cheia numa tarde de sábado. Uma pessoa que passa por ali para para conversar com você.',
+      'Manhã fria, ponto de ônibus. Quem está ao seu lado puxa assunto.',
+      'Você está perdido(a) num bairro novo. Uma pessoa na calçada percebe e se aproxima.',
+    ],
   },
   {
     id: 'airport', title: 'Aeroporto', description: 'Faça check-in, passe pela segurança e encontre o portão.', icon: 'plane', layout: 'training', setting: 'in-person', minutes: 14, skills: ['Avisos e instruções', 'Horários e portões', 'Perguntas de segurança'],
-    byAccent: {
-      'en-US': { intro: 'Você está no aeroporto de Los Angeles. A agente Carla está no balcão de check-in.', character: { name: 'Carla', role: 'Agente de check-in', place: 'Aeroporto americano', avatar: { skin: '#d9a47c', hair: '#1f1612', hairStyle: 'bun', outfit: '#1d4f8f', accessory: 'scarf' } } },
-      'en-GB': { intro: 'Você está no aeroporto de Heathrow. A agente Priya está no balcão de embarque.', character: { name: 'Priya', role: 'Agente de embarque', place: 'Aeroporto britânico', avatar: { skin: '#b9835c', hair: '#15100d', hairStyle: 'long', outfit: '#012169', accessory: 'scarf' } } },
-    },
+    speakerRole: 'Atendente',
+    scenes: [
+      'Balcão de check-in lotado numa manhã de segunda. Chegou a sua vez.',
+      'Madrugada no aeroporto, fila curta. O atendimento do balcão chama você.',
+      'Quase na hora do embarque. Você corre até o balcão e o atendimento recebe você.',
+    ],
   },
   {
     id: 'hotel', title: 'Hotel', description: 'Faça o check-in, tire dúvidas e peça ajuda à recepção.', icon: 'bed', layout: 'training', setting: 'in-person', minutes: 12, skills: ['Reservas e datas', 'Pedidos à recepção', 'Resolver imprevistos'],
-    byAccent: {
-      'en-US': { intro: 'Você chegou a um hotel em Miami. O concierge Daniel recebe você na recepção.', character: { name: 'Daniel', role: 'Concierge', place: 'Hotel americano', avatar: { skin: '#a96f4b', hair: '#1a120d', hairStyle: 'short', outfit: '#7a1f2b', accessory: 'vest' } } },
-      'en-GB': { intro: 'Você chegou a um hotel clássico em Edimburgo. A recepcionista Margaret recebe você.', character: { name: 'Margaret', role: 'Recepcionista', place: 'Hotel clássico britânico', avatar: { skin: '#f3d2b3', hair: '#b9b4ad', hairStyle: 'bun', outfit: '#1c3557', accessory: 'badge' } } },
-    },
+    speakerRole: 'Recepção',
+    scenes: [
+      'Fim de tarde, você chega ao hotel com a mala na mão. A recepção recebe você.',
+      'Saguão silencioso, tarde da noite. Você se aproxima da recepção para fazer o check-in.',
+      'Manhã de checkout. Você vai até a recepção com uma dúvida sobre a estadia.',
+    ],
   },
   {
     id: 'shopping', title: 'Compras', description: 'Pergunte preços e tamanhos, experimente e pague.', icon: 'bag', layout: 'training', setting: 'in-person', minutes: 12, skills: ['Preços e tamanhos', 'Pedidos e trocas', 'Formas de pagamento'],
-    byAccent: {
-      'en-US': { intro: 'Você está numa loja de roupas num shopping de Dallas. A vendedora Jenna vem atender você.', character: { name: 'Jenna', role: 'Vendedora', place: 'Shopping center', avatar: { skin: '#f1c9a5', hair: '#c79a3b', hairStyle: 'long', outfit: '#e0566b', accessory: 'badge' } } },
-      'en-GB': { intro: 'Você está numa loja da high street em Bristol. O atendente Harry vem ajudar você.', character: { name: 'Harry', role: 'Atendente da loja', place: 'High street', avatar: { skin: '#e8b98f', hair: '#6b3f26', hairStyle: 'short', outfit: '#7d3b3b', accessory: 'apron' } } },
-    },
+    speakerRole: 'Atendente',
+    scenes: [
+      'Loja cheia num sábado de promoção. O atendimento se aproxima para ajudar você.',
+      'Fim de tarde no shopping, loja tranquila. Você chama o atendimento para tirar uma dúvida.',
+      'Você está no provador e precisa de outro tamanho. O atendimento vem até você.',
+    ],
   },
   {
     id: 'job-interview', title: 'Entrevista de emprego', description: 'Apresente-se e responda perguntas sobre a sua experiência.', icon: 'briefcase', layout: 'training', setting: 'in-person', minutes: 16, skills: ['Apresentação pessoal', 'Perguntas sobre experiência', 'Respostas claras e formais'],
-    byAccent: {
-      'en-US': { intro: 'Você está num escritório em Nova York para uma entrevista. A recrutadora Sarah conduz a conversa.', character: { name: 'Sarah', role: 'Recrutadora', place: 'Escritório em Nova York', avatar: { skin: '#c98e64', hair: '#2b1d16', hairStyle: 'long', outfit: '#3c3b6e', accessory: 'badge' } } },
-      'en-GB': { intro: 'Você está num escritório em Londres para uma entrevista. O recrutador James conduz a conversa.', character: { name: 'James', role: 'Recrutador', place: 'Escritório em Londres', avatar: { skin: '#f1c9a5', hair: '#5b4636', hairStyle: 'short', outfit: '#012169', accessory: 'tie' } } },
-    },
+    speakerRole: 'Entrevistador(a)',
+    scenes: [
+      'Sala de reunião silenciosa, 9h da manhã. Quem vai entrevistar você acabou de entrar.',
+      'Entrevista por videochamada, no meio da tarde. Quem entrevista abre a conversa.',
+      'Recepção da empresa, um pouco antes do horário marcado. Quem vai entrevistar você chama o seu nome.',
+    ],
   },
   {
     id: 'virtual-chat', title: 'Bate-papo virtual', description: 'Converse por mensagens de voz com um amigo ou colega.', icon: 'chat', layout: 'chat', setting: 'online', minutes: 8, skills: ['Mensagens de voz informais', 'Gírias e contrações', 'Responder por escrito'],
-    byAccent: {
-      'en-US': { intro: 'Sua colega Emily manda mensagens de voz pelo celular. Ouça, transcreva e responda por texto.', character: { name: 'Emily', role: 'Colega de trabalho', place: 'Mensagens', avatar: { skin: '#f1c9a5', hair: '#7a3b1e', hairStyle: 'wavy', outfit: '#3c3b6e' } } },
-      'en-GB': { intro: 'Seu amigo Tom manda mensagens de voz pelo celular. Ouça, transcreva e responda por texto.', character: { name: 'Tom', role: 'Amigo', place: 'Mensagens', avatar: { skin: '#e8b98f', hair: '#5b4636', hairStyle: 'short', outfit: '#012169' } } },
-    },
+    speakerRole: 'Contato',
+    scenes: [
+      'Fim de tarde. Chega uma mensagem de voz de um contato que você conheceu num curso online.',
+      'Noite de domingo. Um contato do trabalho manda uma mensagem de voz pelo celular.',
+      'Intervalo do almoço. Um contato que você conheceu num grupo manda uma mensagem de voz.',
+    ],
   },
 ]
 
@@ -99,6 +98,11 @@ export function situationFor(id: ScenarioId): Situation {
   return found
 }
 
-export const characterFor = (id: ScenarioId, accent: Accent): Character => situationFor(id).byAccent[accent].character
-export const introFor = (id: ScenarioId, accent: Accent): string => situationFor(id).byAccent[accent].intro
+export const speakerRoleFor = (id: ScenarioId): string => situationFor(id).speakerRole
+
+/** Sorteia uma cena da situação (chamado uma vez por sessão). */
+export function pickScene(id: ScenarioId): string {
+  const { scenes } = situationFor(id)
+  return scenes[Math.floor(Math.random() * scenes.length)]!
+}
 export const layoutFor = (id: ScenarioId): PracticeLayout => situationFor(id).layout

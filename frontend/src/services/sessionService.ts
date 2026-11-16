@@ -1,4 +1,4 @@
-import { DEFAULT_MAX_TURNS, SCENARIOS } from '../data/scenarios'
+import { DEFAULT_MAX_TURNS, pickScene, SCENARIOS } from '../data/scenarios'
 import { BANK, resolveItem } from '../mocks/bank'
 import { compareTranscription } from '../domain/transcription'
 import { db } from '../mocks/db'
@@ -22,7 +22,7 @@ const NEXT_TURN_FAILURE_RATE = 0.1
 /** Lê a sessão do "banco"; erro se não existir ou se for de uma versão antiga (link velho, outro navegador...). */
 function load(id: string): Session {
   const session = db.getSessions()[id]
-  if (!session || !session.maxTurns || !SCENARIOS.some((s) => s.id === session.scenarioId)) throw new Error('Sessão não encontrada.')
+  if (!session || !session.maxTurns || !session.scene || !SCENARIOS.some((s) => s.id === session.scenarioId)) throw new Error('Sessão não encontrada.')
   return session
 }
 
@@ -72,6 +72,7 @@ export const sessionService = {
         accent,
         startedAt: new Date().toISOString(),
         maxTurns,
+        scene: pickScene(scenarioId),
         turns: [],
       }
       save(session)
@@ -187,6 +188,7 @@ function toSummary(session: Session): SessionSummary {
     sessionId: session.id,
     scenarioId: session.scenarioId,
     scenarioTitle: scenarioTitle(session.scenarioId),
+    scene: session.scene,
     averageAccuracy: s.accuracy,
     durationSeconds: s.seconds,
     turnsCompleted: s.turnsCompleted,

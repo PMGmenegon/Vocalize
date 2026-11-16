@@ -140,6 +140,8 @@ export interface Session {
   endedAt?: string
   /** Limite de rodadas. A sessão também termina quando o usuário encerra. */
   maxTurns: number
+  /** Cena sorteada ao iniciar a sessão (texto em português); fixa até o fim. */
+  scene: string
   /** As falas chegam uma a uma (assíncronas), então a lista cresce durante a sessão. */
   turns: Turn[]
 }
@@ -148,6 +150,8 @@ export interface SessionSummary {
   sessionId: string
   scenarioId: ScenarioId
   scenarioTitle: string
+  /** Cena em que a conversa aconteceu. */
+  scene: string
   averageAccuracy: number
   durationSeconds: number
   turnsCompleted: number
