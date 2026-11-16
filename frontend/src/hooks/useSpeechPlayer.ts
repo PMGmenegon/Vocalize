@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { estimateDuration, playStartBeep, speechPlayer, splitWords, wordsInSeconds, type SpeechHandle, type SpeechLocale } from '../audio'
+import { estimateDuration, speechPlayer, splitWords, wordsInSeconds, type SpeechHandle, type SpeechLocale } from '../audio'
 
 export type PlaybackStatus = 'idle' | 'playing' | 'paused'
 
@@ -11,11 +11,6 @@ interface Options {
   baseRate?: number
   /** Chamado sempre que a fala recomeça do início (conta uma repetição). */
   onRestart?: () => void
-  /**
-   * Chamado quando a voz realmente começa; se devolver true, toca o bip de início.
-   * Só a sessão de prática passa isto (ela decide que só a primeira fala tem bip).
-   */
-  claimStartBeep?: () => boolean
 }
 
 const SLOW_RATE = 0.75
@@ -31,7 +26,7 @@ const ACCENT_NAME: Record<SpeechLocale, string> = { 'en-US': 'inglês americano'
  * Nada toca sozinho: só os controles (acionados pelo usuário) iniciam a fala. A fala é cancelada ao
  * desmontar o componente (sair da página, trocar de rodada, encerrar a sessão).
  */
-export function useSpeechPlayer({ text, locale, baseRate = 1, onRestart, claimStartBeep }: Options) {
+export function useSpeechPlayer({ text, locale, baseRate = 1, onRestart }: Options) {
   const supported = speechPlayer.supported
   const [status, setStatus] = useState<PlaybackStatus>('idle')
   const [wordIndex, setWordIndex] = useState(0)
@@ -43,10 +38,8 @@ export function useSpeechPlayer({ text, locale, baseRate = 1, onRestart, claimSt
   const handle = useRef<SpeechHandle | null>(null)
   const word = useRef(0)
   const restartRef = useRef(onRestart)
-  const beepRef = useRef(claimStartBeep)
   useEffect(() => {
     restartRef.current = onRestart
-    beepRef.current = claimStartBeep
   })
 
   const total = useMemo(() => splitWords(text ?? '').length, [text])
@@ -68,7 +61,6 @@ export function useSpeechPlayer({ text, locale, baseRate = 1, onRestart, claimSt
         {
           onStart: (voice) => {
             if (run.current !== mine) return
-            if (beepRef.current?.()) playStartBeep()
             if (!voice.matched) setMessage(`Seu aparelho não tem voz em ${ACCENT_NAME[locale]}; usando a voz mais próxima.`)
           },
           onWord: (i) => {

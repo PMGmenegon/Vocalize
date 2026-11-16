@@ -14,17 +14,15 @@ interface VoiceMessageProps {
   time: string
   /** Conta uma repetição (a fala recomeça do início). */
   onRestart: () => void
-  /** Pergunta à sessão se esta fala deve tocar o bip de início (só a primeira da sessão). */
-  claimStartBeep: () => boolean
 }
 
 /**
  * Mensagem de voz do contato: play/pause, forma de onda, duração, velocidade 1×/0.75×
  * e contador de repetições. O texto fica oculto até a conferência. A voz é sintetizada pelo navegador.
  */
-export default function VoiceMessage({ sessionId, locale, contactName, turn, time, onRestart, claimStartBeep }: VoiceMessageProps) {
+export default function VoiceMessage({ sessionId, locale, contactName, turn, time, onRestart }: VoiceMessageProps) {
   const text = useSpokenText(sessionId, turn.index)
-  const playback = useSpeechPlayer({ text, locale, onRestart, claimStartBeep })
+  const playback = useSpeechPlayer({ text, locale, onRestart })
   const { playing, pos, duration, slow, progress, ready } = playback
   return (
     <article aria-label={`Mensagem de voz de ${contactName}`} className="bubble-in max-w-[88%] rounded-2xl rounded-tl-sm border border-line bg-card p-3 text-ink shadow-sm">
