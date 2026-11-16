@@ -15,7 +15,7 @@ import { SkeletonBlock } from '../ui/Skeleton'
 import AudioPlayer from './AudioPlayer'
 import EndSession from './EndSession'
 import SessionScript from './SessionScript'
-import { CorrectionView, ReplyForm, TranscribeForm } from './TrainingForms'
+import { ReplyFeedbackView, ReplyForm, TranscribeForm } from './TrainingForms'
 import TranscriptionResult from './TranscriptionResult'
 
 function TopBar({ ctrl }: { ctrl: PracticeController }) {
@@ -62,7 +62,7 @@ function TrainingTurn({ ctrl, turn }: { ctrl: PracticeController; turn: Turn }) 
   const { toggle, repeat, toggleSpeed } = playback
   const onNext = () => (isLast ? void ctrl.finish() : ctrl.next())
 
-  // Atalhos: Ctrl+Espaço toca/pausa, Ctrl+R repete, Ctrl+S alterna velocidade; Enter avança depois da correção.
+  // Atalhos: Ctrl+Espaço toca/pausa, Ctrl+R repete, Ctrl+S alterna velocidade; Enter avança depois da avaliação.
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.ctrlKey && !e.altKey && !e.metaKey) {
@@ -97,9 +97,9 @@ function TrainingTurn({ ctrl, turn }: { ctrl: PracticeController; turn: Turn }) 
       )}
       {phase === 'reply' && <ReplyForm locale={ctrl.session.accent} busy={ctrl.busy} onSend={(t) => void ctrl.reply(t)} />}
 
-      {turn.correction && (
+      {turn.feedback && turn.reply && (
         <>
-          <CorrectionView correction={turn.correction} />
+          <ReplyFeedbackView reply={turn.reply} feedback={turn.feedback} />
           <div className="mt-6">
             <Button size="lg" onClick={onNext} disabled={ctrl.busy} aria-busy={ctrl.busy}>
               {isLast ? 'Concluir sessão' : 'Próxima fala'}

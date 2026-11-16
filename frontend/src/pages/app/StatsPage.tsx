@@ -70,7 +70,7 @@ export default function StatsPage() {
               <StatList divided>
                 <Stat divided large label="Sessões no período" value={String(s.sessionsCount)} />
                 <Stat divided large label="Repetições por fala" value={String(s.averageRepetitions).replace('.', ',')} note="Média de vezes que você ouviu cada fala." />
-                <Stat divided large label="Respostas corrigidas" value={`${s.correctedRate}%`} note="Das respostas que receberam correção." />
+                <Stat divided large label="Respostas corrigidas" value={`${s.correctedRate}%`} note="Das respostas que tiveram a frase corrigida." />
                 <Stat
                   divided
                   large

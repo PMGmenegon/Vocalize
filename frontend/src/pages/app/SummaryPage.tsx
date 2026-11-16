@@ -60,6 +60,39 @@ export default function SummaryPage() {
               )}
             </Section>
 
+            {s.replies.length > 0 && (
+              <Section id="respostas-titulo" title="Suas respostas" meta={s.replies.length} className="mt-12">
+                <ul className="divide-y divide-line">
+                  {s.replies.map((r, n) => (
+                    <li key={n} className="space-y-2 py-4">
+                      <p lang="en" className="font-bold text-ink">
+                        <span className="sr-only">Sua resposta: </span>
+                        {r.reply}
+                      </p>
+                      {r.correctedReply && (
+                        <p lang="en" className="text-on-ok">
+                          <span className="font-sans text-muted">Sua frase corrigida: </span>
+                          <span aria-hidden="true">✓ </span>
+                          {r.correctedReply}
+                        </p>
+                      )}
+                      {r.suggestedReplies.length > 0 && (
+                        <p className="text-sm text-muted">
+                          Respostas sugeridas:{' '}
+                          {r.suggestedReplies.map((x, i) => (
+                            <span key={x} lang="en" className="text-ink">
+                              {i > 0 && ' · '}
+                              {x}
+                            </span>
+                          ))}
+                        </p>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </Section>
+            )}
+
             <StickyActionBar label="Próximo passo" summary="Continue treinando">
               <Button to="/app" variant="ghost" size="lg">
                 Ir para o início

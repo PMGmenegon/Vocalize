@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { HintKind } from '../../services'
-import type { Accent, Correction } from '../../types'
+import { COHERENCE_LABEL, ISSUE_LABEL, LEVEL_FIT_LABEL } from '../../lib/replyFeedback'
+import type { Accent, ReplyFeedback } from '../../types'
 import { useSpeechRecognition } from '../../hooks/useSpeechRecognition'
 import { SendIcon } from '../appIcons'
 import Button from '../ui/Button'
@@ -126,44 +127,65 @@ export function ReplyForm({ locale, busy, onSend }: { locale: Accent; busy: bool
   )
 }
 
-/** Correção: original × corrigida, explicação em português e vocabulário-chave. */
-export function CorrectionView({ correction }: { correction: Correction }) {
+/** Avaliação da resposta: o que o usuário escreveu, o que fez sentido, a frase corrigida (se houve), pontos de melhoria e sugestões. */
+export function ReplyFeedbackView({ reply, feedback }: { reply: string; feedback: ReplyFeedback }) {
   return (
-    <section aria-label="Correção" className="mt-8 space-y-5 border-t border-line pt-6">
-      <h2 className="type-display text-2xl">Correção</h2>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="border-l-2 border-line pl-4">
-          <p className="type-eyebrow">Sua resposta</p>
-          <p lang="en" className={`mt-1 text-lg ${correction.changed ? 'text-ink line-through decoration-on-danger decoration-2' : 'font-bold text-ink'}`}>
-            {correction.original}
-          </p>
-        </div>
-        <div className="border-l-2 border-on-ok pl-4">
-          <p className="type-eyebrow text-on-ok">
-            <span aria-hidden="true">✓ </span>Versão corrigida
-          </p>
-          <p lang="en" className="mt-1 text-lg font-bold text-ink">
-            {correction.corrected}
-          </p>
-        </div>
-      </div>
-      <div>
-        <h3 className="type-eyebrow">Por quê?</h3>
-        <p className="mt-1 text-ink">{correction.explanation}</p>
-      </div>
-      <div>
-        <h3 className="type-eyebrow">Vocabulário-chave</h3>
-        <ul className="mt-2 divide-y divide-line border-b border-line">
-          {correction.vocabulary.map((v) => (
-            <li key={v.term} className="flex justify-between gap-3 py-2">
-              <span lang="en" className="font-bold text-ink">
-                {v.term}
-              </span>
-              <span className="text-muted">{v.meaning}</span>
-            </li>
-          ))}
+    <section aria-label="Avaliação da resposta" className="mt-8 space-y-5 border-t border-line pt-6">
+      <h2 className="type-display text-2xl">Sua resposta</h2>
+      <div className="border-l-2 border-line pl-4">
+        <p lang="en" className="text-lg font-bold text-ink">
+          {reply}
+        </p>
+        <ul className="mt-2 space-y-0.5 text-ink">
+          <li>
+            <span aria-hidden="true" className={feedback.coherence === 'coherent' ? 'text-on-ok' : 'text-muted'}>
+              {feedback.coherence === 'coherent' ? '✓ ' : '• '}
+            </span>
+            {COHERENCE_LABEL[feedback.coherence]}
+          </li>
+          <li>
+            <span aria-hidden="true" className={feedback.levelFit === 'at' ? 'text-on-ok' : 'text-muted'}>
+              {feedback.levelFit === 'at' ? '✓ ' : '• '}
+            </span>
+            {LEVEL_FIT_LABEL[feedback.levelFit]}
+          </li>
         </ul>
       </div>
+      {feedback.comment && <p className="text-ink">{feedback.comment}</p>}
+      {feedback.correctedReply && (
+        <div className="border-l-2 border-on-ok pl-4">
+          <h3 className="type-eyebrow text-on-ok">Sua frase corrigida</h3>
+          <p lang="en" className="mt-1 text-lg font-bold text-ink">
+            {feedback.correctedReply}
+          </p>
+        </div>
+      )}
+      {feedback.issues.length > 0 && (
+        <div>
+          <h3 className="type-eyebrow">Pontos de melhoria</h3>
+          <ul className="mt-2 divide-y divide-line border-b border-line">
+            {feedback.issues.map((issue, n) => (
+              <li key={n} className="flex flex-wrap justify-between gap-x-3 py-2">
+                <span className="font-bold text-ink">{ISSUE_LABEL[issue.category]}</span>
+                <span className="text-muted">{issue.explanation}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {feedback.suggestedReplies.length > 0 && (
+        <div>
+          <h3 className="type-eyebrow">Respostas sugeridas</h3>
+          <p className="mt-1 text-sm text-muted">Outras formas naturais de responder</p>
+          <ul className="mt-2 space-y-1">
+            {feedback.suggestedReplies.map((r) => (
+              <li key={r} lang="en" className="text-lg font-bold text-ink">
+                {r}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </section>
   )
 }

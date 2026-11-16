@@ -3,6 +3,7 @@ import { speechPlayer } from '../../audio'
 import { characterFor, EXPERIENCE, introFor } from '../../data/scenarios'
 import { ACCENT_LABEL } from '../../lib/format'
 import { usePracticeSession } from '../../hooks/usePracticeSession'
+import { COHERENCE_LABEL, ISSUE_LABEL, LEVEL_FIT_LABEL } from '../../lib/replyFeedback'
 import type { Session, Turn } from '../../types'
 import EndSession from '../practice/EndSession'
 import Button from '../ui/Button'
@@ -24,9 +25,9 @@ function Initials({ name }: { name: string }) {
   )
 }
 
-/** Mensagem do usuário: bolha à direita com horário e ✓✓, e a correção como nota expansível logo abaixo. */
+/** Mensagem do usuário: bolha à direita com horário e ✓✓, e a avaliação como nota expansível logo abaixo. */
 function UserMessage({ turn }: { turn: Turn }) {
-  const c = turn.correction
+  const c = turn.feedback
   return (
     <div className="bubble-in space-y-1.5">
       <div className="flex justify-end">
@@ -41,32 +42,41 @@ function UserMessage({ turn }: { turn: Turn }) {
       {c && (
         <details className="ml-auto max-w-[85%] rounded-lg border border-line bg-card px-3 py-1.5 text-xs text-ink">
           <summary className="min-h-8 cursor-pointer select-none py-1 font-bold text-link">
-            {c.changed ? (
-              <>
-                <span aria-hidden="true">✗ </span>Nota de correção
-              </>
-            ) : (
-              <>
-                <span aria-hidden="true">✓ </span>Sem erros
-              </>
-            )}
+            <span aria-hidden="true">{c.coherence === 'coherent' ? '✓ ' : '• '}</span>
+            {COHERENCE_LABEL[c.coherence]}
           </summary>
-          <p lang="en" className="mt-1 font-bold text-on-ok">
-            <span className="sr-only">Corrigida: </span>
-            <span aria-hidden="true">✓ </span>
-            {c.corrected}
-          </p>
-          <p className="mt-1">{c.explanation}</p>
-          <ul className="mt-1.5 flex flex-wrap gap-1.5">
-            {c.vocabulary.map((v) => (
-              <li key={v.term} className="rounded-full border border-line bg-surface px-2 py-0.5">
-                <span lang="en" className="font-bold">
-                  {v.term}
-                </span>
-                <span className="text-muted"> — {v.meaning}</span>
-              </li>
-            ))}
-          </ul>
+          <p className="mt-1">{LEVEL_FIT_LABEL[c.levelFit]}</p>
+          {c.comment && <p className="mt-1">{c.comment}</p>}
+          {c.correctedReply && (
+            <p lang="en" className="mt-1 font-bold text-on-ok">
+              <span className="font-sans text-muted">Sua frase corrigida: </span>
+              <span aria-hidden="true">✓ </span>
+              {c.correctedReply}
+            </p>
+          )}
+          {c.issues.length > 0 && (
+            <ul className="mt-1.5 space-y-0.5">
+              <li className="font-bold">Pontos de melhoria</li>
+              {c.issues.map((issue, n) => (
+                <li key={n}>
+                  <span className="font-bold">{ISSUE_LABEL[issue.category]}:</span> <span className="text-muted">{issue.explanation}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          {c.suggestedReplies.length > 0 && (
+            <div className="mt-1.5">
+              <p className="font-bold">Respostas sugeridas</p>
+              <p className="text-muted">Outras formas naturais de responder</p>
+              <ul className="mt-1 flex flex-wrap gap-1.5">
+                {c.suggestedReplies.map((r) => (
+                  <li key={r} lang="en" className="rounded-full border border-line bg-surface px-2 py-0.5 font-bold">
+                    {r}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </details>
       )}
     </div>
@@ -82,7 +92,7 @@ export default function ChatLayout({ session }: { session: Session }) {
   const { phase, turns, isLast } = ctrl
   const contact = characterFor(session.scenarioId, session.accent)
 
-  // Depois da correção o contato "grava" outra mensagem de voz (depois de um tempo para ler a nota).
+  // Depois da avaliação o contato "grava" outra mensagem de voz (depois de um tempo para ler a nota).
   const { next } = ctrl
   useEffect(() => {
     if (phase !== 'reviewed' || isLast) return
@@ -110,7 +120,7 @@ export default function ChatLayout({ session }: { session: Session }) {
           <Stat label="Rodadas" value={`até ${session.maxTurns}`} />
         </StatList>
         <p className="mt-8 max-w-md border-t border-line pt-4 text-sm text-muted">
-          Ouça a mensagem de voz, transcreva o que entendeu e responda por texto. A correção aparece como nota logo abaixo da sua resposta.
+          Ouça a mensagem de voz, transcreva o que entendeu e responda por texto. A avaliação aparece como nota logo abaixo da sua resposta.
         </p>
       </div>
       <div className="relative flex h-[calc(100dvh-4.5rem)] w-full flex-col overflow-hidden bg-canvas lg:h-[min(46rem,calc(100dvh-9rem))] lg:rounded-3xl lg:border lg:border-ink">
