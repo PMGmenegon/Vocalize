@@ -1,5 +1,5 @@
 import { ACCENT_OPTIONS, LEVEL_OPTIONS } from '../../content/options'
-import { characterFor, EXPERIENCE, introFor, SETTING_LABEL } from '../../data/scenarios'
+import { EXPERIENCE, SETTING_LABEL, speakerRoleFor } from '../../data/scenarios'
 import type { Accent, Level, Scenario, ScenarioHistory } from '../../types'
 import ChoiceGroup from '../ui/ChoiceGroup'
 import { LastResult } from './ScenarioRow'
@@ -15,16 +15,13 @@ interface ScenarioDetailProps {
 
 /** Painel da situação escolhida: cena, o que será treinado e ajustes de nível e sotaque. */
 export default function ScenarioDetail({ scenario, history, level, accent, onLevel, onAccent }: ScenarioDetailProps) {
-  const character = characterFor(scenario.id, accent)
   const experience = EXPERIENCE[scenario.layout]
   return (
     <div className="fade-swap">
       <p className="type-eyebrow text-brand">Situação selecionada</p>
       <h3 className="type-display mt-2 text-3xl">{scenario.title}</h3>
-      <p className="mt-3 text-lg text-ink">{introFor(scenario.id, accent)}</p>
-      <p className="mt-2 text-sm text-muted">
-        {character.name} · {character.role} · {character.place}
-      </p>
+      <p className="mt-3 text-lg text-ink">{scenario.description}</p>
+      <p className="mt-2 text-sm text-muted">Quem fala: {speakerRoleFor(scenario.id)}</p>
 
       <h4 className="type-eyebrow mt-6 border-t border-line pt-5">O que você vai treinar</h4>
       <ul className="mt-2 space-y-1.5 text-ink">

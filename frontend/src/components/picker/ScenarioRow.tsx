@@ -1,12 +1,11 @@
 import { useId } from 'react'
-import { characterFor, EXPERIENCE } from '../../data/scenarios'
+import { EXPERIENCE, speakerRoleFor } from '../../data/scenarios'
 import { formatDate } from '../../lib/format'
-import type { Accent, Scenario, ScenarioHistory } from '../../types'
+import type { Scenario, ScenarioHistory } from '../../types'
 import { ScenarioIcon } from '../appIcons'
 
 interface ScenarioRowProps {
   scenario: Scenario
-  accent: Accent
   history?: ScenarioHistory
   name: string
   checked: boolean
@@ -28,9 +27,8 @@ export function LastResult({ history, compact = false }: { history?: ScenarioHis
 }
 
 /** Uma linha do índice de situações: um botão de rádio nativo (setas do teclado) com todo o contexto da cena. */
-export default function ScenarioRow({ scenario, accent, history, name, checked, onSelect }: ScenarioRowProps) {
+export default function ScenarioRow({ scenario, history, name, checked, onSelect }: ScenarioRowProps) {
   const id = useId()
-  const character = characterFor(scenario.id, accent)
   return (
     <label
       className={`group relative grid cursor-pointer grid-cols-[auto_1fr] gap-x-4 gap-y-3 py-5 pr-3 pl-5 transition-colors has-[:focus-visible]:outline-3 has-[:focus-visible]:-outline-offset-3 has-[:focus-visible]:outline-(--focus) sm:grid-cols-[auto_1fr_auto] ${
@@ -59,7 +57,7 @@ export default function ScenarioRow({ scenario, accent, history, name, checked, 
         <span id={`${id}-d`} className="block">
           <span className="mt-1 block text-ink">{scenario.description}</span>
           <span className="mt-1 block text-sm text-muted">
-            Com {character.name}, {character.role.toLowerCase()}
+            Quem fala: {speakerRoleFor(scenario.id)}
           </span>
         </span>
       </span>

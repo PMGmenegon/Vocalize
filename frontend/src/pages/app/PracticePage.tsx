@@ -13,7 +13,7 @@ import Section from '../../components/ui/Section'
 import Skeleton from '../../components/ui/Skeleton'
 import { Stat, StatList } from '../../components/ui/Stat'
 import StickyActionBar from '../../components/ui/StickyActionBar'
-import { characterFor, EXPERIENCE, SETTING_LABEL } from '../../data/scenarios'
+import { EXPERIENCE, SETTING_LABEL, speakerRoleFor } from '../../data/scenarios'
 import { useAsync } from '../../hooks/useAsync'
 import { useMediaQuery } from '../../hooks/useMediaQuery'
 import { ACCENT_LABEL, ACCENT_SHORT } from '../../lib/format'
@@ -108,7 +108,7 @@ export default function PracticePage() {
             >
               {/* Aviso para leitores de tela quando a seleção muda. */}
               <p role="status" aria-live="polite" className="sr-only">
-                {selected ? `${selected.title} selecionada. Com ${characterFor(selected.id, accent).name}, ${characterFor(selected.id, accent).role.toLowerCase()}. ${EXPERIENCE[selected.layout].label}, cerca de ${selected.minutes} minutos.` : ''}
+                {selected ? `${selected.title} selecionada. Quem fala: ${speakerRoleFor(selected.id).toLowerCase()}. ${EXPERIENCE[selected.layout].label}, cerca de ${selected.minutes} minutos.` : ''}
               </p>
 
               {recommended && overview && (
@@ -143,7 +143,7 @@ export default function PracticePage() {
                           <List className="border-b border-line">
                             {group.map((s) => (
                               <li key={s.id}>
-                                <ScenarioRow scenario={s} accent={accent} history={historyOf(s.id)} name={groupName} checked={s.id === scenarioId} onSelect={() => setScenarioId(s.id)} />
+                                <ScenarioRow scenario={s} history={historyOf(s.id)} name={groupName} checked={s.id === scenarioId} onSelect={() => setScenarioId(s.id)} />
                                 {!isDesktop && s.id === scenarioId && <div className="bg-surface px-5 pt-2 pb-6">{detail(s)}</div>}
                               </li>
                             ))}
