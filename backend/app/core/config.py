@@ -18,6 +18,10 @@ class Settings(BaseSettings):
     # Aceita lista separada por vírgulas (a,b) ou JSON.
     cors_origins: Annotated[list[str], NoDecode] = []
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
+    # Formato: postgresql+asyncpg://usuario:senha@host:porta/banco
+    database_url: str = "postgresql+asyncpg://vocalize:vocalize_dev@localhost:5432/vocalize"
+    db_pool_size: int = 5
+    db_max_overflow: int = 10
 
     @field_validator("cors_origins", mode="before")
     @classmethod

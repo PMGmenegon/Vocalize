@@ -10,3 +10,7 @@ class ApiInfo(BaseModel):
 
 class Health(BaseModel):
     status: str
+
+
+class Ready(BaseModel):
+    status: str
