@@ -8,7 +8,7 @@ App web para **aprender inglês ouvindo e conversando**. A IA fala em inglês (o
 
 Interface em português (Brasil); conteúdo de estudo em inglês. Dois temas visuais conforme o sotaque: **US** (vermelho, estrelas e listras) e **UK** (azul-marinho, cruz da Union Jack).
 
-> **Status:** frontend com dados falsos + fundação do backend (Fase 4). O login real, o áudio e a IA vêm nas próximas fases.
+> **Status:** frontend com dados falsos + backend com banco de dados PostgreSQL (Fases 4 e 5). O login real, o áudio e a IA vêm nas próximas fases.
 
 ## Próximas fases
 
@@ -19,7 +19,7 @@ Interface em português (Brasil); conteúdo de estudo em inglês. Dois temas vis
 
 ```
 frontend/   React + Vite + TypeScript + Tailwind + Recharts
-backend/    FastAPI (fundação: health, /api/v1, erros padronizados; sem banco/login/IA ainda)
+backend/    FastAPI + PostgreSQL (health, /api/v1, erros padronizados, models e migrations; sem login/IA ainda)
 docs/       documentação e decisões de arquitetura (docs/decisions/)
 ```
 
@@ -64,7 +64,7 @@ uv --directory backend sync
 uv --directory backend run uvicorn app.main:app --reload
 ```
 
-**Com Docker Compose** (API + PostgreSQL 16; o banco ainda não é usado pela API, fica pronto para a Fase 5):
+**Com Docker Compose** (API + PostgreSQL 16):
 
 ```bash
 docker compose up --build
@@ -77,14 +77,54 @@ A API fica em `http://localhost:8000`:
 
 | URL | O que mostra |
 |---|---|
-| `/health` | `{"status": "ok"}` (monitoramento) |
+| `/health` | `{"status": "ok"}` (liveness: a API está de pé) |
+| `/health/ready` | `{"status": "ready"}` (readiness: a API consegue falar com o banco) |
 | `/api/v1/` | nome e versão da API |
 | `/docs` | documentação interativa (Swagger) da **Vocalize API** |
 
-### Testes e checks
+### Banco de dados e migrations
+
+O banco é o PostgreSQL 16 do `docker-compose.yml`. A conexão vem de `DATABASE_URL` (veja `backend/.env.example`): com a API **local** o host é `localhost`; com a API **no Docker** o host é `db` (o compose já força isso).
 
 ```bash
-uv --directory backend run pytest
+docker compose up -d db                              # sobe só o banco
+uv --directory backend run alembic upgrade head      # aplica as migrations (API local)
+docker compose exec api alembic upgrade head         # aplica as migrations (API no Docker)
+```
+
+Outros comandos úteis do Alembic (a partir da raiz, com `uv --directory backend run`):
+
+```bash
+alembic current                                      # versão aplicada
+alembic downgrade -1                                 # desfaz a última migration
+alembic revision --autogenerate -m "descricao"       # gera migration a partir dos models (revise o arquivo!)
+```
+
+**Liveness × readiness.** `/health` (liveness) só diz que o processo responde; não toca no banco, então não cai se o banco cair, e um orquestrador não reinicia a API à toa. `/health/ready` (readiness) executa `SELECT 1`: devolve `200` se o banco responde e `503` (formato padrão de erro) se não, indicando que a API ainda não deve receber tráfego.
+
+**Consultar as tabelas pelo terminal:**
+
+```bash
+docker compose exec db psql -U vocalize -d vocalize
+```
+
+Três comandos úteis dentro do `psql`:
+
+| Comando | O que faz |
+|---|---|
+| `\dt` | lista as tabelas |
+| `\d users` | mostra colunas, constraints e índices de uma tabela |
+| `SELECT * FROM users LIMIT 10;` | consulta linhas (termine com `;`; `\q` sai) |
+
+Para apagar o banco e começar do zero: `docker compose down -v` (o `-v` remove o volume) e aplique as migrations de novo.
+
+### Testes e checks
+
+Os testes de integração sobem um PostgreSQL 16 temporário com Testcontainers, aplicam as migrations e isolam cada teste com rollback: **o Docker Desktop precisa estar aberto**. Os testes sem banco continuam rápidos e independentes.
+
+```bash
+uv --directory backend run pytest                    # todos (com banco)
+uv --directory backend run pytest -m "not integration"   # só os rápidos, sem Docker
 uv --directory backend run ruff check .
 uv --directory backend run ruff format --check .
 uv --directory backend run mypy
@@ -97,14 +137,14 @@ backend/app/
   api/v1/        rotas finas (validam e chamam services)
   services/      regras de negócio
   domain/        lógica pura, sem I/O
-  repositories/  acesso ao banco
-  models/        tabelas (Fase 5)
+  repositories/  acesso ao banco (sem commit: quem comanda a transação é o service)
+  models/        tabelas (SQLAlchemy)
   schemas/       formatos de entrada e saída (Pydantic)
   clients/       integrações externas (IA, Fase 10)
   core/          configuração, logs e erros
 ```
 
-Erros seguem sempre `{"error": {"code": "...", "message": "..."}}`. Configuração por variáveis de ambiente (`APP_ENV`, `CORS_ORIGINS`, `LOG_LEVEL`); em desenvolvimento o frontend em `http://localhost:5173` a `5199` já é aceito pelo CORS.
+Erros seguem sempre `{"error": {"code": "...", "message": "..."}}`. Configuração por variáveis de ambiente (`APP_ENV`, `CORS_ORIGINS`, `LOG_LEVEL`, `DATABASE_URL`); em desenvolvimento o frontend em `http://localhost:5173` a `5199` já é aceito pelo CORS.
 
 ## Dados falsos (mock) e camada de serviços
 
