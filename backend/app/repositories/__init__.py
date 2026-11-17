@@ -1,1 +1,5 @@
-# Repositórios: acesso ao banco de dados (a partir da Fase 5).
+"""Repositories: acesso ao banco."""
+
+from app.repositories.user_repository import UserRepository
+
+__all__ = ["UserRepository"]

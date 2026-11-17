@@ -3,7 +3,11 @@ from collections.abc import Iterator
 import pytest
 from fastapi.testclient import TestClient
 
+from app.core.config import Settings
 from app.main import create_app
+
+# Porta 1: ninguém escuta, a conexão é recusada na hora.
+UNREACHABLE_DB = "postgresql+asyncpg://x:x@127.0.0.1:1/x"
 
 
 @pytest.fixture
@@ -67,3 +71,20 @@ def test_cors_allows_dev_frontend_ports(client: TestClient) -> None:
         assert r.headers["access-control-allow-origin"] == origin
     r = client.get("/health", headers={"Origin": "http://localhost:5200"})
     assert "access-control-allow-origin" not in r.headers
+
+
+def test_health_does_not_touch_the_database() -> None:
+    """Liveness responde 200 mesmo com o banco fora do ar."""
+    settings = Settings(_env_file=None, database_url=UNREACHABLE_DB)
+    with TestClient(create_app(settings)) as c:
+        assert c.get("/health").status_code == 200
+
+
+def test_health_ready_returns_503_without_database() -> None:
+    settings = Settings(_env_file=None, database_url=UNREACHABLE_DB)
+    with TestClient(create_app(settings)) as c:
+        response = c.get("/health/ready")
+    assert response.status_code == 503
+    assert response.json() == {
+        "error": {"code": "service_unavailable", "message": "Banco de dados indisponível."}
+    }
