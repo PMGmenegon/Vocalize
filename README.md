@@ -1,5 +1,8 @@
 # Vocalize
 
+[![Backend](https://github.com/PMGmenegon/Vocalize/actions/workflows/backend.yml/badge.svg?branch=main)](https://github.com/PMGmenegon/Vocalize/actions/workflows/backend.yml)
+[![Frontend](https://github.com/PMGmenegon/Vocalize/actions/workflows/frontend.yml/badge.svg?branch=main)](https://github.com/PMGmenegon/Vocalize/actions/workflows/frontend.yml)
+
 App web para **aprender inglês ouvindo e conversando**. A IA fala em inglês (o texto fica escondido), você transcreve o que ouviu, vê seus erros palavra por palavra e responde para continuar a conversa.
 
 1. **Ouvir** — a fala da IA toca em áudio, sem texto.
@@ -22,6 +25,25 @@ frontend/   React + Vite + TypeScript + Tailwind + Recharts
 backend/    FastAPI + PostgreSQL (health, /api/v1, erros padronizados, models e migrations; sem login/IA ainda)
 docs/       documentação e decisões de arquitetura (docs/decisions/)
 ```
+
+## Integração contínua
+
+Dois workflows do GitHub Actions (em `.github/workflows/`) rodam em **todo pull request para a `main`** e em **todo push na `main`**, sem filtro de pastas (assim os checks podem ser obrigatórios na proteção da branch). Um push novo na mesma branch cancela a execução anterior.
+
+| Workflow (check) | O que verifica, nesta ordem |
+|---|---|
+| **Backend checks** | `ruff check`, `ruff format --check`, `mypy` (strict) e `pytest`, incluindo os testes de integração com Testcontainers (PostgreSQL 16 no Docker do runner). Python 3.12, como no Dockerfile. |
+| **Frontend checks** | `npm run lint`, `typecheck`, testes Vitest, `build` e `check:contrast` (WCAG AA). Node 22. |
+
+Os passos rodam em ordem de custo (o mais barato primeiro), então a falha aparece rápido. O **Dependabot** abre PRs semanais para npm, dependências Python (uv) e GitHub Actions, agrupando atualizações menores/patch. Decisão completa em [0010](docs/decisions/0010-ci-github-actions.md).
+
+## Fluxo de trabalho
+
+1. **Branch por tarefa** a partir da `main` atualizada (ex.: `feat/fase-6-ci`). Nada de commit direto na `main`.
+2. Commits no padrão Conventional Commits (`feat:`, `fix:`, `docs:`, `build:`...).
+3. **Pull request** para a `main`, com título também em Conventional Commits.
+4. **CI** precisa ficar verde (Backend checks e Frontend checks).
+5. **Squash merge** (`gh pr merge --squash --delete-branch`): um commit por PR na `main`, e a branch é apagada.
 
 ## Como rodar o frontend
 
@@ -199,6 +221,7 @@ Registradas em [`docs/decisions/`](docs/decisions/):
 - [0003 — Temas com variáveis CSS e Tailwind v4](docs/decisions/0003-temas-css-variables-tailwind.md)
 - [0004 — TypeScript fixado na série 6.0](docs/decisions/0004-typescript-6.md)
 - [0007 — FastAPI e arquitetura em camadas](docs/decisions/0007-fastapi-arquitetura-em-camadas.md)
+- [0010 — CI com GitHub Actions](docs/decisions/0010-ci-github-actions.md)
 
 ## Licença
 
