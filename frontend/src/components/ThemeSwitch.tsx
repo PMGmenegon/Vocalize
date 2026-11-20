@@ -1,4 +1,4 @@
-import { ACCENT_LIST, ACCENTS } from '../theme/accents'
+import { THEME_LIST, THEMES } from '../theme/themes'
 import { useTheme } from '../theme/useTheme'
 import { Flag } from './Flags'
 
@@ -7,9 +7,9 @@ import { Flag } from './Flags'
  * anunciam o nome completo ("Inglês americano") e qual está ativo.
  * Um indicador desliza de um lado ao outro quando o modo muda.
  */
-export default function AccentSwitch() {
-  const { accent, setAccent } = useTheme()
-  const activeIndex = ACCENT_LIST.indexOf(accent)
+export default function ThemeSwitch() {
+  const { theme, setTheme } = useTheme()
+  const activeIndex = THEME_LIST.indexOf(theme)
 
   return (
     <div
@@ -22,22 +22,22 @@ export default function AccentSwitch() {
         className="absolute inset-y-0.5 left-0.5 w-[calc(50%-0.125rem)] rounded-full bg-brand transition-transform duration-300 ease-out"
         style={{ transform: `translateX(${activeIndex * 100}%)` }}
       />
-      {ACCENT_LIST.map((code) => {
-        const info = ACCENTS[code]
-        const active = code === accent
+      {THEME_LIST.map((code) => {
+        const info = THEMES[code]
+        const active = code === theme
         return (
           <button
             key={code}
             type="button"
             aria-pressed={active}
             aria-label={`${info.label} (${info.locale})`}
-            onClick={() => setAccent(code)}
+            onClick={() => setTheme(code)}
             className={[
               'relative z-10 inline-flex min-h-9 min-w-11 cursor-pointer items-center justify-center gap-1.5 rounded-full px-2.5 text-sm font-bold tracking-wide transition-colors duration-300 sm:px-3',
               active ? 'text-on-brand' : 'text-ink',
             ].join(' ')}
           >
-            <Flag accent={code} />
+            <Flag theme={code} />
             {info.short}
           </button>
         )

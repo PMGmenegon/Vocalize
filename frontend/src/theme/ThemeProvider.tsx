@@ -1,33 +1,33 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import {
-  ACCENT_STORAGE_KEY,
-  ACCENTS,
-  DEFAULT_ACCENT,
-  isAccent,
-  type Accent,
-} from './accents'
+  THEME_STORAGE_KEY,
+  THEMES,
+  DEFAULT_THEME,
+  isTheme,
+  type Theme,
+} from './themes'
 import { ThemeContext, type ThemeContextValue } from './ThemeContext'
 
 /** Lê a escolha salva. O localStorage pode lançar (modo privado, bloqueado...), por isso o try/catch. */
-function readStoredAccent(): Accent {
+function readStoredTheme(): Theme {
   try {
-    const stored = localStorage.getItem(ACCENT_STORAGE_KEY)
-    return isAccent(stored) ? stored : DEFAULT_ACCENT
+    const stored = localStorage.getItem(THEME_STORAGE_KEY)
+    return isTheme(stored) ? stored : DEFAULT_THEME
   } catch {
-    return DEFAULT_ACCENT
+    return DEFAULT_THEME
   }
 }
 
 /**
- * Guarda o sotaque escolhido e o reflete no DOM: `<html data-accent="...">`
+ * Guarda o tema visual escolhido e o reflete no DOM: `<html data-theme="...">`
  * é o que faz o CSS trocar de tema (ver src/index.css).
  */
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [accent, setAccentState] = useState<Accent>(readStoredAccent)
+  const [theme, setThemeState] = useState<Theme>(readStoredTheme)
 
   const fadeTimer = useRef<number | undefined>(undefined)
 
-  const setAccent = useCallback((next: Accent) => {
+  const setTheme = useCallback((next: Theme) => {
     // Liga a transição suave de cores só durante a troca (e só se o usuário não pediu menos movimento).
     if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       const root = document.documentElement
@@ -35,24 +35,24 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       window.clearTimeout(fadeTimer.current)
       fadeTimer.current = window.setTimeout(() => root.classList.remove('theme-fading'), 450)
     }
-    setAccentState(next)
+    setThemeState(next)
     try {
-      localStorage.setItem(ACCENT_STORAGE_KEY, next)
+      localStorage.setItem(THEME_STORAGE_KEY, next)
     } catch {
       // Sem localStorage o tema continua funcionando, só não persiste.
     }
   }, [])
 
   useEffect(() => {
-    document.documentElement.dataset.accent = accent
+    document.documentElement.dataset.theme = theme
     document
       .querySelector('meta[name="theme-color"]')
-      ?.setAttribute('content', ACCENTS[accent].themeColor)
-  }, [accent])
+      ?.setAttribute('content', THEMES[theme].themeColor)
+  }, [theme])
 
   useEffect(() => () => window.clearTimeout(fadeTimer.current), [])
 
-  const value = useMemo<ThemeContextValue>(() => ({ accent, setAccent }), [accent, setAccent])
+  const value = useMemo<ThemeContextValue>(() => ({ theme, setTheme }), [theme, setTheme])
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
 }

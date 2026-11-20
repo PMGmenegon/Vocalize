@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 import { useSpeechPlayer } from '../../hooks/useSpeechPlayer'
-import { ACCENTS, type Accent } from '../../theme/accents'
+import { THEMES, type Theme } from '../../theme/themes'
 import { MODE_COPY } from '../../theme/modeCopy'
 import { useTheme } from '../../theme/useTheme'
 
@@ -16,15 +16,15 @@ const rest = (i: number, t = 0) => 0.28 + 0.14 * Math.sin(t * 1.2 + i * 0.45) + 
  * da frase acende (estilo karaokê).
  */
 export default function SoundStage() {
-  const { accent } = useTheme()
+  const { theme } = useTheme()
   // key: ao trocar de modo a fala em andamento é cortada e o palco recomeça do zero.
-  return <Stage key={accent} accent={accent} />
+  return <Stage key={theme} theme={theme} />
 }
 
-function Stage({ accent }: { accent: Accent }) {
+function Stage({ theme }: { theme: Theme }) {
   const reduced = usePrefersReducedMotion()
-  const phrase = MODE_COPY[accent].demoPhrase
-  const locale = ACCENTS[accent].locale
+  const phrase = MODE_COPY[theme].demoPhrase
+  const locale = THEMES[theme].locale
 
   const words = useMemo(() => phrase.split(' '), [phrase])
   const barRefs = useRef<(HTMLSpanElement | null)[]>([])
@@ -114,7 +114,7 @@ function Stage({ accent }: { accent: Accent }) {
           onClick={play}
           disabled={!player.ready}
           aria-pressed={speaking}
-          aria-label={speaking ? 'Parar a frase' : `Ouvir a frase em ${ACCENTS[accent].label.toLowerCase()}`}
+          aria-label={speaking ? 'Parar a frase' : `Ouvir a frase em ${THEMES[theme].label.toLowerCase()}`}
           className="inline-flex h-14 w-14 shrink-0 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 items-center justify-center rounded-full bg-brand text-on-brand transition-colors hover:bg-brand-strong motion-safe:active:scale-95"
         >
           <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor" aria-hidden="true">
@@ -135,7 +135,7 @@ function Stage({ accent }: { accent: Accent }) {
           ))}
         </p>
       </div>
-      <p className="mt-3 text-muted">Em português: {MODE_COPY[accent].demoTranslation}</p>
+      <p className="mt-3 text-muted">Em português: {MODE_COPY[theme].demoTranslation}</p>
       <p className="mt-1 text-sm text-muted">Passe o mouse (ou o dedo) sobre as ondas e toque em play para ouvir no sotaque do seu modo.</p>
       <p role="status" className="mt-2 text-sm font-bold text-ink empty:hidden">
         {player.notice}

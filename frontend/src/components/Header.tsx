@@ -1,6 +1,6 @@
 import { useRef, useState, type KeyboardEvent } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import AccentSwitch from './AccentSwitch'
+import ThemeSwitch from './ThemeSwitch'
 import Logo from './Logo'
 
 export interface NavItem {
@@ -87,7 +87,7 @@ export default function Header({ logoTo, items, trackActive = false, cta, onSign
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <AccentSwitch />
+          <ThemeSwitch />
           {onSignOut && (
             <button type="button" onClick={onSignOut} className={`${baseLink} hidden cursor-pointer text-ink hover:bg-surface lg:inline-flex`}>
               Sair

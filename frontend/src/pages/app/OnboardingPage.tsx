@@ -12,8 +12,7 @@ import StickyActionBar from '../../components/ui/StickyActionBar'
 import { ACCENT_OPTIONS, LEVEL_OPTIONS } from '../../content/options'
 import { PLACEMENT_QUESTIONS } from '../../data/placementQuestions'
 import { computeLevel, gradeAnswers, scoreByLevel } from '../../domain/placement'
-import { ACCENT_LABEL, themeOf } from '../../lib/format'
-import { useTheme } from '../../theme/useTheme'
+import { ACCENT_LABEL } from '../../lib/format'
 import type { Level, PlacementRecord } from '../../types'
 
 type Stage = 'accent' | 'intro' | 'test' | 'result' | 'manual'
@@ -23,12 +22,11 @@ const TOTAL = PLACEMENT_QUESTIONS.length
 export default function OnboardingPage() {
   const user = useUser()
   const { savePreferences } = useAuth()
-  const { setAccent } = useTheme()
   const navigate = useNavigate()
   // Vindo do perfil ("Refazer teste"), o sotaque já está escolhido e a pessoa vai direto à introdução do teste.
   const redo = (useLocation().state as { redo?: boolean } | null)?.redo === true
   const [stage, setStage] = useState<Stage>(redo ? 'intro' : 'accent')
-  const [accent, setAccentChoice] = useState(user.accent)
+  const [accent, setAccent] = useState(user.accent)
   const [answers, setAnswers] = useState<(number | null)[]>(() => PLACEMENT_QUESTIONS.map(() => null))
   const [current, setCurrent] = useState(0)
   const [manualLevel, setManualLevel] = useState<Level>(user.level)
@@ -93,15 +91,14 @@ export default function OnboardingPage() {
 
       {stage === 'accent' && (
         <>
-          <PageHeader titleRef={heading} eyebrow={stepLabel} title="Qual sotaque você quer treinar?" description="O tema do app muda junto com a sua escolha." />
+          <PageHeader titleRef={heading} eyebrow={stepLabel} title="Qual sotaque você quer treinar?" description="Define a voz das falas nos seus estudos. Você pode mudar depois no perfil." />
           <ChoiceGroup
             legend="Sotaque"
             hideLegend
             value={accent}
             options={ACCENT_OPTIONS}
             onChange={(next) => {
-              setAccentChoice(next)
-              setAccent(themeOf(next))
+              setAccent(next)
             }}
           />
           <StickyActionBar label="Sua escolha" summary={ACCENT_LABEL[accent]}>

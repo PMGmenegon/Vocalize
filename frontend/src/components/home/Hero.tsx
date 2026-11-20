@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
-import { ACCENTS, type Accent } from '../../theme/accents'
+import { THEMES, type Theme } from '../../theme/themes'
 import { useTheme } from '../../theme/useTheme'
 import { Flag } from '../Flags'
 import SoundStage from './SoundStage'
@@ -9,8 +9,8 @@ const delay = (ms: number) => ({ '--d': `${ms}ms` }) as CSSProperties
 
 /** Topo da landing: nome, frase principal, palco sonoro interativo e botão "Começar". */
 export default function Hero() {
-  const { accent, setAccent } = useTheme()
-  const other: Accent = accent === 'us' ? 'uk' : 'us'
+  const { theme, setTheme } = useTheme()
+  const other: Theme = theme === 'us' ? 'uk' : 'us'
 
   return (
     <section aria-labelledby="hero-titulo">
@@ -35,17 +35,17 @@ export default function Hero() {
             </Link>
             <button
               type="button"
-              onClick={() => setAccent(other)}
+              onClick={() => setTheme(other)}
               className="inline-flex min-h-14 cursor-pointer items-center gap-2 rounded-xl border-2 border-control bg-card px-6 text-lg font-bold text-link transition-colors hover:bg-surface"
             >
-              <Flag accent={other} />
-              Mudar para {ACCENTS[other].short}
+              <Flag theme={other} />
+              Mudar para {THEMES[other].short}
             </button>
           </div>
         </div>
 
         <div className="rise" style={delay(220)}>
-          <SoundStage key={accent} />
+          <SoundStage key={theme} />
         </div>
       </div>
     </section>

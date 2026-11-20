@@ -1,5 +1,5 @@
 import { useId } from 'react'
-import type { Accent } from '../theme/accents'
+import type { Theme } from '../theme/themes'
 
 interface FlagProps {
   className?: string
@@ -71,6 +71,6 @@ export function FlagUK({ className = 'h-3.5 w-[1.625rem]' }: FlagProps) {
   )
 }
 
-export function Flag({ accent, className }: FlagProps & { accent: Accent }) {
-  return accent === 'us' ? <FlagUS className={className} /> : <FlagUK className={className} />
+export function Flag({ theme, className }: FlagProps & { theme: Theme }) {
+  return theme === 'us' ? <FlagUS className={className} /> : <FlagUK className={className} />
 }

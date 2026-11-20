@@ -11,8 +11,7 @@ import Skeleton from '../../components/ui/Skeleton'
 import { useAsync } from '../../hooks/useAsync'
 import { useSpeechPlayer } from '../../hooks/useSpeechPlayer'
 import { reviewService } from '../../services'
-import { localeOf } from '../../lib/format'
-import { useTheme } from '../../theme/useTheme'
+import { useUser } from '../../auth/useAuth'
 import type { Flashcard, ReviewRating } from '../../types'
 
 const RATINGS: { value: ReviewRating; label: string; hint: string }[] = [
@@ -24,10 +23,10 @@ const RATINGS: { value: ReviewRating; label: string; hint: string }[] = [
 
 const norm = (s: string) => s.trim().toLowerCase()
 
-/** Botão "Ouvir" do cartão: fala a palavra no sotaque do modo escolhido. Recriado a cada cartão (key). */
+/** Botão "Ouvir" do cartão: fala a palavra no sotaque de estudo do perfil (a voz, não o tema). Recriado a cada cartão (key). */
 function ListenButton({ word }: { word: string }) {
-  const { accent } = useTheme()
-  const player = useSpeechPlayer({ text: word, locale: localeOf(accent) })
+  const { accent } = useUser()
+  const player = useSpeechPlayer({ text: word, locale: accent })
   return (
     <>
       <Button variant="secondary" onClick={() => player.play()} disabled={!player.ready}>

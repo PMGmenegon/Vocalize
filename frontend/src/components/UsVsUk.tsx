@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { DIFFERENCES, KIND_LABEL } from '../content/differences'
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
-import { ACCENT_LIST, ACCENTS, type Accent } from '../theme/accents'
+import { THEME_LIST, THEMES, type Theme } from '../theme/themes'
 import { useTheme } from '../theme/useTheme'
 import { Flag } from './Flags'
 
@@ -13,7 +13,7 @@ const ROTATE_MS = 7000
  * O lado do modo atual fica em destaque. Sempre acompanhadas do significado em português.
  */
 export default function UsVsUk() {
-  const { accent } = useTheme()
+  const { theme } = useTheme()
   const reduced = usePrefersReducedMotion()
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
@@ -67,8 +67,8 @@ export default function UsVsUk() {
       {/* Anuncia a troca só quando a pessoa navega (rotação automática fica em silêncio). */}
       <div aria-live={playing ? 'off' : 'polite'} className="mt-6">
         <div key={index} className="fade-swap grid gap-x-12 gap-y-6 sm:grid-cols-2">
-          {ACCENT_LIST.map((code) => (
-            <Side key={code} code={code} current={code === accent} word={item[code]} sound={code === 'us' ? item.usSound : item.ukSound} isPron={isPron} />
+          {THEME_LIST.map((code) => (
+            <Side key={code} code={code} current={code === theme} word={item[code]} sound={code === 'us' ? item.usSound : item.ukSound} isPron={isPron} />
           ))}
         </div>
         <p className="mt-6 text-muted">
@@ -81,7 +81,7 @@ export default function UsVsUk() {
 }
 
 interface SideProps {
-  code: Accent
+  code: Theme
   current: boolean
   word: string
   sound?: string
@@ -89,11 +89,11 @@ interface SideProps {
 }
 
 function Side({ code, current, word, sound, isPron }: SideProps) {
-  const info = ACCENTS[code]
+  const info = THEMES[code]
   return (
     <div className={`border-l-2 pl-5 ${current ? 'border-brand' : 'border-line'}`}>
       <p className="type-eyebrow inline-flex items-center gap-2">
-        <Flag accent={code} />
+        <Flag theme={code} />
         {info.short}
         {current && <span className="text-brand">· seu modo</span>}
       </p>

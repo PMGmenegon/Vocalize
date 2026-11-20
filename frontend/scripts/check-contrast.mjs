@@ -14,9 +14,9 @@ import { readFileSync } from 'node:fs'
 const css = readFileSync(new URL('../src/index.css', import.meta.url), 'utf8')
 
 /** Extrai { nome: '#rrggbb' } do bloco de variáveis de um tema. */
-function readTokens(accent) {
+function readTokens(theme) {
   const blocks = css.matchAll(
-    new RegExp(`html\\[data-accent="${accent}"\\][^{]*\\{([^}]*)\\}`, 'g'),
+    new RegExp(`html\\[data-theme="${theme}"\\][^{]*\\{([^}]*)\\}`, 'g'),
   )
   for (const [, body] of blocks) {
     if (!body.includes('--canvas')) continue // outra regra do mesmo tema
@@ -26,7 +26,7 @@ function readTokens(accent) {
     }
     return tokens
   }
-  throw new Error(`Bloco de tokens do tema "${accent}" não encontrado em index.css`)
+  throw new Error(`Bloco de tokens do tema "${theme}" não encontrado em index.css`)
 }
 
 /** Luminância relativa (fórmula WCAG). */
@@ -87,9 +87,9 @@ const PAIRS = [
 ]
 
 let failures = 0
-for (const accent of ['us', 'uk']) {
-  const t = { ...readTokens(accent), wine: '#9b1c2e', navy: '#012169' }
-  console.log(`\nTema ${accent.toUpperCase()}`)
+for (const theme of ['us', 'uk']) {
+  const t = { ...readTokens(theme), wine: '#9b1c2e', navy: '#012169' }
+  console.log(`\nTema ${theme.toUpperCase()}`)
   for (const [fg, bg, min, label] of PAIRS) {
     const fgHex = t[fg]
     const bgHex = t[bg]

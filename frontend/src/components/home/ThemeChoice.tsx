@@ -1,6 +1,6 @@
 import { Flag } from '../Flags'
 import UsVsUk from '../UsVsUk'
-import { ACCENT_LIST, ACCENTS, type Accent } from '../../theme/accents'
+import { THEME_LIST, THEMES, type Theme } from '../../theme/themes'
 import { useTheme } from '../../theme/useTheme'
 import HomeSection from './HomeSection'
 
@@ -11,7 +11,7 @@ interface Example {
   words: { term: string; meaning: string }[]
 }
 
-const EXAMPLES: Record<Accent, Example> = {
+const EXAMPLES: Record<Theme, Example> = {
   us: {
     title: 'Americano',
     text: 'Nova York, Califórnia, táxis amarelos. O "r" final é pronunciado e o "t" no meio da palavra soa como um "d" rápido.',
@@ -33,21 +33,21 @@ const EXAMPLES: Record<Accent, Example> = {
 }
 
 /** Os dois lados lado a lado, com botão para escolher o modo ali mesmo. */
-export default function AccentChoice() {
-  const { accent, setAccent } = useTheme()
+export default function ThemeChoice() {
+  const { theme, setTheme } = useTheme()
 
   return (
     <HomeSection id="sotaques" eyebrow="Sotaques" title="Americano ou britânico?" description="Escolha o sotaque que você quer treinar. O visual, os textos e a voz acompanham o modo.">
       <div className="grid gap-x-12 gap-y-10 md:grid-cols-2">
-        {ACCENT_LIST.map((code) => {
-          const info = ACCENTS[code]
+        {THEME_LIST.map((code) => {
+          const info = THEMES[code]
           const ex = EXAMPLES[code]
-          const active = code === accent
+          const active = code === theme
           return (
             <article key={code} className={`border-t-2 pt-5 ${active ? 'border-brand' : 'border-ink'}`}>
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <h3 className="type-display inline-flex items-center gap-3 text-3xl">
-                  <Flag accent={code} />
+                  <Flag theme={code} />
                   {ex.title} ({info.short})
                 </h3>
                 {active && (
@@ -71,7 +71,7 @@ export default function AccentChoice() {
               <button
                 type="button"
                 aria-pressed={active}
-                onClick={() => setAccent(code)}
+                onClick={() => setTheme(code)}
                 className={[
                   'mt-5 inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl border-2 px-5 text-base font-bold transition-colors',
                   active ? 'border-brand bg-brand text-on-brand' : 'border-control bg-card text-link hover:bg-surface',

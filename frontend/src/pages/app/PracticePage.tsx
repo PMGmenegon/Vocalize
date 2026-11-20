@@ -54,6 +54,7 @@ export default function PracticePage() {
   })
   const [scenarioId, setScenarioId] = useState<ScenarioId | null>(null)
   const [level, setLevel] = useState(user.level)
+  // Sotaque de estudo da sessão: define só a VOZ; nunca altera o tema visual.
   const [accent, setAccent] = useState(user.accent)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')

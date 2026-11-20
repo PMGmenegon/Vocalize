@@ -267,7 +267,7 @@ function Comparison({ accent }: { accent: 'us' | 'uk' }) {
  * Tablet: só a frase e a transcrição. Em telas baixas somem primeiro a tabela e depois o rodapé.
  */
 export default function BrandPanel() {
-  const { accent } = useTheme()
+  const { theme } = useTheme()
   const now = useMinuteClock()
 
   return (
@@ -295,7 +295,7 @@ export default function BrandPanel() {
         </section>
 
         <section className="hidden border-t border-line pt-[clamp(0.75rem,1.8vh,1.25rem)] lg:block [@media(max-height:860px)]:!hidden">
-          <Comparison accent={accent} />
+          <Comparison accent={theme} />
         </section>
       </div>
 
