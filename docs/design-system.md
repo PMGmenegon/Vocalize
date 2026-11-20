@@ -14,7 +14,7 @@ O padrão nasceu na página de escolha da prática (`/app/praticar`) e vale para
 
 ## Tokens
 
-Definidos em `src/index.css` e trocados pelo atributo `data-accent` (`us` | `uk`) no `<html>`. O contraste de todos os pares é verificado por `npm run check:contrast`.
+Definidos em `src/index.css` e trocados pelo atributo `data-theme` (`us` | `uk`) no `<html>`. O contraste de todos os pares é verificado por `npm run check:contrast`.
 
 | Token | Uso |
 | --- | --- |

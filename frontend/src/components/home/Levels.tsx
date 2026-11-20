@@ -6,8 +6,8 @@ import HomeSection from './HomeSection'
 
 /** Níveis A2–C1: escolha um para ver o que muda, com um exemplo na grafia do modo atual. */
 export default function Levels() {
-  const { accent } = useTheme()
-  const sp = MODE_COPY[accent].spelling
+  const { theme } = useTheme()
+  const sp = MODE_COPY[theme].spelling
   const [selected, setSelected] = useState(0)
 
   const levels = [
@@ -71,7 +71,7 @@ export default function Levels() {
           </div>
           <div className="border-l-2 border-brand pl-5">
             <p className="type-eyebrow">Exemplo de fala neste nível</p>
-            <p lang={accent === 'us' ? 'en-US' : 'en-GB'} className="type-display mt-2 text-2xl">
+            <p lang={theme === 'us' ? 'en-US' : 'en-GB'} className="type-display mt-2 text-2xl">
               {level.example}
             </p>
             <p className="mt-2 text-muted">Em português: {level.translation}</p>

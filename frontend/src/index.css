@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 /* =====================================================================
-   TEMAS (sotaque)
-   O ThemeContext grava `data-accent="us" | "uk"` no <html>. Cada tema
+   TEMAS visuais (US/UK, independentes do sotaque de estudo)
+   O ThemeContext grava `data-theme="us" | "uk"` no <html>. Cada tema
    redefine as variáveis abaixo; o Tailwind enxerga todas elas como
    utilitários (bg-brand, text-ink, border-line, ...) via @theme inline.
 
@@ -14,7 +14,7 @@
    ===================================================================== */
 
 :root,
-html[data-accent="us"] {
+html[data-theme="us"] {
   --canvas: #faf7f2; /* marfim quente: fundo da página */
   --card: #fffdf9; /* superfícies elevadas (cards, campos, tooltips) */
   --surface: #f1ece3; /* áreas rebaixadas (faixas, chips, rodapé) */
@@ -40,7 +40,7 @@ html[data-accent="us"] {
   --on-ok: #14532d;
 }
 
-html[data-accent="uk"] {
+html[data-theme="uk"] {
   --canvas: #f5f7fa; /* branco gelo, levemente azulado: fundo da página */
   --card: #fbfcfe; /* superfícies elevadas (cards, campos, tooltips) */
   --surface: #eaeff6; /* áreas rebaixadas (faixas, chips, rodapé) */

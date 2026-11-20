@@ -3,7 +3,10 @@
 export type Level = 'A2' | 'B1' | 'B2' | 'C1'
 export const LEVELS: readonly Level[] = ['A2', 'B1', 'B2', 'C1']
 
-/** Sotaque do conteúdo (locale). Não confundir com o tema visual `Accent` de src/theme ('us' | 'uk'). */
+/**
+ * SOTAQUE DE ESTUDO ('en-US' | 'en-GB'): preferência do perfil; define só a VOZ das falas.
+ * Não confundir com o TEMA VISUAL (`Theme` em src/theme, 'us' | 'uk'), que só muda pelo seletor US/UK.
+ */
 export type Accent = 'en-US' | 'en-GB'
 
 export type ScenarioId = 'restaurant' | 'street' | 'airport' | 'hotel' | 'shopping' | 'job-interview' | 'virtual-chat'

@@ -3,11 +3,11 @@ import { compareTranscription } from '../../domain/transcription'
 import { useSpeechPlayer } from '../../hooks/useSpeechPlayer'
 import Button from '../ui/Button'
 import HomeSection from './HomeSection'
-import { ACCENTS, type Accent } from '../../theme/accents'
+import { THEMES, type Theme } from '../../theme/themes'
 import { useTheme } from '../../theme/useTheme'
 import type { TranscriptionResult } from '../../types'
 
-const SENTENCES: Record<Accent, readonly string[]> = {
+const SENTENCES: Record<Theme, readonly string[]> = {
   us: [
     'Could we get the check, please?',
     "I'll take the elevator to my apartment.",
@@ -22,14 +22,14 @@ const SENTENCES: Record<Accent, readonly string[]> = {
 
 /** Mini rodada jogável: ouça, digite e veja a correção palavra por palavra. */
 export default function TryRound() {
-  const { accent } = useTheme()
+  const { theme } = useTheme()
   // key: ao trocar de modo a rodada recomeça do zero.
-  return <Round key={accent} accent={accent} />
+  return <Round key={theme} theme={theme} />
 }
 
-function Round({ accent }: { accent: Accent }) {
-  const locale = ACCENTS[accent].locale
-  const sentences = SENTENCES[accent]
+function Round({ theme }: { theme: Theme }) {
+  const locale = THEMES[theme].locale
+  const sentences = SENTENCES[theme]
   const inputId = useId()
   const [index, setIndex] = useState(0)
   const [typed, setTyped] = useState('')
@@ -79,7 +79,7 @@ function Round({ accent }: { accent: Accent }) {
             Ouvir devagar
           </Button>
           <span className="type-eyebrow">
-            {ACCENTS[accent].label} ({ACCENTS[accent].locale})
+            {THEMES[theme].label} ({THEMES[theme].locale})
           </span>
         </div>
         <p role="status" className="mt-3 text-sm font-bold text-ink empty:hidden">

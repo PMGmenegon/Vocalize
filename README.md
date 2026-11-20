@@ -9,7 +9,7 @@ App web para **aprender inglês ouvindo e conversando**. A IA fala em inglês (o
 2. **Transcrever** — você digita o que entendeu; o backend compara palavra por palavra.
 3. **Responder** — você responde por texto ou voz; não existe uma única resposta certa, então a IA avalia se faz sentido na conversa e no seu nível, corrige a sua frase e sugere outras formas de responder.
 
-Interface em português (Brasil); conteúdo de estudo em inglês. Dois temas visuais conforme o sotaque: **US** (vermelho, estrelas e listras) e **UK** (azul-marinho, cruz da Union Jack).
+Interface em português (Brasil); conteúdo de estudo em inglês. Dois temas visuais, escolhidos no seletor US/UK e independentes do sotaque de estudo: **US** (vermelho, estrelas e listras) e **UK** (azul-marinho, cruz da Union Jack).
 
 > **Status:** frontend com dados falsos + backend com banco de dados PostgreSQL (Fases 4 e 5). O login é real (Supabase Auth, Fase 7); o perfil de estudo ainda é falso. O áudio e a IA vêm nas próximas fases.
 
@@ -229,7 +229,7 @@ Para testar os estados de erro e vazio, abra qualquer tela da área logada com `
 Rotas públicas: `/` (landing), `/login`, `/cadastro`. Todas as rotas `/app/*` exigem login.
 
 - `/cadastro` e `/login` — validação (e-mail, senha de 8+ caracteres, confirmação). Ao entrar o usuário vai direto ao onboarding (conta nova) ou ao início.
-- `/app/onboarding` — sotaque (o tema muda na hora) e teste de nivelamento: 6 perguntas fixas de múltipla escolha em inglês, resultado com nível, acertos por nível e revisão. Dá para escolher o nível na mão (A2–C1) ou ajustar o do teste. A lógica fica em `src/domain/placement.ts` (funções puras) e as perguntas em `src/data/placementQuestions.ts`.
+- `/app/onboarding` — sotaque de estudo (define só a voz; não muda o tema) e teste de nivelamento: 6 perguntas fixas de múltipla escolha em inglês, resultado com nível, acertos por nível e revisão. Dá para escolher o nível na mão (A2–C1) ou ajustar o do teste. A lógica fica em `src/domain/placement.ts` (funções puras) e as perguntas em `src/data/placementQuestions.ts`.
 - `/app` — saudação do modo, sequência, nível, recomendação, "Praticar agora", últimas sessões e palavras para revisar.
 - `/app/praticar` — escolha da **situação** (restaurante, conversa na rua, aeroporto, hotel, compras, entrevista, bate-papo virtual), nível e sotaque.
 - `/app/praticar/:sessaoId` — introdução da situação e botão "Começar"; depois o layout definido nos dados da situação:

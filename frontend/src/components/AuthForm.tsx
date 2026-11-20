@@ -2,10 +2,8 @@ import { useRef, useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { postLoginPath } from '../auth/redirect'
 import { useAuth } from '../auth/useAuth'
-import { themeOf } from '../lib/format'
 import { PASSWORD_RULE_HINT, validateNewPassword } from '../lib/password'
 import { AuthFailure, authErrorMessage } from '../services'
-import { useTheme } from '../theme/useTheme'
 import Button from './ui/Button'
 import PasswordStrength from './auth/PasswordStrength'
 import { Input, PasswordInput } from './ui/Input'
@@ -34,7 +32,6 @@ function validate(mode: Mode, v: { name: string; email: string; password: string
 export default function AuthForm({ mode }: { mode: Mode }) {
   const isLogin = mode === 'login'
   const { signIn, signUp } = useAuth()
-  const { setAccent } = useTheme()
   const navigate = useNavigate()
   const location = useLocation()
   const formRef = useRef<HTMLFormElement>(null)
@@ -70,7 +67,6 @@ export default function AuthForm({ mode }: { mode: Mode }) {
       const email = values.email.trim()
       if (isLogin) {
         const signedIn = await signIn({ email, password: values.password })
-        setAccent(themeOf(signedIn.accent))
         navigate(postLoginPath(signedIn, location.state), { replace: true })
         return
       }

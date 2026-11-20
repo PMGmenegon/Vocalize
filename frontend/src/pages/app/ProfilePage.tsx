@@ -7,17 +7,15 @@ import PageHeader, { Page } from '../../components/ui/PageHeader'
 import Section from '../../components/ui/Section'
 import StickyActionBar from '../../components/ui/StickyActionBar'
 import { ACCENT_OPTIONS, LEVEL_OPTIONS } from '../../content/options'
-import { formatFullDate, themeOf } from '../../lib/format'
-import { useTheme } from '../../theme/useTheme'
+import { formatFullDate } from '../../lib/format'
 
 export default function ProfilePage() {
   const user = useUser()
   const { savePreferences } = useAuth()
   const signOut = useSignOut()
-  const { setAccent } = useTheme()
   const navigate = useNavigate()
   const [level, setLevel] = useState(user.level)
-  const [accent, setAccentChoice] = useState(user.accent)
+  const [accent, setAccent] = useState(user.accent)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null)
 
@@ -84,8 +82,7 @@ export default function ProfilePage() {
               value={accent}
               options={ACCENT_OPTIONS.map((o) => ({ value: o.value, label: o.label }))}
               onChange={(next) => {
-                setAccentChoice(next)
-                setAccent(themeOf(next))
+                setAccent(next)
               }}
             />
           </div>

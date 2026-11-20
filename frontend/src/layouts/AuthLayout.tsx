@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
-import AccentSwitch from '../components/AccentSwitch'
+import ThemeSwitch from '../components/ThemeSwitch'
 import BrandPanel from '../components/auth/BrandPanel'
 import BrandStrip from '../components/auth/BrandStrip'
 import Logo from '../components/Logo'
@@ -23,7 +23,7 @@ export default function AuthLayout() {
         className="relative flex min-h-dvh flex-col px-4 pb-10 pt-20 sm:px-8 md:col-span-6 md:px-0 md:py-[var(--auth-pad-y)] lg:col-span-5"
       >
         <div className="absolute right-4 top-4 sm:right-6 md:hidden">
-          <AccentSwitch />
+          <ThemeSwitch />
         </div>
         <div className="mx-auto flex w-full max-w-[400px] flex-1 flex-col md:mx-0 md:max-w-[28rem]">
           <div className="md:hidden">
@@ -41,7 +41,7 @@ export default function AuthLayout() {
       {/* A lateral acompanha a rolagem: em telas baixas (formulário maior que a janela) ela continua inteira à vista */}
       <div className="relative hidden md:col-span-6 md:block lg:col-span-7">
         <div className="absolute right-0 top-[var(--auth-pad-y)] z-10">
-          <AccentSwitch />
+          <ThemeSwitch />
         </div>
         <div className="sticky top-0 h-dvh">
           <BrandPanel />

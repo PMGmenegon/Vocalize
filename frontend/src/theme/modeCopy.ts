@@ -1,4 +1,4 @@
-import type { Accent } from './accents'
+import type { Theme } from './themes'
 
 /** Textos e grafias que mudam conforme o modo (US ou UK). */
 export interface ModeCopy {
@@ -17,7 +17,7 @@ export interface ModeCopy {
   }
 }
 
-export const MODE_COPY: Record<Accent, ModeCopy> = {
+export const MODE_COPY: Record<Theme, ModeCopy> = {
   us: {
     demoPhrase: 'Could we get the check, please?',
     demoTranslation: 'Podemos pedir a conta, por favor?',

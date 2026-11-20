@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import ExpandCard from '../ExpandCard'
-import type { Accent } from '../../theme/accents'
+import type { Theme } from '../../theme/themes'
 import { useTheme } from '../../theme/useTheme'
 import { ChatIcon, HeadphonesIcon, PencilIcon } from '../icons'
 import HomeSection from './HomeSection'
@@ -46,7 +46,7 @@ interface Round {
 }
 
 /** Exemplo de rodada; a palavra muda conforme o modo (check/bill). */
-const ROUNDS: Record<Accent, Round> = {
+const ROUNDS: Record<Theme, Round> = {
   us: {
     before: 'Could we get the',
     wrong: 'chick',
@@ -67,8 +67,8 @@ const ROUNDS: Record<Accent, Round> = {
 
 /** Os 3 passos e um exemplo visual de uma rodada. */
 export default function HowItWorks() {
-  const { accent } = useTheme()
-  const round = ROUNDS[accent]
+  const { theme } = useTheme()
+  const round = ROUNDS[theme]
 
   return (
     <HomeSection id="como-funciona" eyebrow="Como funciona" title="Três passos por rodada" description="Poucos minutos por dia já ajudam.">

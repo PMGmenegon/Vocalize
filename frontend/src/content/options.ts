@@ -10,8 +10,8 @@ export const LEVEL_OPTIONS: Choice<Level>[] = [
 ]
 
 export const ACCENT_OPTIONS: Choice<Accent>[] = [
-  { value: 'en-US', label: ACCENT_LABEL['en-US'], description: 'Sotaque dos Estados Unidos. Tema vermelho.' },
-  { value: 'en-GB', label: ACCENT_LABEL['en-GB'], description: 'Sotaque do Reino Unido. Tema azul-marinho.' },
+  { value: 'en-US', label: ACCENT_LABEL['en-US'], description: 'Sotaque dos Estados Unidos.' },
+  { value: 'en-GB', label: ACCENT_LABEL['en-GB'], description: 'Sotaque do Reino Unido.' },
 ]
 
 /** Frase do resultado do teste de nivelamento, por nível. */

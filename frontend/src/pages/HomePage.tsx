@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
-import AccentChoice from '../components/home/AccentChoice'
+import ThemeChoice from '../components/home/ThemeChoice'
 import Features from '../components/home/Features'
 import FinalCta from '../components/home/FinalCta'
 import Hero from '../components/home/Hero'
@@ -24,7 +24,7 @@ export default function HomePage() {
       <HowItWorks />
       <TryRound />
       <Features />
-      <AccentChoice />
+      <ThemeChoice />
       <Levels />
       <FinalCta />
     </>
