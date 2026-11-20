@@ -1,7 +1,6 @@
-import { db } from '../mocks/db'
-import { DEMO_USER } from '../mocks/users'
-import type { Accent, Level, PlacementRecord, User } from '../types'
-import { simulate } from './runtime'
+import type { Session as SupabaseSession, User as SupabaseUser } from '@supabase/supabase-js'
+import { getSupabase } from '../lib/supabase'
+import { AuthFailure, translateAuthError } from './authErrors'
 
 export interface Credentials {
   email: string
@@ -10,72 +9,120 @@ export interface Credentials {
 export interface Registration extends Credentials {
   name: string
 }
-export interface Preferences {
-  level: Level
-  accent: Accent
-  /** Resultado do teste de nivelamento, quando o nível veio dele. Sem ele, o nível foi escolhido na mão. */
-  placement?: PlacementRecord
+/** Quem está autenticado (dados do provedor de login, não do perfil de estudo). */
+export interface AuthUser {
+  id: string
+  name: string
+  email: string
+  createdAt: string
+}
+export interface AuthSession {
+  user: AuthUser
+}
+export interface SignUpResult {
+  email: string
+  /** Sessão imediata (confirmação de e-mail desligada) ou null (precisa confirmar o e-mail). */
+  session: AuthSession | null
+}
+export type AuthEvent = 'INITIAL_SESSION' | 'SIGNED_IN' | 'SIGNED_OUT' | 'TOKEN_REFRESHED' | 'USER_UPDATED' | 'PASSWORD_RECOVERY'
+
+/** Contrato de autenticação. Telas e componentes só conhecem esta interface, nunca o Supabase. */
+export interface AuthService {
+  signUp(registration: Registration): Promise<SignUpResult>
+  signIn(credentials: Credentials): Promise<AuthSession>
+  /** Redireciona o navegador para o Google. Rejeita com AuthFailure('provider_unavailable') se o provedor estiver desligado. */
+  signInWithGoogle(): Promise<void>
+  signOut(): Promise<void>
+  getSession(): Promise<AuthSession | null>
+  /** Devolve a função que cancela a assinatura. */
+  onAuthStateChange(callback: (event: AuthEvent, session: AuthSession | null) => void): () => void
+  requestPasswordReset(email: string): Promise<void>
+  updatePassword(password: string): Promise<void>
+  resendConfirmation(email: string): Promise<void>
 }
 
-function nameFromEmail(email: string) {
-  const local = email.split('@')[0] ?? 'Estudante'
-  return local.charAt(0).toUpperCase() + local.slice(1)
+function toAuthUser(user: SupabaseUser): AuthUser {
+  const name = user.user_metadata?.name
+  return {
+    id: user.id,
+    name: typeof name === 'string' && name.trim() ? name : (user.email?.split('@')[0] ?? 'Estudante'),
+    email: user.email ?? '',
+    createdAt: user.created_at,
+  }
 }
 
-export const authService = {
-  /** Usuário logado ou null. Não falha no modo ?mock=erro, para dar para testar os erros das outras telas. */
-  getCurrentUser(): Promise<User | null> {
-    return new Promise((resolve) => {
-      window.setTimeout(() => resolve(db.isAuthenticated() ? db.getUser() : null), 200)
-    })
-  },
+function toAuthSession(session: SupabaseSession | null): AuthSession | null {
+  return session ? { user: toAuthUser(session.user) } : null
+}
 
-  /** Mock: qualquer e-mail entra, como a usuária de demonstração (nível B1, 3 semanas de histórico). */
-  login({ email }: Credentials): Promise<User> {
-    return simulate(() => {
-      const stored = db.getUser()
-      const user: User =
-        stored && stored.email.toLowerCase() === email.toLowerCase()
-          ? stored
-          : { ...DEMO_USER, email, name: nameFromEmail(email) }
-      db.setUser(user)
-      db.setAuthenticated(true)
-      return user
-    }, 700)
-  },
+/** Roda uma chamada do SDK, que devolve { error } ou lança, e converte qualquer falha em AuthFailure (português). */
+async function call<T extends { error: unknown }>(run: () => Promise<T>): Promise<T> {
+  let result: T
+  try {
+    result = await run()
+  } catch (error) {
+    throw translateAuthError(error)
+  }
+  if (result.error) throw translateAuthError(result.error)
+  return result
+}
 
-  /** Conta nova: sem histórico e ainda sem onboarding. */
-  register({ name, email }: Registration): Promise<User> {
-    return simulate(() => {
-      const user: User = {
-        id: `u-${Date.now()}`,
-        name,
+export const supabaseAuthService: AuthService = {
+  async signUp({ name, email, password }) {
+    const { data } = await call(() =>
+      getSupabase().auth.signUp({
         email,
-        level: 'B1',
-        accent: 'en-US',
-        onboarded: false,
-        createdAt: new Date().toISOString(),
-      }
-      db.setUser(user)
-      db.setAuthenticated(true)
-      return user
-    }, 700)
+        password,
+        options: { data: { name }, emailRedirectTo: `${window.location.origin}/app` },
+      }),
+    )
+    // Com confirmação ligada, e-mail já cadastrado não gera erro: o Supabase devolve um usuário sem identidades.
+    if (data.user && data.user.identities?.length === 0) throw new AuthFailure('email_taken')
+    return { email, session: toAuthSession(data.session) }
   },
 
-  logout(): Promise<void> {
-    return simulate(() => {
-      db.setAuthenticated(false)
-    }, 150)
+  async signIn({ email, password }) {
+    const { data } = await call(() => getSupabase().auth.signInWithPassword({ email, password }))
+    const session = toAuthSession(data.session)
+    if (!session) throw new AuthFailure('unknown')
+    return session
   },
 
-  /** Salva nível, sotaque e (opcional) o resultado do teste de nivelamento. Também conclui o onboarding. */
-  savePreferences(prefs: Preferences): Promise<User> {
-    return simulate(() => {
-      const current = db.getUser()
-      if (!current) throw new Error('Sessão expirada.')
-      const user: User = { ...current, level: prefs.level, accent: prefs.accent, placement: prefs.placement, onboarded: true }
-      db.setUser(user)
-      return user
-    }, 400)
+  async signInWithGoogle() {
+    await call(() =>
+      getSupabase().auth.signInWithOAuth({ provider: 'google', options: { redirectTo: `${window.location.origin}/app` } }),
+    )
+  },
+
+  async signOut() {
+    await call(() => getSupabase().auth.signOut())
+  },
+
+  async getSession() {
+    const { data } = await call(() => getSupabase().auth.getSession())
+    return toAuthSession(data.session)
+  },
+
+  onAuthStateChange(callback) {
+    const { data } = getSupabase().auth.onAuthStateChange((event, session) => {
+      callback(event as AuthEvent, toAuthSession(session))
+    })
+    return () => data.subscription.unsubscribe()
+  },
+
+  async requestPasswordReset(email) {
+    await call(() => getSupabase().auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/redefinir-senha` }))
+  },
+
+  async updatePassword(password) {
+    await call(() => getSupabase().auth.updateUser({ password }))
+  },
+
+  async resendConfirmation(email) {
+    await call(() =>
+      getSupabase().auth.resend({ type: 'signup', email, options: { emailRedirectTo: `${window.location.origin}/app` } }),
+    )
   },
 }
+
+export const authService: AuthService = supabaseAuthService

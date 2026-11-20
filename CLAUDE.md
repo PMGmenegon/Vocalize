@@ -74,6 +74,7 @@ O CI roda esses mesmos checks (ver [ADR 0010](docs/decisions/0010-ci-github-acti
 - **Design system:** siga [docs/design-system.md](docs/design-system.md). Use os tokens de cor (`canvas`, `ink`, `muted`, `line`, `brand`, `accent`...) e as classes de tipografia (`type-eyebrow`, `type-display`...), nunca cores/tamanhos soltos. Poucos cards: tente `Section` + `List` antes de uma caixa. Temas **US/UK** via `data-accent` (ADR [0003](docs/decisions/0003-temas-css-variables-tailwind.md)); ao mexer em cores, rode `check:contrast`.
 - **Acessibilidade (WCAG AA):** tudo operável por teclado, foco sempre visível, alvos de 44px, um `h1` por página, mudanças dinâmicas com `aria-live="polite"`/`role="status"` e erros com `role="alert"`, nada dependendo só de cor, conteúdo em inglês com `lang="en"`.
 - **Idioma:** interface 100% em português, sem palavras em inglês soltas. Inglês só como conteúdo do exercício (falas, transcrições, perguntas do teste, flashcards).
+- **Autenticação:** sempre via `services/authService.ts` (Supabase Auth); telas e componentes nunca importam `@supabase/supabase-js` nem `lib/supabase.ts`. Erros do Supabase são traduzidos em um único lugar (`services/authErrors.ts`). O frontend usa **somente a chave pública** (publishable/anon, em `frontend/.env.local`, que nunca é commitado); a chave secret/`service_role` jamais entra no frontend. Rotas protegidas são só experiência do usuário: a segurança real é o JWT validado no backend (Fase 8). Senha: 8+ caracteres com letras e números (`lib/password.ts`). A porta do Vite é fixa em 5173.
 - **Login e cadastro:** têm layout próprio. **Não alterar** sem pedido explícito.
 - **Áudio:** sempre pela abstração em `src/audio/` (`SpeechPlayer`, hook `useSpeechPlayer`, reconhecimento em `recognition.ts`); componentes não chamam `speechSynthesis` direto ([ADR 0005](docs/decisions/0005-audio-web-speech.md)).
 
@@ -105,6 +106,7 @@ Todas em [docs/decisions/](docs/decisions/). As que mais pesam:
 - **Respostas da conversa avaliadas por IA** ([0006](docs/decisions/0006-avaliacao-de-respostas-por-ia.md)): não existe "resposta correta". A IA devolve um `ReplyFeedback` em JSON validado (coerência, adequação ao nível, frase corrigida, pontos de melhoria, sugestões). Sem notas punitivas.
 - **Ditado = comparação exata por algoritmo**, palavra por palavra, **sem IA**. Hoje em `src/domain/transcription.ts`; na Fase 9 o backend vira a fonte oficial.
 - **Próximas fases:** Fase 9 (backend compara o ditado) e Fase 10 (IA avalia respostas e gera o diálogo). Até a Fase 10 o serviço devolve uma avaliação neutra simulada.
+- **Supabase Auth no frontend** ([0011](docs/decisions/0011-supabase-auth-no-frontend.md)): authService na camada de serviços; onboarding concluído ainda é mock (vai para o backend na Fase 8).
 - Outras: [0001](docs/decisions/0001-monorepo.md) monorepo, [0002](docs/decisions/0002-vite-react-router.md) Vite + React Router, [0004](docs/decisions/0004-typescript-6.md) TypeScript 6.0, [0010](docs/decisions/0010-ci-github-actions.md) CI.
 
 Ao tomar uma decisão arquitetural nova, registre um ADR numerado em `docs/decisions/`.

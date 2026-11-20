@@ -1,12 +1,12 @@
 /**
  * "Banco" do mock: guarda o que precisa sobreviver a recarregar a página
- * (usuário logado, sessões de prática, cartões já revisados) e lê o modo de
+ * (perfis de estudo, sessões de prática, cartões já revisados) e lê o modo de
  * simulação (?mock=erro | vazio | normal) usado para testar os estados da interface.
  */
 
 const KEYS = {
   user: 'vocalize:mock-user',
-  auth: 'vocalize:mock-auth',
+  profiles: 'vocalize:mock-profiles',
   sessions: 'vocalize:mock-sessions',
   reviewed: 'vocalize:mock-reviewed',
   mode: 'vocalize:mock-mode',
@@ -33,8 +33,9 @@ function write(key: string, value: unknown) {
 export const db = {
   getUser: () => read<import('../types').User>(KEYS.user),
   setUser: (user: import('../types').User | null) => write(KEYS.user, user),
-  isAuthenticated: () => read<boolean>(KEYS.auth) === true,
-  setAuthenticated: (value: boolean) => write(KEYS.auth, value ? true : null),
+  /** Perfis de estudo por id do usuário (o login em si é do Supabase). */
+  getProfiles: () => read<Record<string, import('../types').User>>(KEYS.profiles) ?? {},
+  setProfiles: (profiles: Record<string, import('../types').User>) => write(KEYS.profiles, profiles),
   getSessions: () => read<Record<string, import('../types').Session>>(KEYS.sessions) ?? {},
   setSessions: (sessions: Record<string, import('../types').Session>) => write(KEYS.sessions, sessions),
   getReviewed: () => read<string[]>(KEYS.reviewed) ?? [],

@@ -11,7 +11,7 @@ App web para **aprender inglês ouvindo e conversando**. A IA fala em inglês (o
 
 Interface em português (Brasil); conteúdo de estudo em inglês. Dois temas visuais conforme o sotaque: **US** (vermelho, estrelas e listras) e **UK** (azul-marinho, cruz da Union Jack).
 
-> **Status:** frontend com dados falsos + backend com banco de dados PostgreSQL (Fases 4 e 5). O login real, o áudio e a IA vêm nas próximas fases.
+> **Status:** frontend com dados falsos + backend com banco de dados PostgreSQL (Fases 4 e 5). O login é real (Supabase Auth, Fase 7); o perfil de estudo ainda é falso. O áudio e a IA vêm nas próximas fases.
 
 ## Próximas fases
 
@@ -55,7 +55,38 @@ npm install
 npm run dev
 ```
 
-Abra o endereço que o Vite mostrar no terminal (normalmente `http://localhost:5173`; se a porta estiver ocupada, ele usa a próxima livre).
+Abra `http://localhost:5173`. A porta é **fixa** (`strictPort`): os redirecionamentos do Supabase dependem dela, então, se estiver ocupada, o Vite falha em vez de trocar de porta.
+
+Antes de usar o login, configure o Supabase (próxima seção).
+
+### Autenticação com Supabase
+
+O login, o cadastro, a confirmação de e-mail e a redefinição de senha usam o [Supabase Auth](https://supabase.com/docs/guides/auth), sempre via `src/services/authService.ts`.
+
+**1. No painel do Supabase** (Authentication):
+
+| Onde | Configuração |
+|---|---|
+| URL Configuration → Site URL | `http://localhost:5173` |
+| URL Configuration → Redirect URLs | `http://localhost:5173/**` (em produção, adicione também a URL do site) |
+| Sign In / Providers → Email | ativado, com **Confirm email** ligado |
+| Sign In / Providers → Password | mínimo de **8 caracteres**, exigindo **letras e números** (o app valida a mesma regra) |
+| Sign In / Providers → Google | opcional; enquanto estiver desligado, o botão mostra "Login com Google ainda não está disponível" |
+
+**2. Onde pegar as chaves:** em *Project Settings → API Keys* (ou *API*): a **Project URL** e a chave **publishable** (antiga `anon`).
+
+**3. Crie `frontend/.env.local`** (copie de `frontend/.env.example`; o Git já o ignora):
+
+```
+VITE_SUPABASE_URL=https://SEU-PROJETO.supabase.co
+VITE_SUPABASE_ANON_KEY=sua-chave-publishable
+```
+
+Reinicie o `npm run dev` depois de editar o arquivo.
+
+> **Atenção:** o frontend usa **somente a chave pública (publishable/anon)**. A chave **secret / `service_role`** dá acesso total ao projeto e **nunca** pode ir para o frontend, para o Git ou para variáveis `VITE_*` (elas ficam visíveis no navegador).
+
+Os testes e o CI **não** usam chaves reais: o `authService` é substituído por um falso e o workflow define valores fictícios.
 
 ### Scripts
 
@@ -177,7 +208,7 @@ frontend/src/
   types/      tipos do domínio (User, Session, Turn, TranscriptionResult, Stats, ...)
   data/       situações (id, nome, contexto, ícone, layout, personagem por sotaque, introdução)
   mocks/      dados falsos coerentes entre si (usuária B1 com 3 semanas de histórico)
-  services/   única porta de entrada para dados; hoje devolvem mocks com atraso simulado
+  services/   única porta de entrada para dados; hoje devolvem mocks com atraso simulado (exceção: authService, que é o Supabase Auth real)
 ```
 
 **Regra:** as telas **nunca** importam `mocks/`, só `services/`. Nas próximas fases troca-se apenas a implementação dos serviços.
@@ -222,6 +253,7 @@ Registradas em [`docs/decisions/`](docs/decisions/):
 - [0004 — TypeScript fixado na série 6.0](docs/decisions/0004-typescript-6.md)
 - [0007 — FastAPI e arquitetura em camadas](docs/decisions/0007-fastapi-arquitetura-em-camadas.md)
 - [0010 — CI com GitHub Actions](docs/decisions/0010-ci-github-actions.md)
+- [0011 — Supabase Auth no frontend](docs/decisions/0011-supabase-auth-no-frontend.md)
 
 ## Licença
 

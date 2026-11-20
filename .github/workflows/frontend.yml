@@ -18,6 +18,10 @@ jobs:
     name: Frontend checks
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      # Valores fictícios: o CI nunca usa as chaves reais do Supabase (os testes usam um authService falso).
+      VITE_SUPABASE_URL: http://localhost:54321
+      VITE_SUPABASE_ANON_KEY: chave-ficticia-de-ci
     defaults:
       run:
         working-directory: frontend

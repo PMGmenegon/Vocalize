@@ -1,7 +1,10 @@
 import { useRef, useState, type FormEvent } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { postLoginPath } from '../auth/redirect'
 import { useAuth } from '../auth/useAuth'
 import { themeOf } from '../lib/format'
+import { PASSWORD_RULE_HINT, validateNewPassword } from '../lib/password'
+import { AuthFailure, authErrorMessage } from '../services'
 import { useTheme } from '../theme/useTheme'
 import Button from './ui/Button'
 import PasswordStrength from './auth/PasswordStrength'
@@ -16,27 +19,34 @@ function validate(mode: Mode, v: { name: string; email: string; password: string
   const errors: Errors = {}
   if (mode === 'register' && v.name.trim().length < 2) errors.name = 'Informe seu nome.'
   if (!EMAIL.test(v.email.trim())) errors.email = 'Informe um e-mail válido, como nome@exemplo.com.'
-  if (v.password.length < 8) errors.password = 'A senha precisa ter pelo menos 8 caracteres.'
+  if (mode === 'register') {
+    // O cadastro segue a regra do Supabase (8+ caracteres, letras e números). No login, vale a senha que já existe.
+    const problem = validateNewPassword(v.password)
+    if (problem) errors.password = problem
+  } else if (v.password.length < 8) {
+    errors.password = 'A senha precisa ter pelo menos 8 caracteres.'
+  }
   if (mode === 'register' && v.confirm !== v.password) errors.confirm = 'A confirmação não é igual à senha.'
   return errors
 }
 
-/** Formulário de login ou cadastro (validação no cliente; a autenticação é simulada). */
+/** Formulário de login ou cadastro (validação no cliente; a autenticação é do Supabase, via authService). */
 export default function AuthForm({ mode }: { mode: Mode }) {
   const isLogin = mode === 'login'
-  const { user, login, register } = useAuth()
+  const { signIn, signUp, signInWithGoogle } = useAuth()
   const { setAccent } = useTheme()
   const navigate = useNavigate()
+  const location = useLocation()
   const formRef = useRef<HTMLFormElement>(null)
   const [values, setValues] = useState({ name: '', email: '', password: '', confirm: '' })
   const [errors, setErrors] = useState<Errors>({})
   const [submitted, setSubmitted] = useState(false)
   const [busy, setBusy] = useState(false)
   const [formError, setFormError] = useState('')
+  const [needsConfirmation, setNeedsConfirmation] = useState(false)
   const [note, setNote] = useState('')
 
-  // Quem já está logado não precisa ver o formulário (a navegação pós-login cuida do próprio redirecionamento).
-  if (user && !busy) return <Navigate to="/app" replace />
+  // Quem já está logado nem chega aqui: o GuestOnly (nas rotas) redireciona.
 
   const set = (field: keyof typeof values) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const next = { ...values, [field]: e.target.value }
@@ -48,6 +58,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
     e.preventDefault()
     setSubmitted(true)
     setFormError('')
+    setNeedsConfirmation(false)
     const found = validate(mode, values)
     setErrors(found)
     if (Object.keys(found).length > 0) {
@@ -57,13 +68,20 @@ export default function AuthForm({ mode }: { mode: Mode }) {
     }
     setBusy(true)
     try {
-      const signedIn = isLogin
-        ? await login({ email: values.email.trim(), password: values.password })
-        : await register({ name: values.name.trim(), email: values.email.trim(), password: values.password })
-      if (isLogin) setAccent(themeOf(signedIn.accent))
-      navigate(signedIn.onboarded ? '/app' : '/app/onboarding', { replace: true })
-    } catch {
-      setFormError('Não foi possível concluir agora. Tente novamente em instantes.')
+      const email = values.email.trim()
+      if (isLogin) {
+        const signedIn = await signIn({ email, password: values.password })
+        setAccent(themeOf(signedIn.accent))
+        navigate(postLoginPath(signedIn, location.state), { replace: true })
+        return
+      }
+      const result = await signUp({ name: values.name.trim(), email, password: values.password })
+      // Com a confirmação de e-mail ligada ainda não há sessão: pedimos para confirmar. Sem ela, segue para o onboarding.
+      if (result.user) navigate(postLoginPath(result.user), { replace: true })
+      else navigate('/confirmar-email', { replace: true, state: { email: result.email } })
+    } catch (error) {
+      setFormError(authErrorMessage(error))
+      setNeedsConfirmation(error instanceof AuthFailure && error.code === 'email_not_confirmed')
       setBusy(false)
     }
   }
@@ -85,6 +103,17 @@ export default function AuthForm({ mode }: { mode: Mode }) {
             </p>
           )}
           {formError && <p className="rounded-md bg-danger p-3 text-sm font-bold text-on-danger">{formError}</p>}
+          {needsConfirmation && (
+            <p className="mt-2 text-sm">
+              <Link
+                to="/confirmar-email"
+                state={{ email: values.email.trim() }}
+                className="font-bold text-link underline underline-offset-4"
+              >
+                Reenviar e-mail de confirmação
+              </Link>
+            </p>
+          )}
         </div>
         {!isLogin && (
           <Input label="Nome" name="name" autoComplete="name" value={values.name} onChange={set('name')} error={errors.name} />
@@ -104,7 +133,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
             label="Senha"
             name="password"
             autoComplete={isLogin ? 'current-password' : 'new-password'}
-            hint={isLogin ? undefined : 'Mínimo de 8 caracteres.'}
+            hint={isLogin ? undefined : PASSWORD_RULE_HINT}
             value={values.password}
             onChange={set('password')}
             error={errors.password}
@@ -123,13 +152,13 @@ export default function AuthForm({ mode }: { mode: Mode }) {
         )}
         {isLogin && (
           <div className="-mt-1 text-right">
-            <button
-              type="button"
-              onClick={() => setNote('A recuperação de senha chega numa fase futura.')}
-              className="min-h-9 cursor-pointer px-1 text-sm font-bold text-link underline underline-offset-4"
+            <Link
+              to="/esqueci-senha"
+              state={{ email: values.email.trim() }}
+              className="inline-flex min-h-9 items-center px-1 text-sm font-bold text-link underline underline-offset-4"
             >
               Esqueci minha senha
-            </button>
+            </Link>
           </div>
         )}
         <Button type="submit" size="lg" className="w-full" disabled={busy} aria-busy={busy}>
@@ -146,7 +175,12 @@ export default function AuthForm({ mode }: { mode: Mode }) {
       <Button
         variant="secondary"
         className="btn-line w-full"
-        onClick={() => setNote('O login com Google chega numa fase futura. Por enquanto, use e-mail e senha.')}
+        disabled={busy}
+        onClick={() => {
+          setNote('')
+          // Com sucesso o navegador vai para o Google; só voltamos aqui se algo falhar (ex.: provedor desligado).
+          signInWithGoogle().catch((error) => setNote(authErrorMessage(error)))
+        }}
       >
         <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" focusable="false">
           <path fill="#4285F4" d="M22 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.6a4.8 4.8 0 0 1-2.1 3.1v2.6h3.4c2-1.8 3.1-4.5 3.1-7.5z" />
