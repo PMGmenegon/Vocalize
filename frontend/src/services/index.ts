@@ -1,6 +1,10 @@
 /** Única porta de entrada para dados. Hoje devolvem mocks; nas próximas fases passam a chamar a API. */
 export { authService } from './authService'
-export type { Credentials, Preferences, Registration } from './authService'
+export type { AuthEvent, AuthService, AuthSession, AuthUser, Credentials, Registration, SignUpResult } from './authService'
+export { AuthFailure, authErrorMessage, translateAuthError } from './authErrors'
+export type { AuthErrorCode } from './authErrors'
+export { profileService } from './profileService'
+export type { Preferences } from './profileService'
 export { reviewService } from './reviewService'
 export { scenarioService } from './scenarioService'
 export { sessionService } from './sessionService'

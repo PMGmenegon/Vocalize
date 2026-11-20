@@ -1,19 +1,10 @@
+import { passwordStrength } from '../../lib/password'
+
 const LEVELS = ['Muito fraca', 'Fraca', 'Média', 'Boa', 'Forte'] as const
 
-/** Pontua de 0 a 4: tamanho, maiúscula+minúscula, número e símbolo. */
-function score(password: string): number {
-  if (!password) return 0
-  let points = 0
-  if (password.length >= 8) points++
-  if (/[a-z]/.test(password) && /[A-Z]/.test(password)) points++
-  if (/\d/.test(password)) points++
-  if (/[^A-Za-z0-9]/.test(password)) points++
-  return password.length < 8 ? Math.min(points, 1) : points
-}
-
-/** Indicador de força da senha: 4 segmentos E um texto (não depende só de cor). */
+/** Indicador de força da senha: 4 segmentos E um texto (não depende só de cor). Reflete a regra do Supabase (8+, letras e números). */
 export default function PasswordStrength({ password }: { password: string }) {
-  const points = score(password)
+  const points = passwordStrength(password)
   return (
     <div className="mt-2" aria-live="polite">
       <div aria-hidden="true" className="flex gap-1.5">

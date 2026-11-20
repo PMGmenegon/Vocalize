@@ -1,14 +1,18 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import GuestOnly from './auth/GuestOnly'
 import RequireAuth from './auth/RequireAuth'
 import { SkeletonBlock } from './components/ui/Skeleton'
 import AppLayout from './layouts/AppLayout'
 import AuthLayout from './layouts/AuthLayout'
 import PublicLayout from './layouts/PublicLayout'
+import ConfirmEmailPage from './pages/ConfirmEmailPage'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
 import RegisterPage from './pages/RegisterPage'
+import ResetPasswordPage from './pages/ResetPasswordPage'
 import DashboardPage from './pages/app/DashboardPage'
 import OnboardingPage from './pages/app/OnboardingPage'
 import PracticePage from './pages/app/PracticePage'
@@ -32,11 +36,16 @@ export default function App() {
 
         {/* Login e cadastro: tela dividida com painel de identidade visual */}
         <Route element={<AuthLayout />}>
-          <Route path="login" element={<LoginPage />} />
-          <Route path="cadastro" element={<RegisterPage />} />
+          <Route element={<GuestOnly />}>
+            <Route path="login" element={<LoginPage />} />
+            <Route path="cadastro" element={<RegisterPage />} />
+            <Route path="confirmar-email" element={<ConfirmEmailPage />} />
+            <Route path="esqueci-senha" element={<ForgotPasswordPage />} />
+          </Route>
+          <Route path="redefinir-senha" element={<ResetPasswordPage />} />
         </Route>
 
-        {/* Área logada: exige login (simulado) e onboarding concluído */}
+        {/* Área logada: exige login (Supabase) e onboarding concluído */}
         <Route element={<RequireAuth />}>
           <Route path="app" element={<AppLayout />}>
             <Route index element={<DashboardPage />} />

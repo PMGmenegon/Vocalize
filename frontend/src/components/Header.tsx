@@ -18,6 +18,8 @@ interface HeaderProps {
   trackActive?: boolean
   /** Botão de destaque ao lado da navegação. */
   cta?: NavItem
+  /** Mostra o botão "Sair" (área logada). */
+  onSignOut?: () => void
 }
 
 const baseLink = 'rounded-lg px-3 py-2 text-sm font-semibold transition-colors'
@@ -28,7 +30,7 @@ const ctaClass =
  * Cabeçalho compartilhado pelo site público e pela área logada.
  * Em telas >= md mostra a navegação inline; abaixo disso vira menu hambúrguer.
  */
-export default function Header({ logoTo, items, trackActive = false, cta }: HeaderProps) {
+export default function Header({ logoTo, items, trackActive = false, cta, onSignOut }: HeaderProps) {
   const [open, setOpen] = useState(false)
   const menuButton = useRef<HTMLButtonElement>(null)
   const menuId = 'menu-principal'
@@ -86,6 +88,11 @@ export default function Header({ logoTo, items, trackActive = false, cta }: Head
 
         <div className="flex items-center gap-2 sm:gap-3">
           <AccentSwitch />
+          {onSignOut && (
+            <button type="button" onClick={onSignOut} className={`${baseLink} hidden cursor-pointer text-ink hover:bg-surface lg:inline-flex`}>
+              Sair
+            </button>
+          )}
           {cta && (
             <Link to={cta.to} className={`${ctaClass} hidden lg:inline-flex`}>
               {cta.label}
@@ -111,6 +118,18 @@ export default function Header({ logoTo, items, trackActive = false, cta }: Head
         <nav id={menuId} aria-label="Principal" className="border-t border-line bg-canvas px-4 pb-4 pt-2 lg:hidden">
           <div className="flex flex-col gap-1">
             {items.map((item) => renderLink(item, true))}
+            {onSignOut && (
+              <button
+                type="button"
+                onClick={() => {
+                  close()
+                  onSignOut()
+                }}
+                className={`${baseLink} block cursor-pointer px-3 py-3 text-left text-base text-ink hover:bg-surface`}
+              >
+                Sair
+              </button>
+            )}
             {cta && (
               <Link to={cta.to} onClick={close} className={`${ctaClass} mt-2 flex py-3 text-base`}>
                 {cta.label}

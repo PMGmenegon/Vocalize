@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth, useUser } from '../../auth/useAuth'
+import { useAuth, useSignOut, useUser } from '../../auth/useAuth'
 import Button from '../../components/ui/Button'
 import ChoiceGroup from '../../components/ui/ChoiceGroup'
 import PageHeader, { Page } from '../../components/ui/PageHeader'
@@ -12,7 +12,8 @@ import { useTheme } from '../../theme/useTheme'
 
 export default function ProfilePage() {
   const user = useUser()
-  const { savePreferences, logout } = useAuth()
+  const { savePreferences } = useAuth()
+  const signOut = useSignOut()
   const { setAccent } = useTheme()
   const navigate = useNavigate()
   const [level, setLevel] = useState(user.level)
@@ -34,11 +35,6 @@ export default function ProfilePage() {
     } finally {
       setBusy(false)
     }
-  }
-
-  async function signOut() {
-    await logout()
-    navigate('/', { replace: true })
   }
 
   return (
