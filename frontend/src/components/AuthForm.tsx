@@ -33,7 +33,7 @@ function validate(mode: Mode, v: { name: string; email: string; password: string
 /** Formulário de login ou cadastro (validação no cliente; a autenticação é do Supabase, via authService). */
 export default function AuthForm({ mode }: { mode: Mode }) {
   const isLogin = mode === 'login'
-  const { signIn, signUp, signInWithGoogle } = useAuth()
+  const { signIn, signUp } = useAuth()
   const { setAccent } = useTheme()
   const navigate = useNavigate()
   const location = useLocation()
@@ -44,7 +44,6 @@ export default function AuthForm({ mode }: { mode: Mode }) {
   const [busy, setBusy] = useState(false)
   const [formError, setFormError] = useState('')
   const [needsConfirmation, setNeedsConfirmation] = useState(false)
-  const [note, setNote] = useState('')
 
   // Quem já está logado nem chega aqui: o GuestOnly (nas rotas) redireciona.
 
@@ -165,34 +164,6 @@ export default function AuthForm({ mode }: { mode: Mode }) {
           {busy ? 'Entrando…' : isLogin ? 'Entrar' : 'Criar conta'}
         </Button>
       </form>
-
-      <div className="my-[var(--sp-3)] flex items-center gap-3 text-sm text-muted" aria-hidden="true">
-        <span className="h-px flex-1 bg-line" />
-        ou
-        <span className="h-px flex-1 bg-line" />
-      </div>
-
-      <Button
-        variant="secondary"
-        className="btn-line w-full"
-        disabled={busy}
-        onClick={() => {
-          setNote('')
-          // Com sucesso o navegador vai para o Google; só voltamos aqui se algo falhar (ex.: provedor desligado).
-          signInWithGoogle().catch((error) => setNote(authErrorMessage(error)))
-        }}
-      >
-        <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true" focusable="false">
-          <path fill="#4285F4" d="M22 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.6a4.8 4.8 0 0 1-2.1 3.1v2.6h3.4c2-1.8 3.1-4.5 3.1-7.5z" />
-          <path fill="#34A853" d="M12 22c2.8 0 5.2-.9 6.9-2.5l-3.4-2.6c-.9.6-2.1 1-3.5 1-2.7 0-5-1.8-5.800-4.300H2.700v2.700A10 10 0 0 0 12 22z" />
-          <path fill="#FBBC05" d="M6.200 13.600a6 6 0 0 1 0-3.800V7.100H2.700a10 10 0 0 0 0 9.200z" />
-          <path fill="#EA4335" d="M12 5.900c1.500 0 2.900.5 4 1.500l3-3A10 10 0 0 0 2.700 7.100l3.500 2.700C7 7.700 9.300 5.900 12 5.900z" />
-        </svg>
-        Entrar com Google
-      </Button>
-      <p role="status" className="mt-2 min-h-5 text-sm text-muted empty:hidden">
-        {note}
-      </p>
 
       <p className="mt-auto pt-[var(--sp-3)] text-muted">
         {isLogin ? 'Ainda não tem conta? ' : 'Já tem conta? '}

@@ -32,10 +32,6 @@ describe('translateAuthError', () => {
     expect(code({ name: 'AuthRetryableFetchError', status: 0, message: 'Failed to fetch' })).toBe('network')
     expect(code(new TypeError('Failed to fetch'))).toBe('network')
   })
-  it('provedor Google desligado', () => {
-    expect(code({ message: 'Unsupported provider: provider is not enabled' })).toBe('provider_unavailable')
-    expect(authErrorMessage({ message: 'provider is not enabled' })).toBe('Login com Google ainda não está disponível.')
-  })
   it('link expirado e mesma senha', () => {
     expect(code({ name: 'AuthSessionMissingError' })).toBe('link_expired')
     expect(code({ code: 'same_password' })).toBe('same_password')

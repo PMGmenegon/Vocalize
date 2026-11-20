@@ -10,7 +10,6 @@ export interface AuthContextValue {
   status: 'loading' | 'ready'
   signUp: (registration: Registration) => Promise<SignUpResult & { user: User | null }>
   signIn: (credentials: Credentials) => Promise<User>
-  signInWithGoogle: () => Promise<void>
   signOut: () => Promise<void>
   requestPasswordReset: (email: string) => Promise<void>
   updatePassword: (password: string) => Promise<void>

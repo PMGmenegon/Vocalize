@@ -19,9 +19,6 @@ export function createFakeAuthService(initial: AuthSession | null = null) {
       emit('SIGNED_IN')
       return session
     },
-    signInWithGoogle: async () => {
-      throw new AuthFailure('provider_unavailable')
-    },
     signOut: async () => {
       session = null
       emit('SIGNED_OUT')
