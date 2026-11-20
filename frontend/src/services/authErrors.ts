@@ -7,7 +7,6 @@ export type AuthErrorCode =
   | 'email_not_confirmed'
   | 'rate_limited'
   | 'email_rate_limited'
-  | 'provider_unavailable'
   | 'link_expired'
   | 'network'
   | 'unknown'
@@ -20,7 +19,6 @@ const MESSAGES: Record<AuthErrorCode, string> = {
   email_not_confirmed: 'Seu e-mail ainda não foi confirmado. Abra o link que enviamos para você.',
   rate_limited: 'Muitas tentativas. Aguarde um pouco e tente de novo.',
   email_rate_limited: 'Limite de envio de e-mails atingido. Aguarde alguns minutos e tente de novo.',
-  provider_unavailable: 'Login com Google ainda não está disponível.',
   link_expired: 'Este link é inválido ou expirou. Peça um novo.',
   network: 'Erro de conexão. Verifique sua internet e tente de novo.',
   unknown: 'Não foi possível concluir agora. Tente novamente em instantes.',
@@ -61,7 +59,6 @@ export function translateAuthError(error: unknown): AuthFailure {
   if (code === 'over_email_send_rate_limit' || /email rate limit/i.test(message)) return new AuthFailure('email_rate_limited')
   if (code === 'over_request_rate_limit' || e.status === 429 || /rate limit|too many requests/i.test(message))
     return new AuthFailure('rate_limited')
-  if (/provider is not enabled|unsupported provider/i.test(message)) return new AuthFailure('provider_unavailable')
   if (e.name === 'AuthSessionMissingError' || code === 'session_not_found' || code === 'otp_expired' || /expired|invalid.*(token|link)/i.test(message))
     return new AuthFailure('link_expired')
   if (e.name === 'AuthRetryableFetchError' || e.status === 0 || error instanceof TypeError || /failed to fetch|network/i.test(message))

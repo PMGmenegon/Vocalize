@@ -3,11 +3,11 @@
 **Status:** aceita
 
 ## Contexto
-Login e cadastro eram simulados (mock no navegador). Precisamos de autenticação real, com confirmação de e-mail, recuperação de senha e login com Google, sem montar e manter um sistema de contas próprio. A Fase 8 levará o perfil de estudo para o backend FastAPI, que precisará saber quem é o usuário.
+Login e cadastro eram simulados (mock no navegador). Precisamos de autenticação real, com confirmação de e-mail e recuperação de senha, sem montar e manter um sistema de contas próprio. A Fase 8 levará o perfil de estudo para o backend FastAPI, que precisará saber quem é o usuário.
 
 ## Decisão
-- **Supabase Auth** (e-mail e senha com confirmação de e-mail; Google opcional) usado direto pelo frontend com `@supabase/supabase-js`. Sessão persistente e renovação automática do token são o padrão do SDK.
-- **`authService` na camada de serviços** (`src/services/authService.ts`): interface própria (`signUp`, `signIn`, `signInWithGoogle`, `signOut`, `getSession`, `onAuthStateChange`, `requestPasswordReset`, `updatePassword`, `resendConfirmation`) com uma implementação Supabase. Telas e componentes nunca importam o SDK; o cliente é criado em um único lugar (`src/lib/supabase.ts`), sob demanda, com erro claro se as variáveis `VITE_SUPABASE_*` faltarem. Trocar de provedor ou usar um falso nos testes é trocar a implementação.
+- **Supabase Auth** (e-mail e senha com confirmação de e-mail) usado direto pelo frontend com `@supabase/supabase-js`. Sessão persistente e renovação automática do token são o padrão do SDK.
+- **`authService` na camada de serviços** (`src/services/authService.ts`): interface própria (`signUp`, `signIn`, `signOut`, `getSession`, `onAuthStateChange`, `requestPasswordReset`, `updatePassword`, `resendConfirmation`) com uma implementação Supabase. Telas e componentes nunca importam o SDK; o cliente é criado em um único lugar (`src/lib/supabase.ts`), sob demanda, com erro claro se as variáveis `VITE_SUPABASE_*` faltarem. Trocar de provedor ou usar um falso nos testes é trocar a implementação.
 - **Erros traduzidos em um único lugar** (`services/authErrors.ts`): o SDK devolve mensagens em inglês; a interface só vê `AuthFailure` com código e texto em português.
 - **Estado**: `AuthProvider` (Context) + `useAuth()`, com carregamento inicial discreto para não piscar a tela de login a quem já está logado.
 - **Somente a chave pública** (publishable/anon) no frontend. A chave secret/`service_role` nunca entra no frontend nem no Git.
@@ -26,3 +26,7 @@ Login e cadastro eram simulados (mock no navegador). Precisamos de autenticaçã
 - Cadastro exige confirmar o e-mail (há tela e reenvio); o e-mail embutido do Supabase tem limite de envios, tratado com mensagem própria.
 - Contas novas começam sem histórico: o histórico falso era só da usuária de demonstração antiga.
 - Na Fase 8 o frontend envia o token da sessão ao backend e o perfil sai do mock.
+
+## Atualização: login com Google retirado
+
+Por decisão de produto, o login com Google foi removido (botão, `signInWithGoogle` e traduções de erro específicas). O Vocalize mantém **somente e-mail e senha**.

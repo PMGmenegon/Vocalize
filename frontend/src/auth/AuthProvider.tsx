@@ -66,7 +66,6 @@ export function AuthProvider({ children, service = authService }: { children: Re
         apply(next)
         return profileService.load(next.user)
       },
-      signInWithGoogle: () => service.signInWithGoogle(),
       signOut: async () => {
         try {
           await service.signOut()

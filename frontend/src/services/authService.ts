@@ -30,8 +30,6 @@ export type AuthEvent = 'INITIAL_SESSION' | 'SIGNED_IN' | 'SIGNED_OUT' | 'TOKEN_
 export interface AuthService {
   signUp(registration: Registration): Promise<SignUpResult>
   signIn(credentials: Credentials): Promise<AuthSession>
-  /** Redireciona o navegador para o Google. Rejeita com AuthFailure('provider_unavailable') se o provedor estiver desligado. */
-  signInWithGoogle(): Promise<void>
   signOut(): Promise<void>
   getSession(): Promise<AuthSession | null>
   /** Devolve a função que cancela a assinatura. */
@@ -86,12 +84,6 @@ export const supabaseAuthService: AuthService = {
     const session = toAuthSession(data.session)
     if (!session) throw new AuthFailure('unknown')
     return session
-  },
-
-  async signInWithGoogle() {
-    await call(() =>
-      getSupabase().auth.signInWithOAuth({ provider: 'google', options: { redirectTo: `${window.location.origin}/app` } }),
-    )
   },
 
   async signOut() {

@@ -71,7 +71,6 @@ O login, o cadastro, a confirmação de e-mail e a redefinição de senha usam o
 | URL Configuration → Redirect URLs | `http://localhost:5173/**` (em produção, adicione também a URL do site) |
 | Sign In / Providers → Email | ativado, com **Confirm email** ligado |
 | Sign In / Providers → Password | mínimo de **8 caracteres**, exigindo **letras e números** (o app valida a mesma regra) |
-| Sign In / Providers → Google | opcional; enquanto estiver desligado, o botão mostra "Login com Google ainda não está disponível" |
 
 **2. Onde pegar as chaves:** em *Project Settings → API Keys* (ou *API*): a **Project URL** e a chave **publishable** (antiga `anon`).
 
